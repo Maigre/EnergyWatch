@@ -637,8 +637,10 @@ var $msg_error;
 		// Set output Encoding.
 		$data->setOutputEncoding('CP1251');
 		$data->read($excel_file_name_with_path);
+
 		//efface le fichier après lecture
 		unlink($excel_file_name_with_path);
+
 		
 		$this->nombres_colonnes=$data->sheets[0]['numCols'];
 		if ($table=='conso_mts') $this->nombres_colonnes=56;
