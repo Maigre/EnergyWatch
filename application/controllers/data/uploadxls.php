@@ -26,7 +26,7 @@ var $msg_error;
 	function do_upload($table)
 	{
 		if ($table=='conso_mts'){
-			$this->fields='';//(id,No_client,No_personne,No_de_facture,Nature,Categorie_client,Tarif,No_compteur,No_police,Point_de_livraison,Puisance_souscrite,Nom_prenom,Adresse,Localisation,Code_Activite,Coefficient_PA,Conso_PA,Ancien_Index_Pointe,Nouvel_Index_Pointe,Conso_Pointe,Montant_HT_Pointe,Contribution_Speciale_Pointe,Montant_Net_Pointe,Ancien_Index_Hors_Pointe,Nouvel_Index_Hors_Pointe,Conso_Hors_Pointe,Montant_HT_Hors_Pointe,Contribution_Speciale_Hors_Pointe,Montant_Net_Hors_Pointe,Ancien_Index_Reactif,Nouvel_Index_Reactif,Conso_Energie_Reactive,Montant_prime_HT,Montant_Prime_TTC,Ancien_Index_Pertes_Cuivre,Nouvel_Index_Pertes_Cuivre,Conso_Pertes_Cuivre,Contribution_Speciale_Pertes_Cuivre,Montant_HT_Pertes_Cuivre,Montant_Net_Pertes_Cuivre,Ancien_Index_Pertes_fer,Nouvel_Index_Pertes_Fer,Conso_Pertes_Fer,Montant_HT_Pertes_Fer,Contribution_Speciale_Pertes_Fer,Montant_Net_Pertes_Fer,Conso_Depassement_PS,Montant_HT Penalite_Depassement_PS,Montant_Net_Penalite_Depassement_PS,Cosinus_phi,Montant_HT_Cosinus_PHI,Montant_Net_Cosinus_PHI,MT_REDEVANCE_HT,Montant_net,Date_index,Date_abonnement,Nb_jours)
+			$this->fields='(id, No_de_facture, Tarif, Puisance_souscrite, Coefficient_PA, Conso_PA, Ancien_Index_Pointe, Nouvel_Index_Pointe, Conso_Pointe, Montant_HT_Pointe, Contribution_Speciale_Pointe, Montant_Net_Pointe, Ancien_Index_Hors_Pointe, Nouvel_Index_Hors_Pointe, Conso_Hors_Pointe, Montant_HT_Hors_Pointe, Contribution_Speciale_Hors_Pointe, Montant_Net_Hors_Pointe, Ancien_Index_Reactif, Nouvel_Index_Reactif, Conso_Energie_Reactive, Montant_prime_HT, Montant_Prime_TTC, Ancien_Index_Pertes_Cuivre, Nouvel_Index_Pertes_Cuivre, Conso_Pertes_Cuivre, Contribution_Speciale_Pertes_Cuivre, Montant_HT_Pertes_Cuivre, Montant_Net_Pertes_Cuivre, Ancien_Index_Pertes_fer, Nouvel_Index_Pertes_Fer, Conso_Pertes_Fer, Montant_HT_Pertes_Fer, Contribution_Speciale_Pertes_Fer, Montant_Net_Pertes_Fer, Conso_Depassement_PS, Montant_HT_Penalite_Depassement_PS, Montant_Net_Penalite_Depassement_PS, Cosinus_phi, Montant_HT_Cosinus_PHI, Montant_Net_Cosinus_PHI, MT_REDEVANCE_HT, Montant_net, Date_index, Nb_jours)';
 		}
 		else $this->fields='(id,No_client,No_personne,No_de_facture,Nature,Categorie_client,Code_tarif,No_compteur,No_police,Point_de_livraison,Puisance_souscrite,Nom_prenom,Adresse,Localisation,Code_Activite,Ancien_index,Nouvel_index,Consommation_mensuelle,Redevance,Contribution_Speciale,Montant_PF,Montant_HT,Montant_tva,Montant_net,Date_index,Date_abonnement,Nb_jours)';
 		
@@ -192,19 +192,28 @@ var $msg_error;
 	//découpée en deux.
 		 		
 		 		//Récuperer mois début et mois fin.
-		 		$date_debut = date('Y-m-d',strtotime($f->Date_index));
-		 		$date_fin= date('Y-m-d',strtotime("+".$f->Nb_jours."days", strtotime($date_debut)));
+		 		$date_fin = date('Y-m-d',strtotime($f->Date_index));
+		 		$date_debut= date('Y-m-d',strtotime("-".$f->Nb_jours."days", strtotime($date_fin)));
 		 		
 		 		$date_array_debut = explode("-",$date_debut); // split the array
 				$month_debut = $date_array_debut[1];
+				$annee_debut = $date_array_debut[0];
 				
 				$date_array_fin = explode("-",$date_fin); // split the array
 				$month_fin = $date_array_fin[1];
-				
+				$annee_fin = $date_array_fin[0];
 				//Tableaux des champs
-				$all_fields=array('id', 'No_de_facture', 'Code_tarif', 'Puisance_souscrite', 'Ancien_index', 'Nouvel_index', 'Consommation_mensuelle', 'Redevance', 'Contribution_Speciale', 'Montant_PF', 'Montant_HT', 'Montant_tva', 'Montant_net', 'Date_index', 'Nb_jours');
-				$extensive_field=array('Consommation_mensuelle','Redevance','Contribution_Speciale','Montant_PF','Montant_HT','Montant_tva','Montant_net');
-				$intensive_field=array('No_de_facture', 'Code_tarif', 'Puisance_souscrite');
+				if ($table=='conso_bts'){
+					$all_fields=array('id', 'No_de_facture', 'Code_tarif', 'Puisance_souscrite', 'Ancien_index', 'Nouvel_index', 'Consommation_mensuelle', 'Redevance', 'Contribution_Speciale', 'Montant_PF', 'Montant_HT', 'Montant_tva', 'Montant_net', 'Date_index', 'Nb_jours');
+					$extensive_field=array('Consommation_mensuelle','Redevance','Contribution_Speciale','Montant_PF','Montant_HT','Montant_tva','Montant_net');
+					$intensive_field=array('No_de_facture', 'Code_tarif', 'Puisance_souscrite');
+				}
+				elseif ($table=='conso_mts'){
+					$all_fields=array('id', 'No_de_facture', 'Tarif', 'Puisance_souscrite', 'Coefficient_PA', 'Conso_PA', 'Ancien_Index_Pointe', 'Nouvel_Index_Pointe', 'Conso_Pointe', 'Montant_HT_Pointe', 'Contribution_Speciale_Pointe', 'Montant_Net_Pointe', 'Ancien_Index_Hors_Pointe', 'Nouvel_Index_Hors_Pointe', 'Conso_Hors_Pointe', 'Montant_HT_Hors_Pointe', 'Contribution_Speciale_Hors_Pointe', 'Montant_Net_Hors_Pointe', 'Ancien_Index_Reactif', 'Nouvel_Index_Reactif', 'Conso_Energie_Reactive', 'Montant_prime_HT', 'Montant_Prime_TTC', 'Ancien_Index_Pertes_Cuivre', 'Nouvel_Index_Pertes_Cuivre', 'Conso_Pertes_Cuivre', 'Contribution_Speciale_Pertes_Cuivre', 'Montant_HT_Pertes_Cuivre', 'Montant_Net_Pertes_Cuivre', 'Ancien_Index_Pertes_fer', 'Nouvel_Index_Pertes_Fer', 'Conso_Pertes_Fer', 'Montant_HT_Pertes_Fer', 'Contribution_Speciale_Pertes_Fer', 'Montant_Net_Pertes_Fer', 'Conso_Depassement_PS', 'Montant_HT_Penalite_Depassement_PS', 'Montant_Net_Penalite_Depassement_PS', 'Cosinus_phi', 'Montant_HT_Cosinus_PHI', 'Montant_Net_Cosinus_PHI', 'MT_REDEVANCE_HT', 'Montant_net', 'Date_index', 'Nb_jours');
+					$extensive_field=array('Coefficient_PA', 'Conso_PA', 'Conso_Pointe', 'Montant_HT_Pointe', 'Contribution_Speciale_Pointe', 'Montant_Net_Pointe', 'Ancien_Index_Hors_Pointe', 'Nouvel_Index_Hors_Pointe', 'Conso_Hors_Pointe', 'Montant_HT_Hors_Pointe', 'Contribution_Speciale_Hors_Pointe', 'Montant_Net_Hors_Pointe', 'Ancien_Index_Reactif', 'Nouvel_Index_Reactif', 'Conso_Energie_Reactive', 'Montant_prime_HT', 'Montant_Prime_TTC', 'Ancien_Index_Pertes_Cuivre', 'Nouvel_Index_Pertes_Cuivre', 'Conso_Pertes_Cuivre', 'Contribution_Speciale_Pertes_Cuivre', 'Montant_HT_Pertes_Cuivre', 'Montant_Net_Pertes_Cuivre', 'Ancien_Index_Pertes_fer', 'Nouvel_Index_Pertes_Fer', 'Conso_Pertes_Fer', 'Montant_HT_Pertes_Fer', 'Contribution_Speciale_Pertes_Fer', 'Montant_Net_Pertes_Fer', 'Conso_Depassement_PS', 'Montant_HT_Penalite_Depassement_PS', 'Montant_Net_Penalite_Depassement_PS', 'Cosinus_phi', 'Montant_HT_Cosinus_PHI', 'Montant_Net_Cosinus_PHI', 'MT_REDEVANCE_HT', 'Montant_net');
+					$intensive_field=array('No_de_facture', 'Tarif', 'Puisance_souscrite');
+				}
+				
 				//$intensive_field = array_diff($extensive_field, $all_fields); 
 				//print_r($intensive_field); die;
 				//Enleve date_index de la liste car ne sera pas recopié à l'identique
@@ -212,10 +221,19 @@ var $msg_error;
 				//$intensive_field = array_diff($intensive_field, $to_remove); 
 	
 		 		//Tester facture à cheval sur plusieurs mois.
+		 		if ($annee_debut!=$annee_fin){
+		 			$month_debut=$month_debut-($annee_fin-$annee_debut)*12;
+		 		}
 
 		 		while (($month_fin-$month_debut)>0){
-		 			
-		 			$d= new Donnees_conso_bt();
+					
+
+		 			if ($table=='conso_bts'){
+		 				$d= new Donnees_conso_bt();
+		 			}
+		 			else{
+		 				$d= new Donnees_conso_mt();			
+		 			}
 		 			$wherearray=array('No_de_facture'=>$f->No_de_facture, 'Date_index'=>$date_debut);
 			 		$d->where($wherearray);
 			 		$d->where_related_pl('Point_de_livraison',$PL);
@@ -258,7 +276,12 @@ var $msg_error;
 		 
 		 		//Derniere partie de la facture, ou toute la facture si elle ne chevauchait pas deux mois.
 		 		if ($month_fin==$month_debut){ 
-		 			$d= new Donnees_conso_bt();
+		 			if ($table=='conso_bts'){
+		 				$d= new Donnees_conso_bt();
+		 			}
+		 			else{
+		 				$d= new Donnees_conso_mt();			
+		 			}
 		 			$wherearray=array('No_de_facture'=>$f->No_de_facture, 'Date_index'=>$date_debut);
 			 		$d->where($wherearray);
 			 		$d->where_related_pl('Point_de_livraison',$PL);
@@ -287,7 +310,13 @@ var $msg_error;
 		 		
 	//Creation des alertes
 				//Get donnees conso
-				$d= new Donnees_conso_bt();
+				
+				if ($table=='conso_bts'){
+		 				$d= new Donnees_conso_bt();
+		 		}
+		 			else{
+		 				$d= new Donnees_conso_mt();			
+		 		}
 	 			$d->where_related_pl('Point_de_livraison',$PL);
 		 		$d->get();
 		 		//Recherche date dernière facture
@@ -318,7 +347,9 @@ var $msg_error;
 			 		//$date_facture_array = explode("-",$date_facture2); // split the array
 					//$year_facture = $date_facture_array[0]; //year segment
 					//$month_facture = $date_facture_array[1]; //month segment
-					
+					if ($table=='conso_mts'){
+						$c->Consommation_mensuelle=$c->Conso_Hors_Pointe+$c->Conso_Pointe;
+					}
 					
 					//mois en_cours
 					if ((($date_encours-$date_facture)<30*24*3600)){
@@ -341,6 +372,9 @@ var $msg_error;
 							$en_cours['Montant_net']=$c->Montant_net;
 						}
 						$en_cours['Puisance_souscrite']=$c->Puisance_souscrite;
+						if ($table=='conso_mts'){
+							$en_cours['Conso_PA']=$c->Conso_PA;
+						}
 					}
 					//mois précédent
 					elseif ((($date_encours-$date_facture)<60*24*3600) and (($date_encours-$date_facture)>30*24*3600)){
@@ -362,27 +396,30 @@ var $msg_error;
 						else{
 							$mois_precedent['Montant_net']=$c->Montant_net;
 						}
-						$mois_precedent['Puisance_souscrite']=$c->Puisance_souscrite;						
+						$mois_precedent['Puisance_souscrite']=$c->Puisance_souscrite;
+						if ($table=='conso_mts'){
+							$mois_precedent['Conso_PA']=$c->Conso_PA;
+						}						
 					}
 					//même mois année précédente
 					elseif ((($date_encours-$date_facture)>365*24*3600) and (($date_encours-$date_facture)<395*24*3600)){
 						if (isset($moyenne_annuelle['Nb_jours'])){
-							$moyenne_annuelle['Nb_jours']+=$c->Nb_jours;
+							$mois_annee_precedente['Nb_jours']+=$c->Nb_jours;
 						}
 						else{
-							$moyenne_annuelle['Nb_jours']=$c->Nb_jours;
+							$mois_annee_precedente['Nb_jours']=$c->Nb_jours;
 						}
-						if (isset($moyenne_annuelle['Consommation_mensuelle'])){
-							$moyenne_annuelle['Consommation_mensuelle']+=$c->Consommation_mensuelle;
-						}
-						else{
-							$moyenne_annuelle['Consommation_mensuelle']=$c->Consommation_mensuelle;
-						}
-						if (isset($moyenne_annuelle['Montant_net'])){
-							$moyenne_annuelle['Montant_net']+=$c->Montant_net;
+						if (isset($mois_annee_precedente['Consommation_mensuelle'])){
+							$mois_annee_precedente['Consommation_mensuelle']+=$c->Consommation_mensuelle;
 						}
 						else{
-							$moyenne_annuelle['Montant_net']=$c->Montant_net;
+							$mois_annee_precedente['Consommation_mensuelle']=$c->Consommation_mensuelle;
+						}
+						if (isset($mois_annee_precedente['Montant_net'])){
+							$mois_annee_precedente['Montant_net']+=$c->Montant_net;
+						}
+						else{
+							$mois_annee_precedente['Montant_net']=$c->Montant_net;
 						}
 					}
 					//moyenne annuelle
@@ -460,7 +497,6 @@ var $msg_error;
 						);
 						$alerte_temp[]=$alerte;
 					}
-					//die;
 				}
 				if ((isset($en_cours['Consommation_mensuelle'])) and (isset($mois_annee_precedente['Consommation_mensuelle']))){
 					if ($en_cours['Consommation_mensuelle']>(1.1*$mois_annee_precedente['Consommation_mensuelle']))
@@ -565,6 +601,23 @@ var $msg_error;
 						$alerte_temp[]=$alerte;
 					}
 				}
+				//type 6 : Dépassement de la puissance souscrite
+				if ((isset($en_cours['Conso_PA'])) and (isset($mois_precedent['Conso_PA']))){
+					if ($en_cours['Conso_PA']> 1.05*$en_cours['Puisance_souscrite']){
+						$hausse = round(100*($en_cours['Conso_PA']-$en_cours['Puisance_souscrite'])/$en_cours['Puisance_souscrite']);
+						$Alerte='Au mois de '.$mois.' la puissance appelée a dépassé de '.$hausse.'% la puissance souscrite.';
+						$Duree_validite = 1;
+						$type_alerte=6;
+						$flux='elec';
+						$alerte=array(
+							'Alerte'=>$Alerte,
+							'Duree_validite'=>$Duree_validite,
+							'type_alerte'=>$type_alerte,
+							'flux'=>$flux
+						);
+						$alerte_temp[]=$alerte;
+					}
+				}
 				
 		 		
 
@@ -591,9 +644,9 @@ var $msg_error;
 							$a->Date= date('Y-m-d',now()); 
 							$a->Etat= 3;
 						
-							$p=new Pl();
-							$p->where('Point_de_livraison',$PL);
-							$p->get();
+							//$p=new Pl();
+							//$p->where('Point_de_livraison',$PL);
+							//$p->get();
 						
 							$t=new Alerte_type();
 							$t->where('id',$AT['type_alerte']) ;
@@ -605,22 +658,31 @@ var $msg_error;
 				}
 				
 				//Creation des donnes statistiques pour chaque pl
-				$s= new Stat();
-				$s->where_related_pl('Point_de_livraison',$PL)->get();
+				//$s= new Stat();
+				//$s->where_related_pl('Point_de_livraison',$PL)->get();
 				//calcul de la consommation mensuelle moyenne
 				$conso_totale=0;
 				$nombrejour_total=0;
+				
 				foreach($d->all as $donneesconso){
+					if ($table=='conso_mts'){
+						$donneesconso->Consommation_mensuelle=$donneesconso->Conso_Hors_Pointe+$donneesconso->Conso_Pointe;
+					}
 					$conso_totale+=$donneesconso->Consommation_mensuelle;
 					$nombrejour_total+=$donneesconso->Nb_jours;
 				}
 				if ($nombrejour_total!=0){
-					$s->conso_moy=round($conso_totale/$nombrejour_total*30);
-					$p= new Pl();
-					$p->where('Point_de_livraison',$PL)->get();
-					$s->save($p);
+					$p->conso_moy=round($conso_totale/$nombrejour_total*30);
 				}
+				//recherche alerte_max
+				$p->alerte_max=0;
+				$a= new Alerte();
+				$a->select_max('Etat');
+				$a->where_related_pl('Point_de_livraison',$p->Point_de_livraison)->get();
+				$p->alerte_max=$a->Etat;
 				
+				//sauvegarde des stats dans l'objet pl'
+				$p->save();				
 				
 			}
 			return TRUE;

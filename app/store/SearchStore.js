@@ -1,6 +1,6 @@
 Ext.define('MainApp.store.SearchStore', {
     extend: 'Ext.data.Store',
-    fields: ['id', 'todisplay'], //put more field here like 'idfamille'
+    fields: ['id', 'todisplay', 'tension'], //put more field here like 'idfamille'
     proxy: {
     	type: 'ajax',
     	api: {

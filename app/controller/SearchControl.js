@@ -21,25 +21,38 @@ Ext.define('MainApp.controller.SearchControl', {
 
 	doselect: function(record) {
 		
-
+		console.info(record.displayTplData[0].tension);
 		//charge le store avec l'id du pl
 		var plstore = this.getStore('PlStore');
 		plstore.load({
 			params: {idPl: record.getValue()}
 		});
 		
-		plstore.on('load', function(){
+		plstore.on('load', function(database){
+			this.plpanel = new Ext.widget('plpanel');
 			Ext.getCmp('westregion').removeAll();
-			Ext.getCmp('westregion').add(Ext.widget('plpanel'));
+			Ext.getCmp('westregion').add(this.plpanel);
+			var rec= database.getAt(0);
+			this.plpanel.getForm().loadRecord(rec);
+			console.info(this.plpanel.getForm());
+			
 		});
 		
+		if (record.displayTplData[0].tension=='BT'){
+			var facturestore = this.getStore('FactureStore');
+			var donneesConsoStore = this.getStore('DonneesConsoStore');
+			var view1 = Ext.widget('plfacturepanel');
+		}
+		else{
+			var facturestore = this.getStore('FactureMTStore');
+			var donneesConsoStore = this.getStore('DonneesConsoMTStore');
+			var view1 = Ext.widget('plfacturemtpanel');
+		}
 		
-		var facturestore = this.getStore('FactureStore');
 		facturestore.load({
 			params: {idPl: record.getValue()}
 		});
 		
-		var donneesConsoStore = this.getStore('DonneesConsoStore');
 		donneesConsoStore.load({
 			params: {idPl: record.getValue()}
 		});
@@ -51,7 +64,6 @@ Ext.define('MainApp.controller.SearchControl', {
 		
 		//Si le panel plfacturepanel n'est pas déjà affiché
 		if(Ext.getCmp('centerregion').items.items[0].alias!='widget.plfacturepanel'){
-			var view1 = Ext.widget('plfacturepanel');
 			Ext.getCmp('centerregion').removeAll(); //clean the center region
 			Ext.getCmp('centerregion').add(view1); //display the panel
 		}

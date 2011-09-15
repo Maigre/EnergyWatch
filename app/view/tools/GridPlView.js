@@ -19,13 +19,13 @@ Ext.define('MainApp.view.tools.GridPlView', {
 		
 		flagtpl= new Ext.XTemplate(
 			'<tpl if="alerte_max == 3;">',
-			'<img src="app/images/icons/flag_red.png">',
+			'<img src="app/images/icons/cross.png">',
 			'</tpl>',
 			'<tpl if="alerte_max == 2;">',
-			'<img src="app/images/icons/flag_orange.png">',
+			'<img src="app/images/icons/exclamation_octagon_fram.png">',
 			'</tpl>',
 			'<tpl if="alerte_max == 1;">',
-			'<img src="app/images/icons/flag_green.png">',
+			'<img src="app/images/icons/accept.png">',
 			'</tpl>'
 		);
 		conso_moy_tpl= new Ext.XTemplate(

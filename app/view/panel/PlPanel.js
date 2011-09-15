@@ -1,6 +1,7 @@
 Ext.define('MainApp.view.panel.PlPanel', {
 	extend		 : 'Ext.form.Panel',
 	alias 		 : 'widget.plpanel',
+	id           : 'plpanel',
 	frame 		 : true,
 	//height		 : 680,
 	//width 		 : 240,
@@ -9,7 +10,7 @@ Ext.define('MainApp.view.panel.PlPanel', {
 	url   		 : BASE_URL+'data/plcontrol/save',
 	frame 		 : true,
 	title 		 : 'Point de Livraison',
-	bodyStyle:'padding:5px 5px 0',
+	bodyStyle    : 'padding:5px 5px 0',
 	method       : 'post',
 	trackResetOnLoad : 'true',
 	fieldDefaults: {
@@ -89,8 +90,15 @@ Ext.define('MainApp.view.panel.PlPanel', {
         }
 	],
 	buttons		 : [{
-		text: 'Save'
-		},{
+		text: 'Save',
+		handler: function(){
+			this.ownerCt.ownerCt.getForm().submit({
+				url: BASE_URL+'data/plcontrol/save/'+this.ownerCt.ownerCt.items.items[8].value
+			});
+			console.info(this.ownerCt.ownerCt.items.items[8].value);
+			//Ext.getCmp('plpanel').submit();
+		}
+	},{
 		text: 'Cancel'
 	}],
 	initComponent: function() {

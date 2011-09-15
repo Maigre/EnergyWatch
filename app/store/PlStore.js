@@ -5,7 +5,7 @@ Ext.define('MainApp.store.PlStore', {
     proxy: {
     	type: 'ajax',
     	api: {
-    		read: BASE_URL+'data/plcontrol/load',
+    		read: BASE_URL+'data/plcontrol/load'    		
     	},
     	actionMethods : {read: 'POST'},   	
     	reader: {

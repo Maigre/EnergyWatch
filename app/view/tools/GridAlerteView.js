@@ -22,13 +22,13 @@ Ext.define('MainApp.view.tools.GridAlerteView', {
 	initComponent: function() {
 		flagtpl= new Ext.XTemplate(
 			'<tpl if="Etat == 3;">',
-			'<img src="app/images/icons/flag_red.png">',
+			'<img src="app/images/icons/cross.png">',
 			'</tpl>',
 			'<tpl if="Etat == 2;">',
-			'<img src="app/images/icons/flag_orange.png">',
+			'<img src="app/images/icons/exclamation_octagon_fram.png">',
 			'</tpl>',
 			'<tpl if="Etat == 1;">',
-			'<img src="app/images/icons/flag_green.png">',
+			'<img src="app/images/icons/accept.png">',
 			'</tpl>'
 		);
 		

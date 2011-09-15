@@ -2,8 +2,8 @@
 
 class Pl extends Dmc {
 	
-	var $has_one=array("stat");
-	var $has_many=array("facturebt","facturemt","donnees_conso_bt","alerte");
+	//var $has_one=array("stat");
+	var $has_many=array("facturebt","facturemt","donnees_conso_bt","donnees_conso_mt","alerte");
 	
 	var $description = array(
 		'No_client' => 	array(
@@ -84,6 +84,27 @@ class Pl extends Dmc {
 				'formfield' 	=> array('text', 15)
 		),
 		'Date_abonnement' => 	array(
+				'label' 	=> array('Date Abonnement',false),
+				'rules' 	=> array('required', 'xss_clean'),
+				'defval'	=> '',
+				'type'		=> 'normal',
+				'formfield' 	=> array('text', 15)
+		),
+		'Commentaire' => 	array(
+				'label' 	=> array('Date Abonnement',false),
+				'rules' 	=> array('required', 'xss_clean'),
+				'defval'	=> '',
+				'type'		=> 'normal',
+				'formfield' 	=> array('text', 15)
+		),
+		'alerte_max' => 	array(
+				'label' 	=> array('Date Abonnement',false),
+				'rules' 	=> array('required', 'xss_clean'),
+				'defval'	=> '',
+				'type'		=> 'normal',
+				'formfield' 	=> array('text', 15)
+		),
+		'conso_moy' => 	array(
 				'label' 	=> array('Date Abonnement',false),
 				'rules' 	=> array('required', 'xss_clean'),
 				'defval'	=> '',
