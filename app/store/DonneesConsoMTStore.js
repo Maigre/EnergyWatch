@@ -1,17 +1,16 @@
-Ext.define('MainApp.store.PlStore', {
+Ext.define('MainApp.store.DonneesConsoMTStore', {
     extend: 'Ext.data.Store',
-    requires: 'MainApp.model.PlModel',
-    model: 'MainApp.model.PlModel',
+    requires: 'MainApp.model.DonneesConsoMTModel',
+    model: 'MainApp.model.DonneesConsoMTModel',
     proxy: {
     	type: 'ajax',
     	api: {
-    		read: BASE_URL+'data/plcontrol/load'    		
+    		read: BASE_URL+'data/facture/loaddonneesconso',
     	},
     	actionMethods : {read: 'POST'},   	
     	reader: {
     		type: 'json',
     		root: 'data',
-    		totalProperty: 'size',
     		successProperty: 'success'
     	}
     },
@@ -19,3 +18,5 @@ Ext.define('MainApp.store.PlStore', {
         idPl:'' 
     }
 });
+
+

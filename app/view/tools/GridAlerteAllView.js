@@ -1,6 +1,6 @@
-Ext.define('MainApp.view.tools.GridAlerteView', {
+Ext.define('MainApp.view.tools.GridAlerteAllView', {
 	extend: 'Ext.grid.Panel',
-	alias : 'widget.gridalerte',
+	alias : 'widget.gridalerteall',
 	title: 'Alertes',
 	store: 'AlerteStore',
 	//height: 200,

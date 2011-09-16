@@ -28,13 +28,13 @@ class Alertecontrol extends CI_Controller {
 		$answ = null;
 		$fieldArray=array('id','idAlerteParent','Date','Etat','Alerte','Commentaire','Flux');
 		
-		//foreach($p->all as $pl){
-		foreach($fieldArray as $field){
-			$answ[$field]=$a->$field;
+		foreach($a->all as $alerte){
+			foreach($fieldArray as $field){
+				$answ[$field]=$alerte->$field;
+			}
+			$answer['data'][] = $answ;
 		}
-		$answer['data'][] = $answ;
-		//}
-		$answer['size'] = count($answer['data']);
+		if (isset($answer['data']))	$answer['size'] = count($answer['data']);
 		
 		if ($answer['size'] == 0){
 			$answer['msg'] = 'aucun resultat...';

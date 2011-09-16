@@ -33,7 +33,7 @@ class Plcontrol extends CI_Controller {
 		}
 		//$answer['data'][] = $answ;
 		//}
-		//$answer['size'] = count($answer['data']);
+		$answer['size'] = count($answer['data']);
 		
 		/*if ($answer['size'] == 0){
 			$answer['msg'] = 'aucun resultat...';
@@ -46,9 +46,25 @@ class Plcontrol extends CI_Controller {
 		echo json_encode($answer);
 	}
 	
+	public function save($PL){
+		//recupération de l'objet PL
+		$this->load->model('Pl','run_pl');
+		$p = $this->run_pl;
+		$p->where('Point_de_livraison', $PL);
+		$p->get();
+		//recuperation des donnees du formulaire
+		foreach ($this->input->post() as $key=>$value){
+			$p->$key=$value;
+		}
+		$date_array = explode("/",$p->Date_abonnement); 
+		$p->Date_abonnement=date('Y-m-d',strtotime($date_array[2].'-'.$date_array[1].'-'.$date_array[0]));
+		
+		$p->save();
+	}
+	
 	public function loadall()
 	{
-		$linked_field=array('conso_moy','alerte_max','alerte_commentaire');
+		$linked_field=array();
 		//get parameters for infinite scrolling grid
 		$start = $this->input->post('start');
 		$limit = $this->input->post('limit');
@@ -60,17 +76,9 @@ class Plcontrol extends CI_Controller {
 			$dir='desc';
 		}
 		
-		
-		
 		//DATAMAPPER CONSTRUCTING
 		$this->load->model('Pl','run_pl');
 		$p = $this->run_pl;
-		if ( ($sort!='lastpost') and !(in_array($sort,$linked_field)) ){
-			$p->order_by($sort, $dir); 
-		}
-		$p->get();
-		
-		
 		
 		//initialize answer array TODO(should be an array design to be JSON encoded)
 		$answer = array(
@@ -80,19 +88,67 @@ class Plcontrol extends CI_Controller {
 		//Populate the data
 		$answ = null;
 		$fieldArray=array('id','Tension', 'No_client', 'No_personne', 'Nature', 'Categorie_client', 'No_compteur', 'No_police', 'Point_de_livraison', 'Nom_prenom', 'Adresse', 'Localisation', 'Code_Activite', 'Date_abonnement');
-		if (count($p->all)<($start+$limit)) $start=count($p->all)-$limit;
-		if ($start<0){
-			$start=0;
-			$limit=count($p->all);
+		
+		//trie sur champ non lié. utilise tri sql (order_by)
+		if (!(in_array($sort,$linked_field))){
+			if ($sort!='lastpost') $p->order_by($sort, $dir); 
+			$p->get();
+			if (count($p->all)<($start+$limit)) $start=count($p->all)-$limit;
+			if ($start<0){
+				$start=0;
+				$limit=count($p->all);
+			}
+			for($i = $start; $i < ($start+$limit); $i++){
+		
+				$pl=$p->all{$i};
+		
+				if (isset($pl)){
+			
+			
+					foreach($fieldArray as $field){
+						if (is_numeric($pl->$field)){
+							$answ[$field]= (int) $pl->$field; 
+						}
+						else{
+							$answ[$field]=$pl->$field;
+						}
+					}
+					$s= new Stat();
+					$s->where_related_pl('Point_de_livraison',$pl->Point_de_livraison)->get();
+					if (isset($s->conso_moy)){
+						$answ['conso_moy']=(int) $s->conso_moy;
+					}
+					else $answ['conso_moy']=0;
+		
+					$a= new Alerte();
+					$a->select_max('Etat');
+					$a->where_related_pl('Point_de_livraison',$pl->Point_de_livraison)->get();
+					$answ['alerte_max']=$a->Etat;
+		
+					$b= new Alerte();
+					$b->select('Alerte');
+					$b->where_related_pl('Point_de_livraison',$pl->Point_de_livraison)->get();
+					$answ['alerte_commentaire']='';
+					foreach($b->all as $al){
+						if ($answ['alerte_commentaire']!='') $answ['alerte_commentaire'].='<br />'.$al->Alerte;
+						else $answ['alerte_commentaire']=$al->Alerte;
+					}
+				}
+		
+				$answer['data'][] = $answ;
+			}
 		}
-		
-		
-		for($i = $start; $i < ($start+$limit); $i++){
+		//Tri sur champ lié, tri sql impossible, tri php necessite recuperation de tous les pls puis tri
+		else{
 			
-			$pl=$p->all{$i};
-			
-			if (isset($pl)){
-				
+			$p->get();
+			if (count($p->all)<($start+$limit)) $start=count($p->all)-$limit;
+			if ($start<0){
+				$start=0;
+				$limit=count($p->all);
+			}
+			//for($i = $start; $i < ($start+$limit); $i++){
+			foreach($p->all as $pl){
 				
 				foreach($fieldArray as $field){
 					if (is_numeric($pl->$field)){
@@ -108,12 +164,12 @@ class Plcontrol extends CI_Controller {
 					$answ['conso_moy']=(int) $s->conso_moy;
 				}
 				else $answ['conso_moy']=0;
-			
+	
 				$a= new Alerte();
-				$a->select_min('Etat');
+				$a->select_max('Etat');
 				$a->where_related_pl('Point_de_livraison',$pl->Point_de_livraison)->get();
 				$answ['alerte_max']=$a->Etat;
-			
+	
 				$b= new Alerte();
 				$b->select('Alerte');
 				$b->where_related_pl('Point_de_livraison',$pl->Point_de_livraison)->get();
@@ -122,14 +178,9 @@ class Plcontrol extends CI_Controller {
 					if ($answ['alerte_commentaire']!='') $answ['alerte_commentaire'].='<br />'.$al->Alerte;
 					else $answ['alerte_commentaire']=$al->Alerte;
 				}
+				$answer['data'][] = $answ;
 			}
-			
-			
-			$answer['data'][] = $answ;
-		}
-		
-		//Trier par champ lié (exemple: conso_moy)
-		if (in_array($sort, $linked_field)){
+			//tri avec arraymultisort necessite transposer tableau (lignes->colonnes)
 			foreach ($answer['data'] as $key => $row) {
 				$Tension[$key]  = $row['Tension'];
 				$No_client[$key]  = $row['No_client'];
@@ -154,6 +205,7 @@ class Plcontrol extends CI_Controller {
 			elseif (($sort=='alerte_max') and ($dir=='desc')) array_multisort($alerte_max, SORT_DESC, $answer['data']);
 			elseif (($sort=='alerte_commentaire') and ($dir=='asc')) array_multisort($alerte_max, SORT_ASC, $answer['data']);
 			elseif (($sort=='alerte_commentaire') and ($dir=='desc')) array_multisort($alerte_commentaire, SORT_DESC, $answer['data']);
+			
 		}
 		
 		$answer['size'] = count($p->all);

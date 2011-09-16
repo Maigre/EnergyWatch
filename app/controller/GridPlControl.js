@@ -30,40 +30,35 @@ Ext.define('MainApp.controller.GridPlControl', {
 		else{
 			//charge le store avec l'id du pl
 			var plstore = this.getStore('PlStore');
-			/*plstore.load({
+			plstore.load({
 				params: {idPl: d.data.id}
-			});*/
+			});
+			plstore.on('load', function(database){
+				this.plpanel = new Ext.widget('plpanel');
+				Ext.getCmp('westregion').removeAll();
+				Ext.getCmp('westregion').add(this.plpanel);
+				var rec= database.getAt(0);
+				this.plpanel.getForm().loadRecord(rec);
+				console.info(this.plpanel.getForm());
 			
-		//plstore.on('load', function (datastore) {
-			//var rec= datastore.getAt(0);
-			//console.info(rec);
-			
-			//Ext.widget('plpanel').loadRecord(rec);
-			//console.info(Ext.widget('plpanel'));
-			//console.info(Ext.widget('plpanel').loadRecord(rec));
-			
-			Ext.widget('plpanel').getForm().load({
-				url: BASE_URL+'data/plcontrol/load',
-				params: {
-					idPl: d.data.id
-				},
-				method: 'POST',
-				failure: function(form, action) {
-					Ext.Msg.alert("Load failed", action.result.errorMessage);
-				}
 			});
 			
-			console.info(Ext.widget('plpanel'));
-			Ext.getCmp('westregion').add(Ext.widget('plpanel'));
-		//});
+			if (d.data.Tension=='BT'){
+				var facturestore = this.getStore('FactureStore');
+				var donneesConsoStore = this.getStore('DonneesConsoStore');
+				var view1 = Ext.widget('plfacturepanel');
+			}
+			else{
+				var facturestore = this.getStore('FactureMTStore');
+				var donneesConsoStore = this.getStore('DonneesConsoMTStore');
+				var view1 = Ext.widget('plfacturemtpanel');
+			}
 			
-		
-			var facturestore = this.getStore('FactureStore');
 			facturestore.load({
 				params: {idPl: d.data.id}
 			});
 		
-			var donneesConsoStore = this.getStore('DonneesConsoStore');
+			
 			donneesConsoStore.load({
 				params: {idPl: d.data.id}
 			});
@@ -75,7 +70,6 @@ Ext.define('MainApp.controller.GridPlControl', {
 		
 			//Si le panel plfacturepanel n'est pas déjà affiché
 			if(Ext.getCmp('centerregion').items.items[0].alias!='widget.plfacturepanel'){
-				var view1 = Ext.widget('plfacturepanel');
 				var view2 = Ext.widget('plpanel');
 				//clean regions
 				//Ext.getCmp('westregion').removeAll();

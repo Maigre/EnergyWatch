@@ -50,7 +50,7 @@ class Search extends CI_Controller {
 
 
 		//SELECT		
-		$this->mod->select('id, '.$f1.', '.$f2);
+		$this->mod->select('id, Tension,'.$f1.', '.$f2);
 
 		//mysql_query('set names utf8'); 
 		
@@ -145,6 +145,7 @@ class Search extends CI_Controller {
 					$answ[$f1] = $p->$f1;
 					$answ[$f2] = $p->$f2;
 					$answ['id'] = $p->id;
+					$answ['tension'] = $p->Tension;
 					
 					
 					if ($this->modellinked!=''){

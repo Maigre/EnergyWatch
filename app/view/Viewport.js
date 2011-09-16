@@ -8,12 +8,14 @@ Ext.define('MainApp.view.Viewport', {
         'MainApp.view.panel.MainPanel',
         'MainApp.view.tools.ButtonHomeView',
         'MainApp.view.tools.ButtonUploadView',
+        'MainApp.view.tools.ButtonAlerteView',
         'MainApp.view.panel.UploadMainPanel',
         //'MainApp.view.panel.UploadPanel',
         //'MainApp.view.panel.HistoriqueUploadPanel',
         'MainApp.view.panel.PlFacturePanel',
         'MainApp.view.panel.PlPanel',
-        'MainApp.view.panel.PlAllPanel'
+        'MainApp.view.panel.PlAllPanel',
+        'MainApp.view.panel.PlFactureMTPanel'
     ],
 
     layout: 'border',
@@ -69,6 +71,14 @@ Ext.define('MainApp.view.Viewport', {
 					//width: 80
 				},{
 					xtype: 'buttonupload',
+					//x: 80,
+					//y: 10,
+					margins: 10,
+					border: 0,
+					//height: 62,
+					//width: 80
+				},{
+					xtype: 'buttonalerte',
 					//x: 80,
 					//y: 10,
 					margins: 10,
