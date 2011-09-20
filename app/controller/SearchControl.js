@@ -64,7 +64,7 @@ Ext.define('MainApp.controller.SearchControl', {
 		
 		//Si le panel plfacturepanel n'est pas déjà affiché
 		if(Ext.getCmp('centerregion').items.items[0].alias!='widget.plfacturepanel'){
-			Ext.getCmp('centerregion').removeAll(); //clean the center region
+			Ext.getCmp('centerregion').removeAll(false); //clean the center region
 			Ext.getCmp('centerregion').add(view1); //display the panel
 		}
 		

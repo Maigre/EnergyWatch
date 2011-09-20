@@ -87,20 +87,20 @@ class Plcontrol extends CI_Controller {
 		);
 		//Populate the data
 		$answ = null;
-		$fieldArray=array('id','Tension', 'No_client', 'No_personne', 'Nature', 'Categorie_client', 'No_compteur', 'No_police', 'Point_de_livraison', 'Nom_prenom', 'Adresse', 'Localisation', 'Code_Activite', 'Date_abonnement');
+		$fieldArray=array('id','Tension', 'No_client', 'No_personne', 'Nature', 'Categorie_client', 'No_compteur', 'No_police', 'Point_de_livraison', 'Nom_prenom', 'Adresse', 'Localisation', 'Code_Activite', 'Date_abonnement', 'alerte_max', 'conso_moy');
 		
 		//trie sur champ non lié. utilise tri sql (order_by)
-		if (!(in_array($sort,$linked_field))){
+		//if (!in_array($sort,$linked_field)){
+			
 			if ($sort!='lastpost') $p->order_by($sort, $dir); 
+			$p->limit($limit,$start);
 			$p->get();
 			if (count($p->all)<($start+$limit)) $start=count($p->all)-$limit;
 			if ($start<0){
 				$start=0;
 				$limit=count($p->all);
 			}
-			for($i = $start; $i < ($start+$limit); $i++){
-		
-				$pl=$p->all{$i};
+			foreach($p->all as $pl){
 		
 				if (isset($pl)){
 			
@@ -113,14 +113,15 @@ class Plcontrol extends CI_Controller {
 							$answ[$field]=$pl->$field;
 						}
 					}
-					$s= new Stat();
+					/*$s= new Stat();
 					$s->where_related_pl('Point_de_livraison',$pl->Point_de_livraison)->get();
 					if (isset($s->conso_moy)){
 						$answ['conso_moy']=(int) $s->conso_moy;
 					}
 					else $answ['conso_moy']=0;
-		
-					$a= new Alerte();
+					*/
+					
+					/*$a= new Alerte();
 					$a->select_max('Etat');
 					$a->where_related_pl('Point_de_livraison',$pl->Point_de_livraison)->get();
 					$answ['alerte_max']=$a->Etat;
@@ -132,14 +133,14 @@ class Plcontrol extends CI_Controller {
 					foreach($b->all as $al){
 						if ($answ['alerte_commentaire']!='') $answ['alerte_commentaire'].='<br />'.$al->Alerte;
 						else $answ['alerte_commentaire']=$al->Alerte;
-					}
+					}*/
 				}
 		
 				$answer['data'][] = $answ;
 			}
-		}
+		//}
 		//Tri sur champ lié, tri sql impossible, tri php necessite recuperation de tous les pls puis tri
-		else{
+		/*else{
 			
 			$p->get();
 			if (count($p->all)<($start+$limit)) $start=count($p->all)-$limit;
@@ -206,7 +207,7 @@ class Plcontrol extends CI_Controller {
 			elseif (($sort=='alerte_commentaire') and ($dir=='asc')) array_multisort($alerte_max, SORT_ASC, $answer['data']);
 			elseif (($sort=='alerte_commentaire') and ($dir=='desc')) array_multisort($alerte_commentaire, SORT_DESC, $answer['data']);
 			
-		}
+		}*/
 		
 		$answer['size'] = count($p->all);
 		

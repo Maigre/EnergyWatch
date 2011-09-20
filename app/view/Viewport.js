@@ -15,7 +15,8 @@ Ext.define('MainApp.view.Viewport', {
         'MainApp.view.panel.PlFacturePanel',
         'MainApp.view.panel.PlPanel',
         'MainApp.view.panel.PlAllPanel',
-        'MainApp.view.panel.PlFactureMTPanel'
+        'MainApp.view.panel.PlFactureMTPanel',
+        'MainApp.view.panel.AlerteAllPanel'
     ],
 
     layout: 'border',

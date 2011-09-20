@@ -32,6 +32,19 @@ Ext.define('MainApp.view.tools.GridAlerteView', {
 			'</tpl>'
 		);
 		
+		type_tpl= new Ext.XTemplate(
+			'<tpl if="Type == 4;">',
+			'Changement Puissance Souscrite',
+			'</tpl>',
+			'<tpl if="Type == 6;">',
+			'D&eacute;passement Puissance de {Valeur}% ',
+			'</tpl>'
+		);
+		
+		/*valeur_tpl= new Ext.XTemplate(
+			'{Valeur} %'
+		);*/
+		
 		change_etat= new Ext.XTemplate(
 			'<input type="button" name="addButton" value="Modifier" style="width:90px"/></div>'
 		);
@@ -65,7 +78,9 @@ Ext.define('MainApp.view.tools.GridAlerteView', {
 		});*/
 		
 		this.columns = [
-			{header: 'Date', dataIndex: 'Date', xtype:'datecolumn', format:'d-m-Y', width:80}, 
+			{header: 'Date', dataIndex: 'Date', xtype:'datecolumn', format:'d-m-Y', width:80},
+			{header: 'Alerte', dataIndex: 'Type', xtype: 'templatecolumn', tpl: type_tpl, flex:1}, 
+			//{header: 'Hausse', dataIndex: 'Valeur', xtype: 'templatecolumn', tpl: valeur_tpl, flex:1},
 			{header: 'Etat', dataIndex: 'Etat', xtype: 'templatecolumn', tpl: flagtpl , align:'center', width:40,
 				editor: {
 		            xtype: 'flagcombobox',
@@ -75,8 +90,7 @@ Ext.define('MainApp.view.tools.GridAlerteView', {
 		            //listClass: 'x-combo-list-small'
             	}
             }, 
-            {header: 'Alerte', dataIndex: 'Alerte', flex:1},
-			{header: 'Commentaire', dataIndex: 'Commentaire', flex:1,
+			{header: 'Commentaire', dataIndex: 'Commentaire', flex:2,
 				editor: {
 		            xtype: 'textfield',
 		            allowBlank: false,

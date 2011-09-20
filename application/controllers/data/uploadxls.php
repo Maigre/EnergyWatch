@@ -322,9 +322,10 @@ var $msg_error;
 		 		//Recherche date dernière facture
 		 		$date_encours=0;
 		 		foreach($d->all as $c){
-		 			$date_fin_facture=strtotime($c->Date_index)+$c->Nb_jours*3600*24;
+		 			$date_fin_facture=strtotime($c->Date_index)+$c->Nb_jours*3600*24;  //dans donnes conso date_index=date_debut
 		 			if ($date_encours<$date_fin_facture) $date_encours=$date_fin_facture;
 		 		}
+		 		
 		 		$date_fin=date('Y-m-d',$date_encours);
 		 		$date_fin_array = explode("-",$date_fin); // split the array
 				$month_encours = $date_fin_array[1]; //month segment
@@ -353,7 +354,7 @@ var $msg_error;
 					
 					//mois en_cours
 					if ((($date_encours-$date_facture)<30*24*3600)){
-						if (isset($en_cours['Nb_jours'])){
+						/*if (isset($en_cours['Nb_jours'])){
 							$en_cours['Nb_jours']+=$c->Nb_jours;
 						}
 						else{
@@ -370,7 +371,7 @@ var $msg_error;
 						}
 						else{
 							$en_cours['Montant_net']=$c->Montant_net;
-						}
+						}*/
 						$en_cours['Puisance_souscrite']=$c->Puisance_souscrite;
 						if ($table=='conso_mts'){
 							$en_cours['Conso_PA']=$c->Conso_PA;
@@ -378,7 +379,7 @@ var $msg_error;
 					}
 					//mois précédent
 					elseif ((($date_encours-$date_facture)<60*24*3600) and (($date_encours-$date_facture)>30*24*3600)){
-						if (isset($mois_precedent['Nb_jours'])){
+						/*if (isset($mois_precedent['Nb_jours'])){
 							$mois_precedent['Nb_jours']+=$c->Nb_jours;
 						}
 						else{
@@ -395,14 +396,14 @@ var $msg_error;
 						}
 						else{
 							$mois_precedent['Montant_net']=$c->Montant_net;
-						}
+						}*/
 						$mois_precedent['Puisance_souscrite']=$c->Puisance_souscrite;
 						if ($table=='conso_mts'){
 							$mois_precedent['Conso_PA']=$c->Conso_PA;
 						}						
 					}
 					//même mois année précédente
-					elseif ((($date_encours-$date_facture)>365*24*3600) and (($date_encours-$date_facture)<395*24*3600)){
+					/*elseif ((($date_encours-$date_facture)>365*24*3600) and (($date_encours-$date_facture)<395*24*3600)){
 						if (isset($moyenne_annuelle['Nb_jours'])){
 							$mois_annee_precedente['Nb_jours']+=$c->Nb_jours;
 						}
@@ -421,7 +422,7 @@ var $msg_error;
 						else{
 							$mois_annee_precedente['Montant_net']=$c->Montant_net;
 						}
-					}
+					}*/
 					//moyenne annuelle
 					if (($date_encours-$date_facture)>365*24*3600){
 						if (isset($moyenne_annuelle['Nb_jours'])){
@@ -447,7 +448,7 @@ var $msg_error;
 				
 				//extrapole les resultats pour avoir 30 jours/mois et 365/an
 				//creation des donnees cout kWh
-				if ((isset($en_cours['Nb_jours'])) and ($en_cours['Nb_jours']!=0)){
+				/*if ((isset($en_cours['Nb_jours'])) and ($en_cours['Nb_jours']!=0)){
 					if (isset($en_cours['Consommation_mensuelle']))$en_cours['Consommation_mensuelle']=$en_cours['Consommation_mensuelle']*30/$en_cours['Nb_jours'];
 					if (isset($en_cours['Montant_net']))$en_cours['Montant_net']=$en_cours['Montant_net']*30/$en_cours['Nb_jours'];
 					if ($en_cours['Consommation_mensuelle']!=0)$en_cours['Cout_kwh']=$en_cours['Montant_net']/$en_cours['Consommation_mensuelle'];
@@ -462,13 +463,13 @@ var $msg_error;
 					if (isset($mois_annee_precedente['Montant_net']))$mois_annee_precedente['Montant_net']=$mois_annee_precedente['Montant_net']*30/$mois_annee_precedente['Nb_jours'];
 					if ($mois_annee_precedente['Consommation_mensuelle']!=0)$mois_annee_precedente['Cout_kwh']=$mois_annee_precedente['Montant_net']/$mois_annee_precedente['Consommation_mensuelle'];
 				}
-
+				
 				if ((isset($moyenne_annuelle['Montant_net'])) and (isset($moyenne_annuelle['Nb_jours'])) and ($moyenne_annuelle['Nb_jours']!=0)){
 					$moyenne_annuelle['Consommation_mensuelle']=$moyenne_annuelle['Consommation_mensuelle']*365/$moyenne_annuelle['Nb_jours'];
 				 	$moyenne_annuelle['Montant_net']=$moyenne_annuelle['Montant_net']*365/$moyenne_annuelle['Nb_jours'];
 					if ($moyenne_annuelle['Consommation_mensuelle']!=0)$moyenne_annuelle['Cout_kwh']=$moyenne_annuelle['Montant_net']/$moyenne_annuelle['Consommation_mensuelle'];				 	
 				} 
-				
+				*/
 				
 				
 				
@@ -478,7 +479,7 @@ var $msg_error;
 				$tableaumois = array("","Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre");
 				$mois = $tableaumois[date("n",$date_encours)].' '.date("Y",$date_encours);
 				//Génère les alertes dans un tableau
-				
+			/*	
 				//type 1 : augmentation des consommations
 				if ((isset($en_cours['Consommation_mensuelle'])) and (isset($mois_precedent['Consommation_mensuelle'])) and ($mois_precedent['Consommation_mensuelle']!=0)){
 					if ($en_cours['Consommation_mensuelle']>(1.1*$mois_precedent['Consommation_mensuelle']))
@@ -584,19 +585,23 @@ var $msg_error;
 						$alerte_temp[]=$alerte;
 					}
 				}
+				
+		*/		
 				//type 4 : Modification de la puissance souscrite
 				if ((isset($en_cours['Puisance_souscrite'])) and (isset($mois_precedent['Puisance_souscrite']))){
 					if ($en_cours['Puisance_souscrite']!=$mois_precedent['Puisance_souscrite']){
-						$hausse = round($en_cours['Puisance_souscrite']-$mois_precedent['Puisance_souscrite']);
-						$Alerte='Au mois de '.$mois.' la puissance souscrite a augmenté de '.$hausse.'kWh';
+						$valeur = round($en_cours['Puisance_souscrite']-$mois_precedent['Puisance_souscrite']);
+						//$Alerte='Au mois de '.$mois.' la puissance souscrite a augmenté de '.$hausse.'kWh';
 						$Duree_validite = 1;
 						$type_alerte=4;
 						$flux='elec';
+						$date=date('Y-m-d',$date_encours);
 						$alerte=array(
-							'Alerte'=>$Alerte,
+							'Valeur'=>$valeur,
 							'Duree_validite'=>$Duree_validite,
 							'type_alerte'=>$type_alerte,
-							'flux'=>$flux
+							'flux'=>$flux,
+							'Date'=>$date,
 						);
 						$alerte_temp[]=$alerte;
 					}
@@ -604,16 +609,19 @@ var $msg_error;
 				//type 6 : Dépassement de la puissance souscrite
 				if ((isset($en_cours['Conso_PA'])) and (isset($mois_precedent['Conso_PA']))){
 					if ($en_cours['Conso_PA']> 1.05*$en_cours['Puisance_souscrite']){
-						$hausse = round(100*($en_cours['Conso_PA']-$en_cours['Puisance_souscrite'])/$en_cours['Puisance_souscrite']);
-						$Alerte='Au mois de '.$mois.' la puissance appelée a dépassé de '.$hausse.'% la puissance souscrite.';
+						$valeur = round(100*($en_cours['Conso_PA']-$en_cours['Puisance_souscrite'])/$en_cours['Puisance_souscrite']);
+						//$Alerte='Au mois de '.$mois.' la puissance appelée a dépassé de '.$hausse.'% la puissance souscrite.';
 						$Duree_validite = 1;
 						$type_alerte=6;
 						$flux='elec';
+						$date= $mois;
+						$date=date('Y-m-d',$date_encours);
 						$alerte=array(
-							'Alerte'=>$Alerte,
+							'Valeur'=>$valeur,
 							'Duree_validite'=>$Duree_validite,
 							'type_alerte'=>$type_alerte,
-							'flux'=>$flux
+							'flux'=>$flux,
+							'Date'=>$date,
 						);
 						$alerte_temp[]=$alerte;
 					}
@@ -639,20 +647,17 @@ var $msg_error;
 						//Sauvegarde l'alerte dans la DB
 						if (!$Alerte_already_done) {
 							$a=new Alerte();
-							$a->Alerte= $AT['Alerte'];    
+							$a->Valeur= $AT['Valeur'];    
 							$a->Flux= $AT['flux']; 
-							$a->Date= date('Y-m-d',now()); 
+							$a->Date= $AT['Date']; 
 							$a->Etat= 3;
+							$a->Type= $AT['type_alerte'];
 						
 							//$p=new Pl();
 							//$p->where('Point_de_livraison',$PL);
-							//$p->get();
-						
-							$t=new Alerte_type();
-							$t->where('id',$AT['type_alerte']) ;
-				 			$t->get();
+							//$p->get()
 				 			
-							$a->save(array($t,$p));
+							$a->save($p);
 						}
 					}
 				}
