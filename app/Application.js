@@ -9,9 +9,9 @@ Main.Launch = {
 		Ext.create ('Ext.app.Application',{
 			name: 'MainApp',    
 			//autoCreateViewport: true,
-			controllers: ['SearchControl','GridFactureControl','ButtonUploadControl','ButtonHomeControl','UploadControl','GridFactureControl','AlerteGridControl', 'GridPlControl'],
+			controllers: ['SearchControl','GridFactureControl','ButtonUploadControl','ButtonHomeControl','ButtonAlerteControl','UploadControl','GridFactureControl', 'GridAlerteAllControl', 'AlerteGridControl', 'GridPlControl'],
 			models: ['Crud','SearchModel', 'PlModel', 'FactureBTModel', 'FactureMTModel', 'DonneesConsoModel', 'DonneesConsoMTModel','AlerteModel'],    
-		    stores: ['SearchStore','FactureStore', 'FactureMTStore', 'PlStore', 'PlAllStore', 'HistoriqueUploadStore', 'DonneesConsoStore', 'DonneesConsoMTStore', 'AlerteStore'],
+		    stores: ['SearchStore','FactureStore', 'FactureMTStore', 'PlStore', 'PlAllStore', 'HistoriqueUploadStore', 'DonneesConsoStore', 'DonneesConsoMTStore', 'AlerteStore', 'AlerteAllStore'],
 			launch: function() {
 				Ext.create('Ext.container.Viewport', {});
 				Ext.QuickTips.init();

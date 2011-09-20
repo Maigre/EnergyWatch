@@ -3,11 +3,11 @@ Ext.define('MainApp.controller.AlerteGridControl', {
 	views: ['MainApp.view.tools.GridAlerteView'],
 
     init: function() {
-        this.control({
+        /*this.control({
             'gridalerte' : {
             	cellclick: this.modifier_etat
             }
-        });
+        });*/
     },
     
     

@@ -10,7 +10,7 @@ Ext.define('MainApp.controller.ButtonUploadControl', {
         });
     },
     openupload: function() {
-		Ext.getCmp('centerregion').removeAll(); //clean the center region
+		Ext.getCmp('centerregion').removeAll(false); //clean the center region
 		Ext.getCmp('westregion').removeAll();
 		
 		var view1 = Ext.widget('mainuploadpanel');

@@ -24,7 +24,13 @@ class Alerte extends Dmc {
 				'defval'	=> '',
 				'type'		=> 'normal',				
 				'formfield' => array('text', 15)
-		),'Alerte' => 	array(
+		),'Type' => 	array(
+				'label' 	=> array('Nom',false),
+				'rules' 	=> array('required', 'xss_clean'),
+				'defval'	=> '',
+				'type'		=> 'normal',				
+				'formfield' => array('text', 15)
+		),'Valeur' => 	array(
 				'label' 	=> array('Nom',false),
 				'rules' 	=> array('required', 'xss_clean'),
 				'defval'	=> '',

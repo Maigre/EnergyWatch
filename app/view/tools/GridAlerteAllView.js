@@ -2,7 +2,7 @@ Ext.define('MainApp.view.tools.GridAlerteAllView', {
 	extend: 'Ext.grid.Panel',
 	alias : 'widget.gridalerteall',
 	title: 'Alertes',
-	store: 'AlerteStore',
+	store: 'AlerteAllStore',
 	//height: 200,
 	//forceFit: true,
 	//width: 1100,
@@ -31,6 +31,19 @@ Ext.define('MainApp.view.tools.GridAlerteAllView', {
 			'<img src="app/images/icons/accept.png">',
 			'</tpl>'
 		);
+		
+		type_tpl= new Ext.XTemplate(
+			'<tpl if="Type == 4;">',
+			'Changement Puissance Souscrite',
+			'</tpl>',
+			'<tpl if="Type == 6;">',
+			'D&eacute;passement Puissance de {Valeur} %',
+			'</tpl>'
+		);
+		
+		/*valeur_tpl= new Ext.XTemplate(
+			'{Valeur} %'
+		);*/
 		
 		change_etat= new Ext.XTemplate(
 			'<input type="button" name="addButton" value="Modifier" style="width:90px"/></div>'
@@ -65,7 +78,11 @@ Ext.define('MainApp.view.tools.GridAlerteAllView', {
 		});*/
 		
 		this.columns = [
-			{header: 'Date', dataIndex: 'Date', xtype:'datecolumn', format:'d-m-Y', width:80}, 
+			{header: 'Nom PL', dataIndex: 'Nom_prenom', flex:3},
+			{header: 'N&deg; PL', dataIndex: 'Point_de_livraison', flex:2},
+			{header: 'Date', dataIndex: 'Date', xtype:'datecolumn', format:'d-m-Y', width:80},
+			//{header: 'Alerte', dataIndex: 'Type', xtype: 'templatecolumn', tpl: type_tpl, flex:2}, 
+			{header: 'Alerte', dataIndex: 'Valeur', xtype: 'templatecolumn', tpl: type_tpl, flex:2},
 			{header: 'Etat', dataIndex: 'Etat', xtype: 'templatecolumn', tpl: flagtpl , align:'center', width:40,
 				editor: {
 		            xtype: 'flagcombobox',
@@ -74,9 +91,9 @@ Ext.define('MainApp.view.tools.GridAlerteAllView', {
 		            //lazyRender: true,
 		            //listClass: 'x-combo-list-small'
             	}
-            }, 
-            {header: 'Alerte', dataIndex: 'Alerte', flex:1},
-			{header: 'Commentaire', dataIndex: 'Commentaire', flex:1,
+            } 
+            /*,
+			{header: 'Commentaire', dataIndex: 'Commentaire', flex:2,
 				editor: {
 		            xtype: 'textfield',
 		            allowBlank: false,
@@ -85,7 +102,7 @@ Ext.define('MainApp.view.tools.GridAlerteAllView', {
 		            //lazyRender: true,
 		            //listClass: 'x-combo-list-small'
             	}
-			}
+			}*/
 		];
 		this.plugins = [
 		    Ext.create('Ext.grid.plugin.CellEditing', {

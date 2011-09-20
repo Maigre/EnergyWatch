@@ -4,7 +4,7 @@ Ext.define('MainApp.store.PlAllStore', {
     model: 'MainApp.model.PlModel',
     remoteSort: true,
     buffered: true,
-    pageSize: 200,
+    pageSize: 100,
     //autoLoad: true,
     proxy: {
     	type: 'ajax',
