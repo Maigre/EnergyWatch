@@ -34,23 +34,33 @@ Ext.define('MainApp.controller.GridPlControl', {
 				params: {idPl: d.data.id}
 			});
 			plstore.on('load', function(database){
-				this.plpanel = new Ext.widget('plpanel');
-				Ext.getCmp('westregion').removeAll();
-				Ext.getCmp('westregion').add(this.plpanel);
+				var plpanel = Ext.getCmp('plpanel');
+				if (!plpanel){
+					var plpanel = Ext.widget('plpanel');
+				}
+				Ext.getCmp('westregion').removeAll(false);
+				Ext.getCmp('westregion').add(plpanel);
 				var rec= database.getAt(0);
-				this.plpanel.getForm().loadRecord(rec);
-				console.info(this.plpanel.getForm());
+				plpanel.getForm().loadRecord(rec);
+				//console.info(plpanel.getForm());
 			});
 			
 			if (d.data.Tension=='BT'){
 				var facturestore = this.getStore('FactureStore');
 				var donneesConsoStore = this.getStore('DonneesConsoStore');
-				this.view1 = new Ext.widget('plfacturepanel');
+				var view1 = Ext.getCmp('plfacturepanel');
+				if (!view1){
+					var view1 = Ext.widget('plfacturepanel');
+				}
 			}
 			else{
 				var facturestore = this.getStore('FactureMTStore');
 				var donneesConsoStore = this.getStore('DonneesConsoMTStore');
-				this.view1 = new Ext.widget('plfacturemtpanel');
+				var view1 = Ext.getCmp('plfacturemtpanel');
+				if (!view1){
+					//console.info('newplfacturepanel')
+					var view1 = Ext.widget('plfacturemtpanel');
+				}
 			}
 			
 			facturestore.load({
@@ -73,7 +83,7 @@ Ext.define('MainApp.controller.GridPlControl', {
 				//Ext.getCmp('westregion').removeAll();
 				Ext.getCmp('centerregion').removeAll(); 
 				//display panels
-				Ext.getCmp('centerregion').add(this.view1);
+				Ext.getCmp('centerregion').add(view1);
 				//Ext.getCmp('westregion').add(view2); 
 			//}
 		}

@@ -20,6 +20,7 @@ Ext.define('MainApp.view.panel.UploadMainPanel', {
     height: 240,
     border:0,
 	alias : 'widget.mainuploadpanel',
+	id    : 'mainuploadpanel',
 	items: [{
         xtype: 'uploadpanel',
     	},{

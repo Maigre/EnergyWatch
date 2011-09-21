@@ -19,12 +19,15 @@ Ext.define('MainApp.controller.GridAlerteAllControl', {
 				params: {idPl: d.data.idPl}
 			});
 			plstore.on('load', function(database){
-				this.plpanel = new Ext.widget('plpanel');
+				var plpanel = Ext.getCmp('plpanel');
+				if (!plpanel){
+					var plpanel = Ext.widget('plpanel');
+				}				
 				Ext.getCmp('westregion').removeAll(false);
-				Ext.getCmp('westregion').add(this.plpanel);
+				Ext.getCmp('westregion').add(plpanel);
 				var rec= database.getAt(0);
-				this.plpanel.getForm().loadRecord(rec);
-				console.info(this.plpanel.getForm());
+				plpanel.getForm().loadRecord(rec);
+				console.info(plpanel.getForm());
 			});
 			
 			if (d.data.Tension=='BT'){
