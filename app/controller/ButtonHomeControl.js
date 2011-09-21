@@ -12,16 +12,12 @@ Ext.define('MainApp.controller.ButtonHomeControl', {
     openhome: function() {
 		var plallstore = this.getStore('PlAllStore');
 		plallstore.load();
-		var view1 = Ext.widget('plallpanel');
-		console.info(Ext.getCmp('centerregion').items.items[0]);
-		//Ext.getCmp('centerregion').items.items[0].close();
-		
-		//view1.close();
-		//Ext.getCmp('centerregion').clearListeners();
+		var view1 = Ext.getCmp('plallpanel');
+		if (!view1){
+			var view1 = Ext.widget('plallpanel');
+		}
 		Ext.getCmp('centerregion').removeAll(false); //clean the center region
-		console.info(Ext.getCmp('westregion'));
 		Ext.getCmp('westregion').removeAll();
-		console.info(Ext.getCmp('westregion'));
 		Ext.getCmp('centerregion').add(view1);
 	}   
 });

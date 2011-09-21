@@ -2,6 +2,7 @@ Ext.define('MainApp.view.panel.PlFactureMTPanel', {
 	extend: 'Ext.panel.Panel',
 	requires:['MainApp.view.tools.ChartLinesMTView','MainApp.view.tools.GridFactureMTView','MainApp.view.tools.GridAlerteView'],
 	alias : 'widget.plfacturemtpanel',
+	id: 'plfacturemtpanel',
 	bodyPadding: 5,
 	layout: {
         type: 'vbox',

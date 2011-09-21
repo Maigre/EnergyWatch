@@ -29,24 +29,33 @@ Ext.define('MainApp.controller.SearchControl', {
 		});
 		
 		plstore.on('load', function(database){
-			this.plpanel = new Ext.widget('plpanel');
-			Ext.getCmp('westregion').removeAll();
-			Ext.getCmp('westregion').add(this.plpanel);
+			var plpanel = Ext.getCmp('plpanel');
+			if (!plpanel){
+				var plpanel = Ext.widget('plpanel');
+			}	
+			Ext.getCmp('westregion').removeAll(false);
+			Ext.getCmp('westregion').add(plpanel);
 			var rec= database.getAt(0);
-			this.plpanel.getForm().loadRecord(rec);
-			console.info(this.plpanel.getForm());
+			plpanel.getForm().loadRecord(rec);
+
 			
 		});
 		
 		if (record.displayTplData[0].tension=='BT'){
 			var facturestore = this.getStore('FactureStore');
 			var donneesConsoStore = this.getStore('DonneesConsoStore');
-			var view1 = Ext.widget('plfacturepanel');
+			var plfacturepanel = Ext.getCmp('plfacturepanel');
+			if (!plfacturepanel){
+				var plfacturepanel = Ext.widget('plfacturepanel');
+			}
 		}
 		else{
 			var facturestore = this.getStore('FactureMTStore');
 			var donneesConsoStore = this.getStore('DonneesConsoMTStore');
-			var view1 = Ext.widget('plfacturemtpanel');
+			var plfacturepanel = Ext.getCmp('plfacturemtpanel');
+			if (!plfacturepanel){
+				var plfacturepanel = Ext.widget('plfacturemtpanel');
+			}
 		}
 		
 		facturestore.load({
@@ -65,7 +74,7 @@ Ext.define('MainApp.controller.SearchControl', {
 		//Si le panel plfacturepanel n'est pas déjà affiché
 		if(Ext.getCmp('centerregion').items.items[0].alias!='widget.plfacturepanel'){
 			Ext.getCmp('centerregion').removeAll(false); //clean the center region
-			Ext.getCmp('centerregion').add(view1); //display the panel
+			Ext.getCmp('centerregion').add(plfacturepanel); //display the panel
 		}
 		
 		
