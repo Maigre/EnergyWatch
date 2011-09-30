@@ -14,8 +14,17 @@
         
      	<!-- APPLICATION -->
      	<script type="text/javascript">BASE_URL = '<?=base_url()?>index.php/';</script>
+     	<script 
+     			//Application Start in MT(Moyenne Tension) Mode
+     			type="text/javascript">BT_MT_EAU = 'MT';
+     	</script>  
+     	
+     	<script 
+     			type="text/javascript">PERIODE_MENSUELLE = '';
+     	</script>
 
      	<link rel="stylesheet" type="text/css" href="app/css/icons.css" />
+     	<link rel="stylesheet" type="text/css" href="app/css/viewport.css" />
      	<script type="text/javascript" src="app/Application.js"></script>
      	<script type="text/javascript" src="app/login.js"></script>
      	

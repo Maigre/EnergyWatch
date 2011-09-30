@@ -12,12 +12,12 @@ Ext.define('MainApp.view.panel.UploadMainPanel', {
     ],
     layout:{
 		type:'hbox',
-		align:'middle'
+		align: 'middle'
 	},
     //width: 300,
     padding: 5,
     opacity:0,
-    height: 240,
+    //height: 300,
     border:0,
 	alias : 'widget.mainuploadpanel',
 	id    : 'mainuploadpanel',

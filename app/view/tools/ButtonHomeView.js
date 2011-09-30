@@ -3,7 +3,7 @@
 Ext.define('MainApp.view.tools.ButtonHomeView', {
 	extend: 'Ext.button.Button',
 	alias : 'widget.buttonhome',
-	icon: 'app/images/icons/home.png',
+	icon: 'app/images/icons/home_coloured.png',
 	tooltip : 'Accueil',
 	scale: 'large',
 	height: 40,

@@ -42,7 +42,6 @@ Ext.define('MainApp.controller.GridPlControl', {
 				Ext.getCmp('westregion').add(plpanel);
 				var rec= database.getAt(0);
 				plpanel.getForm().loadRecord(rec);
-				//console.info(plpanel.getForm());
 			});
 			
 			if (d.data.Tension=='BT'){
@@ -75,22 +74,11 @@ Ext.define('MainApp.controller.GridPlControl', {
 			alerteStore.load({
 				params: {idPl: d.data.id}
 			});
-		
-			//Si le panel plfacturepanel n'est pas déjà affiché
-			//if(Ext.getCmp('centerregion').items.items[0].alias!='widget.plfacturepanel'){
-				//var view2 = Ext.widget('plpanel');
-				//clean regions
-				//Ext.getCmp('westregion').removeAll();
-				Ext.getCmp('centerregion').removeAll(); 
-				//display panels
-				Ext.getCmp('centerregion').add(view1);
-				//Ext.getCmp('westregion').add(view2); 
-			//}
+
+			Ext.getCmp('centerregion').removeAll(); 
+			Ext.getCmp('centerregion').add(view1);
+
 		}
 
-		
-		//console.info(a.ownerCt);
-		//console.info(a.ownerCt.columns[c].dataIndex);
-		//console.info(a.ownerCt.getGridColumns());
 	} 
 });

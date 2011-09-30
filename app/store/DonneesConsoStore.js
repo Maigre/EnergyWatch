@@ -15,7 +15,7 @@ Ext.define('MainApp.store.DonneesConsoStore', {
     	}
     },
     baseParams: {
-        idPl:'' 
+        BT_MT_EAU: BT_MT_EAU 
     }
 });
 

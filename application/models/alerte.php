@@ -2,7 +2,7 @@
 
 class Alerte extends Dmc {
 	
-	var $has_one=array("pl","alerte_type");
+	var $has_one=array("pl","facturebt", "facturemt", "factureeau","menumensuel");
 	//var $has_many=array("famille");
 
 	var $description = array(

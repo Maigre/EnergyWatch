@@ -25,7 +25,7 @@ Ext.define('MainApp.view.tools.GridAlerteView', {
 			'<img src="app/images/icons/cross.png">',
 			'</tpl>',
 			'<tpl if="Etat == 2;">',
-			'<img src="app/images/icons/exclamation_octagon_fram.png">',
+			'<img src="app/images/icons/help.png">',
 			'</tpl>',
 			'<tpl if="Etat == 1;">',
 			'<img src="app/images/icons/accept.png">',
@@ -33,11 +33,14 @@ Ext.define('MainApp.view.tools.GridAlerteView', {
 		);
 		
 		type_tpl= new Ext.XTemplate(
+			'<tpl if="Type == 1;">',
+			'Hausse de {Valeur}% des Consommations',
+			'</tpl>',
 			'<tpl if="Type == 4;">',
 			'Changement Puissance Souscrite',
 			'</tpl>',
 			'<tpl if="Type == 6;">',
-			'D&eacute;passement Puissance de {Valeur}% ',
+			'D&eacute;passement Puissance de {Valeur} %',
 			'</tpl>'
 		);
 		
@@ -78,8 +81,10 @@ Ext.define('MainApp.view.tools.GridAlerteView', {
 		});*/
 		
 		this.columns = [
+			{header: 'N&deg; Facture', dataIndex: 'No_de_facture', flex:1},
 			{header: 'Date', dataIndex: 'Date', xtype:'datecolumn', format:'d-m-Y', width:80},
 			{header: 'Alerte', dataIndex: 'Type', xtype: 'templatecolumn', tpl: type_tpl, flex:1}, 
+			
 			//{header: 'Hausse', dataIndex: 'Valeur', xtype: 'templatecolumn', tpl: valeur_tpl, flex:1},
 			{header: 'Etat', dataIndex: 'Etat', xtype: 'templatecolumn', tpl: flagtpl , align:'center', width:40,
 				editor: {

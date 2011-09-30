@@ -25,48 +25,62 @@ Ext.define('MainApp.view.panel.UploadPanel', {
                 hideLabel : true,
                 name      : 'tension',
                 inputValue: 'bt',
-                id        : 'radio1',
-                listeners:{
-					'change': function(a,b,c,d){
-						var form = this.up('form').getForm();
-						if (b){
-							form.url=BASE_URL+'data/uploadxls/do_upload/conso_bts';
-						}
-						if (c){
-							form.url=BASE_URL+'data/uploadxls/do_upload/conso_mts';
-						}
-					}
-				}
-            }, {
+                id        : 'radiobassetensionupload'
+            },{
                 boxLabel  : 'Moyenne Tension',
                 hideLabel : true,
                 name      : 'tension',
                 inputValue: 'mt',
-                id        : 'radio2',
-                listeners:{
-					'change': function(a,b,c,d){
-						var form = this.up('form').getForm();
-						if (b){
-							form.url=BASE_URL+'data/uploadxls/do_upload/conso_mts';
-						}
-						if (c){
-							form.url=BASE_URL+'data/uploadxls/do_upload/conso_bts';
-						}
-					}
-				}
+                id        : 'radiomoyennetensionupload'
             }
-        ]
-        },{
-        xtype     : 'filefield',
-        name      : 'file',
-        fieldLabel: '',
-        hideLabel : true,
-        labelWidth: 50,
-        msgTarget : 'side',
-        allowBlank: false,
-        anchor    : '100%',
-        buttonText: 'Recherche fichier...'
-    }],
+        ]},
+        {
+	        xtype: 'container',
+	        anchor: '100%',
+	        layout: 'column',
+			items:[{
+			    xtype: 'container',
+			    columnWidth:0.8,
+			    layout: 'anchor',		
+				items : 
+				[{
+					xtype: 'combobox',
+					id :'comboboxmoisfacture',
+					fieldLabel: 'P&eacute;riode',
+					name: 'mois',
+					store: 'MonthStore',
+					displayField: 'mois',
+					valueField: 'mois'
+				}]
+			},{
+				xtype: 'container',
+				columnWidth:0.2,
+				layout: 'anchor',		
+				items : 
+				[{
+					xtype: 'combobox',
+					id :'comboboxanneefacture',
+					fieldLabel: '',
+					hideLabel: true,
+					name: 'mois',
+					store: 'YearStore',
+					displayField: 'annee',
+					valueField: 'annee',
+					width: 70
+				}]
+			}]
+		},{
+			xtype     : 'filefield',
+			name      : 'file',
+			fieldLabel: '',
+			hideLabel : true,
+			labelWidth: 50,
+			msgTarget : 'side',
+			allowBlank: false,
+			anchor    : '100%',
+			buttonText: 'Recherche fichier...'
+		}
+	],
     listeners:{
 		'click': function(){
 			//Ext.getCmp('viewport').items.items[0].removeAll();
@@ -75,7 +89,18 @@ Ext.define('MainApp.view.panel.UploadPanel', {
     buttons: [{
         text: 'Importer',
         handler: function() {
-            var form = this.up('form').getForm();
+            
+            if (Ext.getCmp('radiobassetensionupload').value){
+				var table='conso_bts';
+			}
+			else{
+				var table='conso_mts';
+			}
+			var nomperiodefacture= Ext.getCmp('comboboxmoisfacture').value+'_'+Ext.getCmp('comboboxanneefacture').value;
+			
+			var form = this.up('form').getForm();
+			form.url=BASE_URL+'data/uploadxls/do_upload/'+table+'/'+nomperiodefacture;
+            
             if(form.isValid()){
                 form.submit({
                     url: form.url,

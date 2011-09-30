@@ -16,6 +16,6 @@ Ext.define('MainApp.store.FactureStore', {
     	}
     },
     baseParams: {
-        idPl:'' 
+        BT_MT_EAU: BT_MT_EAU 
     }
 });

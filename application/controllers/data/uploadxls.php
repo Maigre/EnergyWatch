@@ -10,6 +10,7 @@ var $nombres_lignes;
 var $nombres_colonnes;	
 var $nombres_requetes;
 var $msg_error;
+var $periode_pour_menu;
 	
 	
 	function __construct()
@@ -23,8 +24,11 @@ var $msg_error;
 		$this->viewlib->view('upload_form', array('error' => ' ' ));
 	}
 */
-	function do_upload($table)
+	function do_upload($table,$periode)
 	{
+		$periode_array=explode('_',$periode);
+		
+		$this->periode_pour_menu=$periode_array[0].' '.$periode_array[1];
 		if ($table=='conso_mts'){
 			$this->fields='(id, No_de_facture, Tarif, Puisance_souscrite, Coefficient_PA, Conso_PA, Ancien_Index_Pointe, Nouvel_Index_Pointe, Conso_Pointe, Montant_HT_Pointe, Contribution_Speciale_Pointe, Montant_Net_Pointe, Ancien_Index_Hors_Pointe, Nouvel_Index_Hors_Pointe, Conso_Hors_Pointe, Montant_HT_Hors_Pointe, Contribution_Speciale_Hors_Pointe, Montant_Net_Hors_Pointe, Ancien_Index_Reactif, Nouvel_Index_Reactif, Conso_Energie_Reactive, Montant_prime_HT, Montant_Prime_TTC, Ancien_Index_Pertes_Cuivre, Nouvel_Index_Pertes_Cuivre, Conso_Pertes_Cuivre, Contribution_Speciale_Pertes_Cuivre, Montant_HT_Pertes_Cuivre, Montant_Net_Pertes_Cuivre, Ancien_Index_Pertes_fer, Nouvel_Index_Pertes_Fer, Conso_Pertes_Fer, Montant_HT_Pertes_Fer, Contribution_Speciale_Pertes_Fer, Montant_Net_Pertes_Fer, Conso_Depassement_PS, Montant_HT_Penalite_Depassement_PS, Montant_Net_Penalite_Depassement_PS, Cosinus_phi, Montant_HT_Cosinus_PHI, Montant_Net_Cosinus_PHI, MT_REDEVANCE_HT, Montant_net, Date_index, Nb_jours)';
 		}
@@ -46,9 +50,7 @@ var $msg_error;
 		{
 			//enleve les white spaces du nom
 			$file_name = preg_replace("/\s+/", "_", $_FILES['file']['name']);
-
 			//import de la facture dans la base de donnee
-			
 			if($this->xls_to_db($file_name, $table)){
 				//enregistrement dans l'historique des uploads
 				$this->historique_upload($file_name);
@@ -64,6 +66,7 @@ var $msg_error;
 	function xls_to_db($file_name, $table)
 	{
 	 	
+	 	
 	 	$this->nombres_requetes=0;
 	 	$prod=$this->parseExcel('./uploads/'.$file_name, $table);
 	 	if (is_array($prod)){
@@ -77,6 +80,10 @@ var $msg_error;
 		 		$PL=substr($prod[$i][8], 1, -1);
 		 		$p->where('Point_de_livraison',$PL);
 		 		$p->get();
+		 		if (empty($p->id)){
+		 			//Nouveau PL détecté 
+		 			$p->etat=1;
+		 		}
 		 		//Remplissage des champs du Pl
 		 		$p->No_client=substr($prod[$i][0], 1, -1);
 		 		$p->No_personne=substr($prod[$i][1], 1, -1);
@@ -154,7 +161,17 @@ var $msg_error;
 			 		$f->Nb_jours=substr($prod[$i][55], 1, -1);
 		 		}
 		 		else{
-		 			$f= new Facturebt();
+		 			if (substr($p->No_compteur,0,1)=='E'){
+		 				//BT
+		 				$tension='BT';
+		 				$f= new Facturebt();
+		 			}
+		 			else{
+		 				//EAU
+		 				$tension='EAU';
+		 				$f= new Factureeau();
+		 			}
+		 			
 			 		$nofacture=substr($prod[$i][2], 1, -1);
 			 		$f->where('No_de_facture',$nofacture);
 			 		$f->where_related_pl('Point_de_livraison',$PL);
@@ -177,19 +194,56 @@ var $msg_error;
 			 		$f->Date_index=substr($prod[$i][23], 1, -1);
 			 		$f->Nb_jours=substr($prod[$i][25], 1, -1);
 		 		}
-		 		
-		 		//print_r($f);
-		 		//$f->save();
-		 		$this->nombres_requetes++;
+		 		if (empty($f->etat)){
+		 			//import d'une nouvelle facture
+		 			if($p->etat==3){
+		 			//Pl non valide mais refacturé. Facture en attente de confirmation 
+		 			$f->etat=4;
+			 		}
+			 		else{
+			 			$f->etat=$p->etat;
+			 		}
+		 		}
+		 		//creation de l'objet menumensuel
+			 	$m= new Menumensuel();
+			 	$m->where('periode',$this->periode_pour_menu);
+			 	if ($table=='conso_bts'){
+			 		if ($tension=='BT'){
+	 					$m->where('Tension','BT')->get();
+	 				}
+	 				else{
+	 					$m->where('Tension','EAU')->get();
+	 				}
+		 		}
+		 		else {
+		 			$m->where('Tension','MT')->get();
+		 		}
+			 	
+			 	$m->periode=$this->periode_pour_menu;
+			 	if ($table=='conso_bts'){
+		 			if ($tension=='BT'){
+	 					$m->Tension='BT';
+	 				}
+	 				else{
+	 					$m->Tension='EAU';
+	 				}
+		 		}
+		 		else {
+		 			$m->Tension='MT';
+		 		}
+			 	$m->save();
+			 	
 		 		//Link Facture & Pl
-		 		$f->save($p);
-	
+		 		$f->save(array($p,$m));
+				
+				$this->nombres_requetes++;
+				
 	
 	
 		 		
-	//Creation des donnes utilisables pour l'affichage des graphs de consommation mensuelle
-	//Eclatement des factures par mois. Si une facture est à cheval sur deux mois, elle est 
-	//découpée en deux.
+		//Creation des donnes utilisables pour l'affichage des graphs de consommation mensuelle
+		//Eclatement des factures par mois. Si une facture est à cheval sur deux mois, elle est 
+		//découpée en deux.
 		 		
 		 		//Récuperer mois début et mois fin.
 		 		$date_fin = date('Y-m-d',strtotime($f->Date_index));
@@ -229,7 +283,12 @@ var $msg_error;
 					
 
 		 			if ($table=='conso_bts'){
-		 				$d= new Donnees_conso_bt();
+		 				if ($tension=='BT'){
+		 					$d= new Donnees_conso_bt();
+		 				}
+		 				else{
+		 					$d= new Donnees_conso_eau();
+		 				}
 		 			}
 		 			else{
 		 				$d= new Donnees_conso_mt();			
@@ -277,7 +336,12 @@ var $msg_error;
 		 		//Derniere partie de la facture, ou toute la facture si elle ne chevauchait pas deux mois.
 		 		if ($month_fin==$month_debut){ 
 		 			if ($table=='conso_bts'){
-		 				$d= new Donnees_conso_bt();
+		 				if ($tension=='BT'){
+		 					$d= new Donnees_conso_bt();
+		 				}
+		 				else{
+		 					$d= new Donnees_conso_eau();
+		 				}
 		 			}
 		 			else{
 		 				$d= new Donnees_conso_mt();			
@@ -312,17 +376,22 @@ var $msg_error;
 				//Get donnees conso
 				
 				if ($table=='conso_bts'){
-		 				$d= new Donnees_conso_bt();
+	 				if ($tension=='BT'){
+	 					$f= new Facturebt();
+	 				}
+	 				else{
+	 					$f= new Factureeau();
+	 				}
 		 		}
-		 			else{
-		 				$d= new Donnees_conso_mt();			
+		 		else{
+	 				$f= new Facturemt();			
 		 		}
-	 			$d->where_related_pl('Point_de_livraison',$PL);
-		 		$d->get();
+	 			$f->where_related_pl('Point_de_livraison',$PL);
+		 		$f->get();
 		 		//Recherche date dernière facture
 		 		$date_encours=0;
-		 		foreach($d->all as $c){
-		 			$date_fin_facture=strtotime($c->Date_index)+$c->Nb_jours*3600*24;  //dans donnes conso date_index=date_debut
+		 		foreach($f->all as $facture){
+		 			$date_fin_facture=strtotime($facture->Date_index);
 		 			if ($date_encours<$date_fin_facture) $date_encours=$date_fin_facture;
 		 		}
 		 		
@@ -330,30 +399,30 @@ var $msg_error;
 		 		$date_fin_array = explode("-",$date_fin); // split the array
 				$month_encours = $date_fin_array[1]; //month segment
 				$year_encours = $date_fin_array[0]; //year segment
-				if ($month_encours=='02'){
+				/*if ($month_encours=='02'){
 					$date_encours=strtotime($year_encours.'-'.$month_encours.'-28');				
 				}
 				else{
 					$date_encours=strtotime($year_encours.'-'.$month_encours.'-30');
-				}
+				}*/
 		 		
 		 		$en_cours=array();
 		 		$mois_precedent=array();
 		 		$moyenne_annuelle=array();
 		 		$mois_annee_precedente=array();
 				//Calcul des donnees necessaires pour generer les alertes
-				foreach($d->all as $c){
-					$date_facture=strtotime($c->Date_index);
+				foreach($f->all as $facture){
+					$date_facture=strtotime($facture->Date_index);
 					//$date_facture2=date('Y-n-d',$date_facture2);
 			 		//$date_facture_array = explode("-",$date_facture2); // split the array
 					//$year_facture = $date_facture_array[0]; //year segment
 					//$month_facture = $date_facture_array[1]; //month segment
 					if ($table=='conso_mts'){
-						$c->Consommation_mensuelle=$c->Conso_Hors_Pointe+$c->Conso_Pointe;
+						$facture->Consommation_mensuelle=$facture->Conso_Hors_Pointe+$facture->Conso_Pointe;
 					}
 					
 					//mois en_cours
-					if ((($date_encours-$date_facture)<30*24*3600)){
+					if ($date_encours==$date_facture){
 						/*if (isset($en_cours['Nb_jours'])){
 							$en_cours['Nb_jours']+=$c->Nb_jours;
 						}
@@ -372,9 +441,12 @@ var $msg_error;
 						else{
 							$en_cours['Montant_net']=$c->Montant_net;
 						}*/
-						$en_cours['Puisance_souscrite']=$c->Puisance_souscrite;
+						$en_cours['Nb_jours']=$facture->Nb_jours;
+						$en_cours['Consommation_mensuelle']=$facture->Consommation_mensuelle;
+						$en_cours['idFacture']=$facture->id;
+						$en_cours['Puisance_souscrite']=$facture->Puisance_souscrite;
 						if ($table=='conso_mts'){
-							$en_cours['Conso_PA']=$c->Conso_PA;
+							$en_cours['Conso_PA']=$facture->Conso_PA;
 						}
 					}
 					//mois précédent
@@ -397,9 +469,11 @@ var $msg_error;
 						else{
 							$mois_precedent['Montant_net']=$c->Montant_net;
 						}*/
-						$mois_precedent['Puisance_souscrite']=$c->Puisance_souscrite;
+						$mois_precedent['Nb_jours']=$facture->Nb_jours;
+						$mois_precedent['Consommation_mensuelle']=$facture->Consommation_mensuelle;
+						$mois_precedent['Puisance_souscrite']=$facture->Puisance_souscrite;
 						if ($table=='conso_mts'){
-							$mois_precedent['Conso_PA']=$c->Conso_PA;
+							$mois_precedent['Conso_PA']=$facture->Conso_PA;
 						}						
 					}
 					//même mois année précédente
@@ -426,38 +500,39 @@ var $msg_error;
 					//moyenne annuelle
 					if (($date_encours-$date_facture)>365*24*3600){
 						if (isset($moyenne_annuelle['Nb_jours'])){
-							$moyenne_annuelle['Nb_jours']+=$c->Nb_jours;
+							$moyenne_annuelle['Nb_jours']+=$facture->Nb_jours;
 						}
 						else{
-							$moyenne_annuelle['Nb_jours']=$c->Nb_jours;
+							$moyenne_annuelle['Nb_jours']=$facture->Nb_jours;
 						}
 						if (isset($moyenne_annuelle['Consommation_mensuelle'])){
-							$moyenne_annuelle['Consommation_mensuelle']+=$c->Consommation_mensuelle;
+							$moyenne_annuelle['Consommation_mensuelle']+=$facture->Consommation_mensuelle;
 						}
 						else{
-							$moyenne_annuelle['Consommation_mensuelle']=$c->Consommation_mensuelle;
+							$moyenne_annuelle['Consommation_mensuelle']=$facture->Consommation_mensuelle;
 						}
 						if (isset($moyenne_annuelle['Montant_net'])){
-							$moyenne_annuelle['Montant_net']+=$c->Montant_net;
+							$moyenne_annuelle['Montant_net']+=$facture->Montant_net;
 						}
 						else{
-							$moyenne_annuelle['Montant_net']=$c->Montant_net;
+							$moyenne_annuelle['Montant_net']=$facture->Montant_net;
 						}
 					}
 				}
 				
 				//extrapole les resultats pour avoir 30 jours/mois et 365/an
 				//creation des donnees cout kWh
-				/*if ((isset($en_cours['Nb_jours'])) and ($en_cours['Nb_jours']!=0)){
+				if ((isset($en_cours['Nb_jours'])) and ($en_cours['Nb_jours']!=0)){
 					if (isset($en_cours['Consommation_mensuelle']))$en_cours['Consommation_mensuelle']=$en_cours['Consommation_mensuelle']*30/$en_cours['Nb_jours'];
-					if (isset($en_cours['Montant_net']))$en_cours['Montant_net']=$en_cours['Montant_net']*30/$en_cours['Nb_jours'];
-					if ($en_cours['Consommation_mensuelle']!=0)$en_cours['Cout_kwh']=$en_cours['Montant_net']/$en_cours['Consommation_mensuelle'];
+					//if (isset($en_cours['Montant_net']))$en_cours['Montant_net']=$en_cours['Montant_net']*30/$en_cours['Nb_jours'];
+					//if ($en_cours['Consommation_mensuelle']!=0)$en_cours['Cout_kwh']=$en_cours['Montant_net']/$en_cours['Consommation_mensuelle'];
 				}
 				if ((isset($mois_precedent['Nb_jours'])) and ($mois_precedent['Nb_jours']!=0)){
 					if (isset($mois_precedent['Consommation_mensuelle']))$mois_precedent['Consommation_mensuelle']=$mois_precedent['Consommation_mensuelle']*30/$mois_precedent['Nb_jours'];
-					if (isset($mois_precedent['Montant_net']))$mois_precedent['Montant_net']=$mois_precedent['Montant_net']*30/$mois_precedent['Nb_jours'];
-					if ($mois_precedent['Consommation_mensuelle']!=0)$mois_precedent['Cout_kwh']=$mois_precedent['Montant_net']/$mois_precedent['Consommation_mensuelle'];
+					//if (isset($mois_precedent['Montant_net']))$mois_precedent['Montant_net']=$mois_precedent['Montant_net']*30/$mois_precedent['Nb_jours'];
+					//if ($mois_precedent['Consommation_mensuelle']!=0)$mois_precedent['Cout_kwh']=$mois_precedent['Montant_net']/$mois_precedent['Consommation_mensuelle'];
 				}
+				/*
 				if ((isset($mois_annee_precedente['Nb_jours'])) and ($mois_annee_precedente['Nb_jours']!=0)){
 					if (isset($mois_annee_precedente['Consommation_mensuelle']))$mois_annee_precedente['Consommation_mensuelle']=$mois_annee_precedente['Consommation_mensuelle']*30/$mois_annee_precedente['Nb_jours'];
 					if (isset($mois_annee_precedente['Montant_net']))$mois_annee_precedente['Montant_net']=$mois_annee_precedente['Montant_net']*30/$mois_annee_precedente['Nb_jours'];
@@ -479,26 +554,31 @@ var $msg_error;
 				$tableaumois = array("","Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre");
 				$mois = $tableaumois[date("n",$date_encours)].' '.date("Y",$date_encours);
 				//Génère les alertes dans un tableau
-			/*	
+				
 				//type 1 : augmentation des consommations
 				if ((isset($en_cours['Consommation_mensuelle'])) and (isset($mois_precedent['Consommation_mensuelle'])) and ($mois_precedent['Consommation_mensuelle']!=0)){
-					if ($en_cours['Consommation_mensuelle']>(1.1*$mois_precedent['Consommation_mensuelle']))
+					if ($en_cours['Consommation_mensuelle']>(1.25*$mois_precedent['Consommation_mensuelle']))
 					{
-					
-						$hausse=round((($en_cours['Consommation_mensuelle']/$mois_precedent['Consommation_mensuelle'])-1)*100);
-						$Alerte='Au mois de '.$mois.' les consommations ont augmenté de '.$hausse.'% par rapport au mois précédent.';
+						$idFacture=$en_cours['idFacture'];
+						$valeur=round((($en_cours['Consommation_mensuelle']/$mois_precedent['Consommation_mensuelle'])-1)*100);
+						//$Alerte='Au mois de '.$mois.' les consommations ont augmenté de '.$hausse.'% par rapport au mois précédent.';
 						$Duree_validite = 1;
 						$type_alerte=1;
 						$flux='elec';
+						$date=date('Y-m-d',$date_encours);
+						
 						$alerte=array(
-							'Alerte'=>$Alerte,
+							'idFacture'=>$idFacture,
+							'Valeur'=>$valeur,
 							'Duree_validite'=>$Duree_validite,
 							'type_alerte'=>$type_alerte,
-							'flux'=>$flux
+							'flux'=>$flux,
+							'Date'=>$date,
 						);
 						$alerte_temp[]=$alerte;
 					}
 				}
+			/*
 				if ((isset($en_cours['Consommation_mensuelle'])) and (isset($mois_annee_precedente['Consommation_mensuelle']))){
 					if ($en_cours['Consommation_mensuelle']>(1.1*$mois_annee_precedente['Consommation_mensuelle']))
 					{
@@ -590,6 +670,7 @@ var $msg_error;
 				//type 4 : Modification de la puissance souscrite
 				if ((isset($en_cours['Puisance_souscrite'])) and (isset($mois_precedent['Puisance_souscrite']))){
 					if ($en_cours['Puisance_souscrite']!=$mois_precedent['Puisance_souscrite']){
+						$idFacture=$en_cours['idFacture'];
 						$valeur = round($en_cours['Puisance_souscrite']-$mois_precedent['Puisance_souscrite']);
 						//$Alerte='Au mois de '.$mois.' la puissance souscrite a augmenté de '.$hausse.'kWh';
 						$Duree_validite = 1;
@@ -597,6 +678,7 @@ var $msg_error;
 						$flux='elec';
 						$date=date('Y-m-d',$date_encours);
 						$alerte=array(
+							'idFacture'=>$idFacture,
 							'Valeur'=>$valeur,
 							'Duree_validite'=>$Duree_validite,
 							'type_alerte'=>$type_alerte,
@@ -609,6 +691,7 @@ var $msg_error;
 				//type 6 : Dépassement de la puissance souscrite
 				if ((isset($en_cours['Conso_PA'])) and (isset($mois_precedent['Conso_PA']))){
 					if ($en_cours['Conso_PA']> 1.05*$en_cours['Puisance_souscrite']){
+						$idFacture=$en_cours['idFacture'];
 						$valeur = round(100*($en_cours['Conso_PA']-$en_cours['Puisance_souscrite'])/$en_cours['Puisance_souscrite']);
 						//$Alerte='Au mois de '.$mois.' la puissance appelée a dépassé de '.$hausse.'% la puissance souscrite.';
 						$Duree_validite = 1;
@@ -617,6 +700,7 @@ var $msg_error;
 						$date= $mois;
 						$date=date('Y-m-d',$date_encours);
 						$alerte=array(
+							'idFacture'=>$idFacture,
 							'Valeur'=>$valeur,
 							'Duree_validite'=>$Duree_validite,
 							'type_alerte'=>$type_alerte,
@@ -627,54 +711,72 @@ var $msg_error;
 					}
 				}
 				
-		 		
-
-				
 				//Vérifie que l'alerte n'est pas déjà présente et valide
 				if (is_array($alerte_temp)){
 					
 					foreach($alerte_temp as $AT){
 						$a=new Alerte();
-						$a->where_related_pl('Point_de_livraison',$PL);
-						$a->where_related_alerte_type('id',$AT['type_alerte']);
+						if ($table=='conso_bts'){
+			 				if ($tension=='BT'){
+			 					$a->where_related_facturebt('id',$AT['idFacture']);
+			 				}
+			 				else{
+			 					$a->where_related_factureeau('id',$AT['idFacture']);
+			 				}
+				 		}
+				 		else{
+			 				$a->where_related_facturemt('id',$AT['idFacture']);			
+				 		}
+						//$a->where_related_('Point_de_livraison',$PL);
+						$a->where('Type',$AT['type_alerte']);
 						$a->where('Flux',$AT['flux']);
+						$a->where('Date',$AT['Date']);
 						$a->get();
-						$Alerte_already_done=false;
+						/*$Alerte_already_done=false;
 						foreach($a->all as $same_alerte){
 							if (now() < (strtotime('+'.$AT['Duree_validite'].' month',(strtotime($same_alerte->Date))))) $Alerte_already_done=true;
-						}
+						}*/
 						
 						//Sauvegarde l'alerte dans la DB
-						if (!$Alerte_already_done) {
+						if (empty($a->id)) {
 							$a=new Alerte();
 							$a->Valeur= $AT['Valeur'];    
 							$a->Flux= $AT['flux']; 
 							$a->Date= $AT['Date']; 
 							$a->Etat= 3;
 							$a->Type= $AT['type_alerte'];
-						
-							//$p=new Pl();
-							//$p->where('Point_de_livraison',$PL);
-							//$p->get()
-				 			
-							$a->save($p);
 						}
+						
+						if ($table=='conso_bts'){
+			 				if ($tension=='BT'){
+			 					$f= new Facturebt();
+			 				}
+			 				else{
+			 					$f= new Factureeau();
+			 				}
+				 		}
+				 		else{
+			 				$f= new Facturemt();			
+				 		}
+				 		$f->where('id',$AT['idFacture'])->get();
+			 			
+						$a->save(array($p,$facture,$m));						
 					}
 				}
 				
-				//Creation des donnes statistiques pour chaque pl
+				//Creation des donnees statistiques pour chaque pl
 				//$s= new Stat();
 				//$s->where_related_pl('Point_de_livraison',$PL)->get();
 				//calcul de la consommation mensuelle moyenne
 				$conso_totale=0;
 				$nombrejour_total=0;
 				
-				foreach($d->all as $donneesconso){
+				foreach($f->all as $facture){
 					if ($table=='conso_mts'){
-						$donneesconso->Consommation_mensuelle=$donneesconso->Conso_Hors_Pointe+$donneesconso->Conso_Pointe;
+						$facture->Consommation_mensuelle=$facture->Conso_Hors_Pointe+$facture->Conso_Pointe;
 					}
-					$conso_totale+=$donneesconso->Consommation_mensuelle;
-					$nombrejour_total+=$donneesconso->Nb_jours;
+					$conso_totale+=$facture->Consommation_mensuelle;
+					$nombrejour_total+=$facture->Nb_jours;
 				}
 				if ($nombrejour_total!=0){
 					$p->conso_moy=round($conso_totale/$nombrejour_total*30);

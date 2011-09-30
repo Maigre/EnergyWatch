@@ -5,6 +5,8 @@ class Search extends CI_Controller {
 	
 	var $field1='Nom_prenom';
 	var $field2='Point_de_livraison';
+	var $field3='No_compteur';
+	var $field4='No_police';
 	var $modelsearched='pl';
 	var $modellinked=''; //exemple: 'famille'
 	var $fieldlinked='id';  //json answer renvoie le champ 'todisplay' et '$modellinked.$fieldlinked'
@@ -20,6 +22,8 @@ class Search extends CI_Controller {
 		$m=$this->modelsearched;
 		$f1=$this->field1;
 		$f2=$this->field2;
+		$f3=$this->field3;
+		$f4=$this->field4;
 		//DATAMAPPER CONSTRUCTING
 		
 		$this->load->model($m,'mod');
@@ -50,7 +54,7 @@ class Search extends CI_Controller {
 
 
 		//SELECT		
-		$this->mod->select('id, Tension,'.$f1.', '.$f2);
+		$this->mod->select('id, Tension,'.$f1.', '.$f2.', '.$f3.', '.$f4);
 
 		//mysql_query('set names utf8'); 
 		
@@ -71,6 +75,12 @@ class Search extends CI_Controller {
 			if ($f2!=''){
 				$where.= "OR (".$f2." REGEXP '".$sr."') ";
 			}
+			if ($f3!=''){
+				$where.= "OR (".$f3." REGEXP '".$sr."') ";
+			}
+			if ($f4!=''){
+				$where.= "OR (".$f4." REGEXP '".$sr."') ";
+			}
 		}
 		///////////////////////////
 		
@@ -80,6 +90,8 @@ class Search extends CI_Controller {
 		$src2 = str_replace("’","[\'’]",$src2);
 		if ($src2 != '') $where.=" OR (".$f1." REGEXP '".$src2."' ) ";
 		if ($f2 != '') $where.="OR (".$f2." REGEXP '".$src2."') ";
+		if ($f3 != '') $where.="OR (".$f3." REGEXP '".$src2."') ";
+		if ($f4 != '') $where.="OR (".$f4." REGEXP '".$src2."') ";
 		///////////////////////////
 		
 		$where .= " )";	//end 1st WHERE
@@ -118,13 +130,13 @@ class Search extends CI_Controller {
 			if ($vars['text_search'] != '')
 			{
 				$src = str_replace(' ','',$vars['text_search']);
-				$p1 = min(stripos(str_replace(' ','',$p->$f1.$p->$f2),$src),stripos(str_replace(' ','',$p->$f1.$p->$f2),$src)); 
+				$p1 = min(stripos(str_replace(' ','',$p->$f1.$p->$f2.$p->f3.$p->f4),$src),stripos(str_replace(' ','',$p->$f1.$p->$f2.$p->f3.$p->f4),$src)); 
 				if ($p1 === false) $p1 = 100;
 			}
 			else $p1 = 0;
 			
 			//STORE INTO sorted array
-			$ansT[$p1][$p->$f1.$p->$f2.$p->id] = $p;
+			$ansT[$p1][$p->$f1.$p->$f2.$p->f3.$p->f4.$p->id] = $p;
 			
 		}
 		
@@ -144,6 +156,8 @@ class Search extends CI_Controller {
 					
 					$answ[$f1] = $p->$f1;
 					$answ[$f2] = $p->$f2;
+					$answ[$f3] = $p->$f3;
+					$answ[$f4] = $p->$f4;
 					$answ['id'] = $p->id;
 					$answ['tension'] = $p->Tension;
 					
@@ -166,7 +180,13 @@ class Search extends CI_Controller {
 						
 						$answ['todisplay']= $answ[$f1];
 						if ($f2!=''){
-							$answ['todisplay'].='  '.$answ[$f2];
+							$answ['todisplay'].='<br> n&deg; PL : '.$answ[$f2];
+						}
+						if ($f3!=''){
+							$answ['todisplay'].='<br> n&deg; Compteur : '.$answ[$f3];
+						}
+						if ($f4!=''){
+							$answ['todisplay'].='<br> n&deg; Police : '.$answ[$f4];
 						}
 						
 						///////////////////////////////////

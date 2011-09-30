@@ -2,8 +2,8 @@
 
 class Facturemt extends Dmc {
 	
-	var $has_one=array("pl");
-	//var $has_many=array("famille");
+	var $has_one=array("pl","menumensuel");
+	var $has_many=array("alerte");
 
 	var $description = array(
 		'No_de_facture' => 	array(

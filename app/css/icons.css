@@ -73,3 +73,19 @@
 .arrow_redo{  
     background: url(../images/icons/arrow_redo.png) no-repeat !important;  
 } 
+
+.yes{  
+    background: url(../images/icons/accept.png) no-repeat !important;  
+} 
+
+.no{  
+    background: url(../images/icons/cross.png) no-repeat !important;  
+} 
+
+.emptyText {
+	text-align: center;
+}
+
+.arrow_divide{
+	background: url(../images/icons/arrow_divide.png) no-repeat !important;
+}
