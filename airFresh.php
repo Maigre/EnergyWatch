@@ -1,10 +1,5 @@
 <?php 
-
-
-//TODO : Before MySQL DUMP : count -1 histo and number of tickets to know if a dump is necessary / force if Files Freshed FTP
-
-//TODO : ProgressBar for histo transmission ?
-
+// AIRFRESH VERSION 1 - 05 octobre 2011
 
 //Integrity test
 //KEEP THIS PART WHATEVER UPGRADES ARE PERFORMED HERE

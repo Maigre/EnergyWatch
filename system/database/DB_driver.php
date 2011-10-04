@@ -301,46 +301,10 @@ class CI_DB_driver {
 
 		// Start the Query Timer
 		$time_start = list($sm, $ss) = explode(' ', microtime());
-		
-		/**************MODIFICATION SUIVI HISTORIQUE*****************/
-		
-		
-		//On écrit la requête dans la table historique des requêtes.
-		//on vérifie que la requête correspond bien à une modification de la database (i.e la requête commence par INSERT, UPDATE ou DELETE)
-		
-		//prepare for embarrassing '
-		$sql = str_replace("\n"," ",$sql);
-		$sql = str_replace("\'","*",$sql);
-		
-		//parse the request to get details
-		$parse = histo_parse($sql);
-		//print_r($parse); die;
-		$query_done = '';
-		//echo gettype($parse);die;
-		//var_dump($parse); die;
-		if (!is_object($parse) and isset($parse['Command']))
-		{
-			if (($parse['Command'] == 'insert') or ($parse['Command'] == 'update') or ($parse['Command'] == 'delete'))
-			{
-				if ($parse['TableNames'][0] != '`Sessions`')
-				{
-					if (APP_TYPE == 'server') $ticket = -1;
-					else $ticket = 0;
-					
-					$requete= "INSERT INTO `historique` VALUES (null,\"".$sql."\",'".now()."','".$parse['Command']."',\"".$parse['TableNames'][0]."\",null,\"".$ticket."\",0,null)";
-					$this->simple_query($requete);
-					
-					if ($parse['Command'] == 'insert') $parse['historique_id'] = $this->insert_id();
-				}
-			}
-		}
-		else
-		{
-			$requete= "INSERT INTO `historique` VALUES (null,\"".$sql."\",\"".now()."\",null,null,null,1,null)";
-			$this->simple_query($requete);
-		}		
-	
-		/**************FIN MODIFICATION*****************/
+
+/**************MODIFICATION SUIVI HISTORIQUE*****************/
+$histo_id = record_query($this,$sql);
+/**************FIN MODIFICATION*****************/
 		
 		// Run the Query
 		if (FALSE === ($this->result_id = $this->simple_query($sql)))
@@ -381,16 +345,9 @@ class CI_DB_driver {
 		}
 		
 		
-		/****************MODIFICATION************///
-				
-		if (!is_object($parse) and isset($parse['Command']))
-		if (($parse['Command'] == 'insert') and ($parse['TableNames'][0] != '`Sessions`'))
-		{		
-			$requete = "UPDATE `historique` SET `insert_id` = ".$this->insert_id()." WHERE `id` = ".$parse['historique_id'];
-			$this->simple_query($requete);
-		}
-		
-		/*******FIN MODIF ******/
+/****************MODIFICATION************///
+record_query_id($this,$histo_id,$this->insert_id());
+/*******FIN MODIF ******/
 
 		// Stop and aggregate the query time results
 		$time_end = list($em, $es) = explode(' ', microtime());
