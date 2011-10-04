@@ -26,7 +26,14 @@ class Triplcontrol extends CI_Controller {
 			$etat=4;
 		}
 		$BT_MT_EAU=$this->input->post('BT_MT_EAU');
-		$PERIODE_MENSUELLE=$this->input->post('PERIODE_MENSUELLE');
+		
+		//formatte la date
+		$array_periode=explode(' ',$this->input->post('PERIODE_MENSUELLE'));		
+		$tableau_mois=array('Janvier'=>'01','Février'=>'02','Mars'=>'03','Avril'=>'04','Mai'=>'05','Juin'=>'06','Juillet'=>'07','Aout'=>'08','Septembre'=>'09','Octobre'=>'10','Novembre'=>'11','Décembre'=>'12');
+		$mois= $tableau_mois[$array_periode[0]];
+		$PERIODE_MENSUELLE=$array_periode[1].'-'.$mois.'-01';
+		
+		
 		//DATAMAPPER CONSTRUCTING
 		if ($BT_MT_EAU=='MT'){
 			$this->load->model('Facturemt','run_facture');
@@ -102,9 +109,18 @@ class Triplcontrol extends CI_Controller {
 		
 		//get the data into post
 		$idfacture = $this->input->post('idfacture');
+		$BT_MT_EAU=$this->input->post('BT_MT_EAU');
 		
 		//modify facture's etat
-		$this->load->model('Facturemt','run_facture');
+		if ($BT_MT_EAU=='MT'){
+			$this->load->model('Facturemt','run_facture');
+		}
+		elseif ($BT_MT_EAU=='BT'){
+			$this->load->model('Facturebt','run_facture');
+		}
+		else{
+			$this->load->model('Factureeau','run_facture');
+		}
 		$f = $this->run_facture;
 		$f->where('id', $idfacture);
 		//$f->where_related_pl('Point_de_livraison', $data['Point_de_livraison']);

@@ -9,11 +9,13 @@ Main.Launch = {
 		Ext.create ('Ext.app.Application',{
 			name: 'MainApp',    
 			//autoCreateViewport: true,
-			controllers: ['SearchControl','GridFactureControl','ButtonUploadControl','ButtonHomeControl','ButtonAlerteControl','ButtonValidationControl','ButtonWaterControl','ButtonMTControl','ButtonBTControl','UploadControl','GridFactureControl', 'GridAlerteAllControl', 'AlerteGridControl', 'GridPlControl','PlPanelControl'],
+			controllers: ['ViewportControl','SearchControl','GridFactureControl','ButtonUploadControl','ButtonHomeControl','ButtonAlerteControl','ButtonValidationControl','ButtonWaterControl','ButtonMTControl','ButtonBTControl','UploadControl','GridFactureControl', 'GridAlerteAllControl', 'AlerteGridControl', 'GridPlControl','PlPanelControl'],
 			models: ['Crud','SearchModel', 'PlModel', 'FactureBTModel', 'FactureMTModel', 'DonneesConsoModel', 'DonneesConsoMTModel','AlerteModel'],    
 		    stores: ['SearchStore','FactureStore', 'FactureMTStore', 'PlStore', 'PlAllStore', 'HistoriqueUploadStore', 'DonneesConsoStore', 'DonneesConsoMTStore', 'AlerteStore', 'AlerteAllStore','TriPlNonValideAgainStore','TriPlNonValideStore','TriPlNouveauStore','TriPlValideStore','YearStore','MonthStore','BilanStore'],
 			launch: function() {
-				Ext.create('Ext.container.Viewport', {});
+				//load viewport
+				//MainApp.ViewPort.init();
+				
 				Ext.QuickTips.init();
 				//var plallstore= this.getStore('PlAllStore');
 				// trigger the data store load

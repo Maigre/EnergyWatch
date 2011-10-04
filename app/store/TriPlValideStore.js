@@ -24,7 +24,7 @@ Ext.define('MainApp.store.TriPlValideStore', {
 		}
     },
     baseParams: {
-            text_search:'' 
+            BT_MT_EAU: BT_MT_EAU 
     }
 });
 

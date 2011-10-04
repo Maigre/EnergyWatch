@@ -26,5 +26,15 @@ Ext.define('MainApp.controller.ButtonHomeControl', {
 		Ext.getCmp('westregion').removeAll();
 		Ext.getCmp('westregion').setWidth(0);
 		Ext.getCmp('centerregion').add(homepanel);
-	}   
+		homepanel.animate({
+		   	duration: 1000,
+		   	easing: 'backIn',
+			from: {
+				opacity: 0
+			},
+			to: {
+				opacity: 1
+			}
+		}); 
+	}
 });

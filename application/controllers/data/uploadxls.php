@@ -5,12 +5,14 @@
 class Uploadxls extends CI_Controller {
 
 var $fields='';
+var $file_name;
 var $destination='./uploads/';  //repertoire de sauvegarde des fichiers importer
 var $nombres_lignes;
 var $nombres_colonnes;	
 var $nombres_requetes;
 var $msg_error;
 var $periode_pour_menu;
+var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parties de '$decoupage' lignes
 	
 	
 	function __construct()
@@ -26,9 +28,8 @@ var $periode_pour_menu;
 */
 	function do_upload($table,$periode)
 	{
-		$periode_array=explode('_',$periode);
+		$this->periode_pour_menu=$periode."-01";
 		
-		$this->periode_pour_menu=$periode_array[0].' '.$periode_array[1];
 		if ($table=='conso_mts'){
 			$this->fields='(id, No_de_facture, Tarif, Puisance_souscrite, Coefficient_PA, Conso_PA, Ancien_Index_Pointe, Nouvel_Index_Pointe, Conso_Pointe, Montant_HT_Pointe, Contribution_Speciale_Pointe, Montant_Net_Pointe, Ancien_Index_Hors_Pointe, Nouvel_Index_Hors_Pointe, Conso_Hors_Pointe, Montant_HT_Hors_Pointe, Contribution_Speciale_Hors_Pointe, Montant_Net_Hors_Pointe, Ancien_Index_Reactif, Nouvel_Index_Reactif, Conso_Energie_Reactive, Montant_prime_HT, Montant_Prime_TTC, Ancien_Index_Pertes_Cuivre, Nouvel_Index_Pertes_Cuivre, Conso_Pertes_Cuivre, Contribution_Speciale_Pertes_Cuivre, Montant_HT_Pertes_Cuivre, Montant_Net_Pertes_Cuivre, Ancien_Index_Pertes_fer, Nouvel_Index_Pertes_Fer, Conso_Pertes_Fer, Montant_HT_Pertes_Fer, Contribution_Speciale_Pertes_Fer, Montant_Net_Pertes_Fer, Conso_Depassement_PS, Montant_HT_Penalite_Depassement_PS, Montant_Net_Penalite_Depassement_PS, Cosinus_phi, Montant_HT_Cosinus_PHI, Montant_Net_Cosinus_PHI, MT_REDEVANCE_HT, Montant_net, Date_index, Nb_jours)';
 		}
@@ -40,7 +41,7 @@ var $periode_pour_menu;
 		$this->load->library('upload', $config);
 		
 		//print_r($_FILES);
-		$file_name='';
+		$this->file_name='';
 		if ( ! $this->upload->do_upload('file'))
 		{
 			$this->upload->display_errors('<p>', '</p>');
@@ -49,31 +50,48 @@ var $periode_pour_menu;
 		else
 		{
 			//enleve les white spaces du nom
-			$file_name = preg_replace("/\s+/", "_", $_FILES['file']['name']);
-			//import de la facture dans la base de donnee
-			if($this->xls_to_db($file_name, $table)){
+			$this->file_name = preg_replace("/\s+/", "_", $_FILES['file']['name']);
+			//parse le fichier excel
+			$this->parseExcel('./uploads/'.$this->file_name, $table);
+			/*
+			if($this->xls_to_db($this->file_name, $table)){
 				//enregistrement dans l'historique des uploads
-				$this->historique_upload($file_name);
+				$this->historique_upload($this->file_name);
 				$answer['success'] = true;
-			}
+			}*/
 		}
-		$answer['file']=utf8_encode($file_name);
+		/*$answer['file']=utf8_encode($this->file_name);
 		$answer['queries']=$this->nombres_requetes;
 		if ($this->msg_error!='') $answer['error']=utf8_encode($this->msg_error);
-		echo json_encode($answer); 	
+		echo json_encode($answer); */	
 	}
 	
-	function xls_to_db($file_name, $table)
+	function xls_to_db()//$table,$periode)
 	{
 	 	
 	 	
-	 	$this->nombres_requetes=0;
-	 	$prod=$this->parseExcel('./uploads/'.$file_name, $table);
+	 	
+	 	//$this->nombres_requetes=0;
+	 	$u= new Uploadprocess();
+	 	$u->get();
+	 	
+	 	$table=$u->table_mt_bt_eau;
+	 	$periode=$u->periode;
+	 	$this->periode_pour_menu=$periode."-01";
+	 	
+	 	$prod=unserialize($u->factures);
+	 	//print_r($prod);
+	 	
+	 	
 	 	if (is_array($prod)){
 	 		
+	 		//echo 'okisarray';
 	 		//Sauvegarde sql des objets facture et pl
 			$requete_sql='';
-			for ($i = 1; $i <= $this->nombres_lignes-3; $i++) {
+			for ($i = 1; $i < (count($prod)); $i++) {
+			
+				$start=microtime(true);
+			
 			
 	//Creation de l'objet pl
 		 		$p= new Pl();
@@ -204,7 +222,8 @@ var $periode_pour_menu;
 			 			$f->etat=$p->etat;
 			 		}
 		 		}
-		 		//creation de l'objet menumensuel
+		 	
+		 	//creation de l'objet menumensuel
 			 	$m= new Menumensuel();
 			 	$m->where('periode',$this->periode_pour_menu);
 			 	if ($table=='conso_bts'){
@@ -237,14 +256,17 @@ var $periode_pour_menu;
 		 		$f->save(array($p,$m));
 				
 				$this->nombres_requetes++;
-				
+				$end_sauvegarde=microtime(true);
+				$temp_sauvegarde=$end_sauvegarde-$start;
+				//echo 'temps d execution sauvegarde'.$temp_sauvegarde;			
 	
-	
+			$start_donneesconso=microtime(true);
+		
 		 		
 		//Creation des donnes utilisables pour l'affichage des graphs de consommation mensuelle
 		//Eclatement des factures par mois. Si une facture est à cheval sur deux mois, elle est 
 		//découpée en deux.
-		 		
+		 		/*
 		 		//Récuperer mois début et mois fin.
 		 		$date_fin = date('Y-m-d',strtotime($f->Date_index));
 		 		$date_debut= date('Y-m-d',strtotime("-".$f->Nb_jours."days", strtotime($date_fin)));
@@ -370,8 +392,11 @@ var $periode_pour_menu;
 		 			//Sauvegarde les donnees conso et les relie au PL
 		 			//$d->save();
 		 			$d->save($p);
-		 		} 		
+		 		} 
 		 		
+		 		*/
+		 		//$start_alerte=microtime(true);
+				
 	//Creation des alertes
 				//Get donnees conso
 				
@@ -764,6 +789,12 @@ var $periode_pour_menu;
 					}
 				}
 				
+				/*$end_alerte=microtime(true);
+				$temp_alerte=$end_alerte-$start_alerte;
+				echo 'temps d execution alerte'.$temp_alerte;
+				*/
+				
+				
 				//Creation des donnees statistiques pour chaque pl
 				//$s= new Stat();
 				//$s->where_related_pl('Point_de_livraison',$PL)->get();
@@ -787,12 +818,33 @@ var $periode_pour_menu;
 				$a->select_max('Etat');
 				$a->where_related_pl('Point_de_livraison',$p->Point_de_livraison)->get();
 				$p->alerte_max=$a->Etat;
+				$p->save();	
 				
-				//sauvegarde des stats dans l'objet pl'
-				$p->save();				
+				/*$end=microtime(true);
+				$temp=$end-$start;
+				echo 'temps d execution'.$temp;
+				die();*/			
 				
+			} 
+			
+			if(($u->count())>1){
+				$answer['info'] = 'continue';
+				$progress=round((1-($this->decoupage*$u->count())/$u->nombre_lignes)*100)/100;
+				$answer['progress']=$progress;
+				//supprime les infos traitées
+				$u->delete();
 			}
+			else{
+				$answer['info'] = 'end';
+				$answer['lignes'] = $u->nombre_lignes;
+				$answer['progress']=1;
+				$u->delete();
+			}
+			$answer['success'] = true;
+			echo json_encode($answer);
+			
 			return TRUE;
+			
 			
 	 	}
 	 	else return FALSE;
@@ -802,6 +854,7 @@ var $periode_pour_menu;
 	function parseExcel($excel_file_name_with_path, $table)
 	{
 		
+		$start_time=microtime(true);
 		$data = new spreadsheetexcelreader();
 		// Set output Encoding.
 		$data->setOutputEncoding('CP1251');
@@ -849,6 +902,34 @@ var $periode_pour_menu;
 				else $product[$i-1][$j-1]='""';
 			}
 		}
+		//Decoupe et Enregistre le tableau de facture dans la base de donnees
+		$i=1;
+		$u=new Uploadprocess();
+		$u->get();
+		$u->delete_all();
+		//$decoupage=50;
+		while ($i<count($product)){
+			$array_to_save=null;
+			$array_to_save[]=''; //start at 1
+			for ($j = $i; $j <= ($i+$this->decoupage); $j++) {
+				if($j<count($product)){
+					$array_to_save[]=$product[$j];
+				}
+			}
+			$u=new Uploadprocess();
+			$u->table_mt_bt_eau=$table;
+			$u->periode=$this->periode_pour_menu;
+			$u->factures=serialize($array_to_save);
+			$u->nombre_lignes=count($product);
+			$u->save();
+			$i=$i+$this->decoupage;
+		}
+		$this->historique_upload($this->file_name);
+		$answer['file'] = $this->file_name;
+		$answer['info'] = 'parseok';
+		$answer['success'] = true;
+		echo json_encode(utf8_encode($answer));
+		die();
 		return $product;
 	}
 	
@@ -863,6 +944,18 @@ var $periode_pour_menu;
 		echo form_hidden('error',$this->upload->display_errors());
 		echo form_close();
 		echo '<script>document.getElementById("errform").submit();</script>';*/
+	}
+	
+	function is_upload_running(){
+		$u= new Uploadprocess();
+	 	$u->get(1,1);//just get one entry. If there is one at least, it means there is an upload not ended.
+		if ($u->count()>0){
+			$answer['success'] = true;
+		}
+		else{
+			$answer['msg'] = 'aucun resultat...';
+		}
+		echo json_encode($answer);
 	}
 	
 	function build_alert(){

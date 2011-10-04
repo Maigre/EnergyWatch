@@ -12,9 +12,11 @@ Ext.define('MainApp.view.panel.UploadMainPanel', {
     ],
     layout:{
 		type:'hbox',
-		align: 'middle'
+		align: 'middle',
+		pack: 'center'
 	},
     //width: 300,
+    margins: 5,
     padding: 5,
     opacity:0,
     //height: 300,

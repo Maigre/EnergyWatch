@@ -13,7 +13,7 @@ class Menumensuel extends Dmc {
 				'type'		=> 'normal',				
 				'formfield' 	=> array('text', 15)
 		),
-		'tension' => 	array(
+		'Tension' => 	array(
 				'label' 	=> array('Nom',false),
 				'rules' 	=> array('required', 'xss_clean'),
 				'defval'	=> '',

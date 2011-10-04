@@ -11,6 +11,7 @@ Ext.define('MainApp.view.panel.UploadPanel', {
     headers: {'Content-type':'multipart/form-data'},
     enctype:'multipart/form-data',
 	title : 'Importation d\'une nouvelle facture ',
+
 	items : [{
         xtype      : 'fieldcontainer',
         fieldLabel : '',
@@ -47,10 +48,10 @@ Ext.define('MainApp.view.panel.UploadPanel', {
 					xtype: 'combobox',
 					id :'comboboxmoisfacture',
 					fieldLabel: 'P&eacute;riode',
-					name: 'mois',
+					//name: 'id',
 					store: 'MonthStore',
 					displayField: 'mois',
-					valueField: 'mois'
+					valueField: 'value'
 				}]
 			},{
 				xtype: 'container',
@@ -96,7 +97,8 @@ Ext.define('MainApp.view.panel.UploadPanel', {
 			else{
 				var table='conso_mts';
 			}
-			var nomperiodefacture= Ext.getCmp('comboboxmoisfacture').value+'_'+Ext.getCmp('comboboxanneefacture').value;
+			console.info(Ext.getCmp('comboboxmoisfacture'));
+			var nomperiodefacture= Ext.getCmp('comboboxanneefacture').value+'-'+Ext.getCmp('comboboxmoisfacture').value;
 			
 			var form = this.up('form').getForm();
 			form.url=BASE_URL+'data/uploadxls/do_upload/'+table+'/'+nomperiodefacture;
@@ -108,9 +110,52 @@ Ext.define('MainApp.view.panel.UploadPanel', {
                     //method : 'POST', 
                     waitMsg: 'Importation en cours...',
                     success: function(fp, o) {
-                        form.owner.ownerCt.items.items[1].store.load();
-                        form.owner.ownerCt.items.items[1].doLayout();
-                        Ext.Msg.alert('Success', 'Le fichier "' + o.result.file + '" a &eacute;t&eacute; import&eacute; avec succ&egrave;s. '+ o.result.queries+' requ&ecirc;tes ont &eacute;t&eacute; effectu&eacute;es.');
+                    	if(o.result.info=='parseok'){
+	                		
+	                		Ext.Msg.alert('Success', 'Le fichier '+o.result.file+' a &eacute;t&eacute; t&eacute;l&eacute;charg&eacute; avec succ&egrave;s. Traitement des factures en cours...');					
+							
+							var progressbar = Ext.getCmp('progressbar');
+							if (!progressbar){
+								var progressbar = Ext.create('Ext.ProgressBar', {
+								   //renderTo: Ext.getBody(),
+								   id: 'progressbar',
+								   width: 800
+								});
+							}
+							progressbar.updateProgress(0);
+							Ext.getCmp('southregion').removeAll(false),
+							Ext.getCmp('southregion').add(progressbar);
+							
+	                		function request_until_end(){
+								Ext.Ajax.request({
+									url: BASE_URL+'data/uploadxls/xls_to_db',//'+table+'/'+nomperiodefacture,
+									method : 'POST',
+									params : {
+										BT_MT_EAU: BT_MT_EAU
+									},
+									success: function(response){
+										var obj = Ext.decode(response.responseText);
+										
+										if(obj.info=='continue'){
+											progressbar.updateProgress(obj.progress);
+											progress=obj.progress*100;
+											progressbar.updateText(progress+'%');
+											request_until_end();
+										}
+										else{
+											progressbar.updateProgress(obj.progress);
+											progress=obj.progress*100;
+											progressbar.updateText(progress+'%');
+											form.owner.ownerCt.items.items[1].store.load();
+											form.owner.ownerCt.items.items[1].doLayout();
+											Ext.getCmp('southregion').removeAll(false);
+											Ext.Msg.alert('Success', 'Le fichier a &eacute;t&eacute; import&eacute; avec succ&egrave;s. '+ obj.lignes+' requ&ecirc;tes ont &eacute;t&eacute; effectu&eacute;es.');																
+										}
+									}
+								});
+							}
+	                		request_until_end();
+                		}
                     },
                     failure: function(fp, o) {
                         Ext.Msg.alert('Success', 'Echec d\'importation du fichier.'+o.result.error);
@@ -122,5 +167,6 @@ Ext.define('MainApp.view.panel.UploadPanel', {
 	initComponent: function() {
 		var me = this;
 		me.callParent(arguments);
-	}
+	}, 
+	
 });

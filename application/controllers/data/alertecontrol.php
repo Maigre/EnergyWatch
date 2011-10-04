@@ -96,7 +96,11 @@ class Alertecontrol extends CI_Controller {
 	public function loadall()
 	{
 		$BT_MT_EAU=$this->input->post('BT_MT_EAU');
-		$PERIODE_MENSUELLE=$this->input->post('PERIODE_MENSUELLE');
+		//formatte la date
+		$array_periode=explode(' ',$this->input->post('PERIODE_MENSUELLE'));		
+		$tableau_mois=array('Janvier'=>'01','Février'=>'02','Mars'=>'03','Avril'=>'04','Mai'=>'05','Juin'=>'06','Juillet'=>'07','Aout'=>'08','Septembre'=>'09','Octobre'=>'10','Novembre'=>'11','Décembre'=>'12');
+		$mois= $tableau_mois[$array_periode[0]];
+		$PERIODE_MENSUELLE=$array_periode[1].'-'.$mois.'-01';
 
 		
 		if ($BT_MT_EAU=='MT'){

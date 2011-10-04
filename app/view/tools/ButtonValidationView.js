@@ -3,7 +3,7 @@
 Ext.define('MainApp.view.tools.ButtonValidationView', {
 	extend: 'Ext.button.Button',
 	alias : 'widget.buttonvalidation',
-	icon: 'app/images/icons/tri.png',
+	icon: 'app/images/icons/tri_coloured.png',
 	tooltip : 'Validation P.L',
 	scale: 'large',
 	height: 40,

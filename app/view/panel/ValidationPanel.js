@@ -6,11 +6,17 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 	bodyPadding: 5,
 	layout: {
         type: 'table',
-        columns: 2,
+        columns: 2/*,
+        tableAttrs: {
+            style: {
+                width: '50%',
+                height: '50%'
+            }
+        }*/
         //align: 'stretch',
         //padding: 5
     },
-    //defaults     : { flex : 1 },
+    //defaults     : { frame: true },
 	
 	initComponent: function() {
 		var me = this;
@@ -55,12 +61,14 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 
 		// declare the source Grid
 		var NouveauPlGrid = Ext.create('Ext.grid.Panel', {
-			height: 300,
-			width:500,
+			height: 280,
+			width:550,
+			//margins: 5,
 			padding: 5,
 			iconCls: 'arrow_divide',
 		    alias: 'widget.nouveauPlGrid',
 		    multiSelect: true,
+		    frame: true,
 		    viewConfig: {
 		        plugins: {
 		            ptype: 'gridviewdragdrop',
@@ -70,38 +78,43 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 		        listeners: {
 		            drop: function(node, data, dropRec, dropPosition) {
 		                //var dropOn = dropRec ? ' ' + dropPosition + ' ' + dropRec.get('name') : ' on empty view';
-		                var idfacture=data.records[0].get('id');
-		                Ext.Ajax.request({
-							url: BASE_URL+'data/triplcontrol/save/nouveau',
-							method : 'POST',
-							params : {
-								idfacture: idfacture
-							}/*,
-							success: function(response){
-									Ext.get('working-area').insertHtml('beforeBegin',response.responseText,true);
-							}*/
-						});
+		                Ext.each(data.records, function(op) {
+							Ext.Ajax.request({
+								url: BASE_URL+'data/triplcontrol/save/nouveau',
+								method : 'POST',
+								params : {
+									idfacture: op.get('id'),
+									BT_MT_EAU: BT_MT_EAU
+								}/*,
+								success: function(response){
+										Ext.get('working-area').insertHtml('beforeBegin',response.responseText,true);
+								}*/
+							});
+		                	//console.info(op.get('id'));
+		                })
 		            }		            
 		        }
 		    },
 		    store            : 'TriPlNouveauStore',
 		    columns          : columns,
 		    stripeRows       : true,
-		    title            : 'Nouveaux P.L d&eacute;tect&eacute;s - A Valider ou Rejeter',
-		    margins          : '0 2 0 0'
+		    title            : 'Nouveaux P.L d&eacute;tect&eacute;s - A Valider ou Rejeter'
+		    //,		    margins          : '5 5 5 5'
 		});
 
 		
 
 		// create the destination Grid
 		var PlNonValideAgainGrid = Ext.create('Ext.grid.Panel', {
-			height: 300,
-			width:500,
+			height: 280,
+			width:550,
+			//margins: 5,
 			padding: 5,
 			alias: 'widget.plNonValideAgainGrid',
 			//cls: 'my-grid',
 			iconCls: 'yes',
 			multiSelect: true,
+		    frame: true,
 		    viewConfig: {
 		        plugins: {
 		            ptype: 'gridviewdragdrop',
@@ -111,36 +124,41 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 		        listeners: {
 		            drop: function(node, data, dropRec, dropPosition) {
 		                //var dropOn = dropRec ? ' ' + dropPosition + ' ' + dropRec.get('name') : ' on empty view';
-		                var idfacture=data.records[0].get('id');
-		                Ext.Ajax.request({
-							url: BASE_URL+'data/triplcontrol/save/nonvalideagain',
-							method : 'POST',
-							params : {
-								idfacture: idfacture
-							}/*,
-							success: function(response){
-									Ext.get('working-area').insertHtml('beforeBegin',response.responseText,true);
-							}*/
-						});
+		                Ext.each(data.records, function(op) {
+							Ext.Ajax.request({
+								url: BASE_URL+'data/triplcontrol/save/nonvalideagain',
+								method : 'POST',
+								params : {
+									idfacture: op.get('id'),
+									BT_MT_EAU: BT_MT_EAU
+								}/*,
+								success: function(response){
+										Ext.get('working-area').insertHtml('beforeBegin',response.responseText,true);
+								}*/
+							});
+		                	//console.info(op.get('id'));
+		                })
 		            }		            
 		        }
 		    },
 		    store            : 'TriPlNonValideAgainStore',
 		    columns          : columns,
 		    stripeRows       : true,
-		    title            : 'P.L rejet&eacute;s &agrave; nouveau factur&eacute;s - A Valider ou Rejeter',
-		    margins          : '0 0 0 3'
+		    title            : 'P.L rejet&eacute;s &agrave; nouveau factur&eacute;s - A Valider ou Rejeter'
+		    //,		    margins          : '5 5 5 5'
 		});
 		
 
 		// create the destination Grid
 		var PlValideGrid = Ext.create('Ext.grid.Panel', {
-			height: 300,
-			width:500,
+			height: 280,
+			width:550,
+			//margins: 5,
 			padding: 5,
 			alias: 'widget.plValideGrid',
 			iconCls: 'arrow_divide',
 			multiSelect: true,
+		    frame: true,
 		    viewConfig: {
 		        plugins: {
 		            ptype: 'gridviewdragdrop',
@@ -150,17 +168,20 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 		        listeners: {
 		            drop: function(node, data, dropRec, dropPosition) {
 		                //var dropOn = dropRec ? ' ' + dropPosition + ' ' + dropRec.get('name') : ' on empty view';
-		                var idfacture=data.records[0].get('id');
-		                Ext.Ajax.request({
-							url: BASE_URL+'data/triplcontrol/save/valide',
-							method : 'POST',
-							params : {
-								idfacture: idfacture
-							}/*,
-							success: function(response){
-									Ext.get('working-area').insertHtml('beforeBegin',response.responseText,true);
-							}*/
-						});
+		                Ext.each(data.records, function(op) {
+							Ext.Ajax.request({
+								url: BASE_URL+'data/triplcontrol/save/valide',
+								method : 'POST',
+								params : {
+									idfacture: op.get('id'),
+									BT_MT_EAU: BT_MT_EAU
+								}/*,
+								success: function(response){
+										Ext.get('working-area').insertHtml('beforeBegin',response.responseText,true);
+								}*/
+							});
+		                	//console.info(op.get('id'));
+		                })
 		            }		            
 		        },
 		        deferEmptyText : false,
@@ -169,18 +190,20 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 		    store            : 'TriPlValideStore',
 		    columns          : columns,
 		    stripeRows       : true,
-		    title            : 'P.L valid&eacute;s',
-		    margins          : '0 0 0 3'
+		    title            : 'P.L valid&eacute;s'
+		    //,		    margins          : '5 5 5 5'
 		});
 
 		// create the destination Grid
 		var PlNonValideGrid = Ext.create('Ext.grid.Panel', {
-			height: 300,
-			width:500,
+			height: 280,
+			width:550,
+			//margins: 5,
 			padding: 5,
 			alias: 'widget.plNonValideGrid',
 			iconCls: 'no',
 			multiSelect: true,
+		    frame: true,
 			//cls: 'my-grid',
 			viewConfig: {
 		        plugins: {
@@ -191,17 +214,22 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 		        listeners: {
 		            drop: function(node, data, dropRec, dropPosition) {
 		                //var dropOn = dropRec ? ' ' + dropPosition + ' ' + dropRec.get('name') : ' on empty view';
-		                var idfacture=data.records[0].get('id');
-		                Ext.Ajax.request({
-							url: BASE_URL+'data/triplcontrol/save/nonvalide',
-							method : 'POST',
-							params : {
-								idfacture: idfacture
-							}/*,
-							success: function(response){
-									Ext.get('working-area').insertHtml('beforeBegin',response.responseText,true);
-							}*/
-						});
+		                //var idfacture=data.records[0].get('id');
+		                Ext.each(data.records, function(op) {
+							Ext.Ajax.request({
+								url: BASE_URL+'data/triplcontrol/save/nonvalide',
+								method : 'POST',
+								params : {
+									idfacture: op.get('id'),
+									BT_MT_EAU: BT_MT_EAU
+								}/*,
+								success: function(response){
+										Ext.get('working-area').insertHtml('beforeBegin',response.responseText,true);
+								}*/
+							});
+		                	//console.info(op.get('id'));
+		                })
+		                
 		            }		            
 		        },
 		        deferEmptyText : false,
@@ -210,8 +238,8 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 		    store            : 'TriPlNonValideStore',
 		    columns          : columns,
 		    stripeRows       : true,
-		    title            : 'P.L rejet&eacute;s',
-		    margins          : '0 0 0 3'
+		    title            : 'P.L rejet&eacute;s'
+		    //,		    margins          : '5 5 5 5'
 		});
 
 		

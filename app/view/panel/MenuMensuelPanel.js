@@ -30,6 +30,7 @@ Ext.define('MainApp.view.panel.MenuMensuelPanel', {
 						text: op,
 						iconCls: 'money',
 						margin: 10,
+						width: 120, 
 						handler: function(){
 							PERIODE_MENSUELLE = op;
 							Ext.getCmp('centerregion').removeAll(false);

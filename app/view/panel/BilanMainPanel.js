@@ -6,7 +6,8 @@ Ext.define('MainApp.view.panel.BilanMainPanel', {
     ],
     layout:{
 		type:'hbox',
-		align:'middle'
+		align:'middle',
+		pack: 'center'
 	},
     //width: 300,
     padding: 5,

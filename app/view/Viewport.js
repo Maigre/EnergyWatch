@@ -1,6 +1,7 @@
 Ext.define('MainApp.view.Viewport', {
     extend: 'Ext.container.Viewport',
 	id: 'viewport',
+	//alias : 'widget.viewport',
     requires: [
     	'MainApp.view.panel.HomePanel',
         'MainApp.view.panel.SearchbarPanel',
@@ -30,7 +31,7 @@ Ext.define('MainApp.view.Viewport', {
     layout: 'border',
  
     initComponent: function() {
-        Ext.QuickTips.init();
+        //Ext.QuickTips.init();
         this.items = [
         	{
 				xtype: 'container',
@@ -58,6 +59,12 @@ Ext.define('MainApp.view.Viewport', {
 				height: 30,
 				//width: 823,
 				region: 'south',
+				id: 'southregion',
+				layout:{
+					type:'hbox',
+					align: 'middle',
+					pack: 'center'
+				},
 				bodyStyle: "background-image:url(app/images/banner_color.png); border:0px;"
 			},
 			{
