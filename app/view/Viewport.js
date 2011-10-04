@@ -1,14 +1,21 @@
 Ext.define('MainApp.view.Viewport', {
     extend: 'Ext.container.Viewport',
 	id: 'viewport',
+	//alias : 'widget.viewport',
     requires: [
+    	'MainApp.view.panel.HomePanel',
         'MainApp.view.panel.SearchbarPanel',
         'MainApp.view.tools.SearchView',
         'MainApp.view.image.Searchbaricon',
+        'MainApp.view.panel.MenuMensuelPanel',
+        'MainApp.view.panel.BilanMainPanel',
         'MainApp.view.panel.MainPanel',
         'MainApp.view.tools.ButtonHomeView',
         'MainApp.view.tools.ButtonUploadView',
         'MainApp.view.tools.ButtonAlerteView',
+        'MainApp.view.tools.ButtonWaterView',
+        'MainApp.view.tools.ButtonMTView',
+        'MainApp.view.tools.ButtonBTView',
         'MainApp.view.panel.UploadMainPanel',
         //'MainApp.view.panel.UploadPanel',
         //'MainApp.view.panel.HistoriqueUploadPanel',
@@ -16,13 +23,15 @@ Ext.define('MainApp.view.Viewport', {
         'MainApp.view.panel.PlPanel',
         'MainApp.view.panel.PlAllPanel',
         'MainApp.view.panel.PlFactureMTPanel',
-        'MainApp.view.panel.AlerteAllPanel'
+        'MainApp.view.panel.AlerteAllPanel',
+        'MainApp.view.panel.ValidationPanel'
+        
     ],
 
     layout: 'border',
  
     initComponent: function() {
-        Ext.QuickTips.init();
+        //Ext.QuickTips.init();
         this.items = [
         	{
 				xtype: 'container',
@@ -31,32 +40,38 @@ Ext.define('MainApp.view.Viewport', {
 				layout: 'fit',
 				//bodyPadding: 10,
 				items:[{
-					xtype: 'plallpanel'
+					xtype: 'homepanel'
 				}]
 			},
 			{
 				xtype: 'container',
-				width: 240,
+				width: 0,
 				id: 'westregion',
 				layout: 'fit',
 				padding: 2,
-				region: 'west'/*,
+				region: 'west',
 				items:[{
-					xtype: 'plpanel'
-				}]*/
+					xtype: 'menumensuelpanel'
+				}]
 			},
 			{
 				xtype: 'panel',
 				height: 30,
 				//width: 823,
 				region: 'south',
+				id: 'southregion',
+				layout:{
+					type:'hbox',
+					align: 'middle',
+					pack: 'center'
+				},
 				bodyStyle: "background-image:url(app/images/banner_color.png); border:0px;"
 			},
 			{
 				xtype: 'panel',
-				height: 62,
+				height: 58,
 				region: 'north',
-				bodyStyle: "background-image:url(app/images/ewatch_banner.png); border:0px;",
+				bodyStyle: "background-image:url(app/images/ewatch_banner_color.png); border:0px;",
 				layout:{
 					type:'hbox',
 					align:'stretch'
@@ -79,7 +94,23 @@ Ext.define('MainApp.view.Viewport', {
 					//height: 62,
 					//width: 80
 				},{
-					xtype: 'buttonalerte',
+					xtype: 'buttonwater',
+					//x: 80,
+					//y: 10,
+					margins: 10,
+					border: 0,
+					//height: 62,
+					//width: 80
+				},{
+					xtype: 'buttonbt',
+					//x: 80,
+					//y: 10,
+					margins: 10,
+					border: 0,
+					//height: 62,
+					//width: 80
+				},{
+					xtype: 'buttonmt',
 					//x: 80,
 					//y: 10,
 					margins: 10,
@@ -88,7 +119,7 @@ Ext.define('MainApp.view.Viewport', {
 					//width: 80
 				},{
 					xtype: 'panel',
-					bodyStyle: "background-image:url(app/images/ewatch_banner.png)",
+					bodyStyle: "background-image:url(app/images/ewatch_banner.png); background-repeat:no-repeat;",
 					//x: 80,
 					//y: 10,
 					//margins: 10,
@@ -97,7 +128,7 @@ Ext.define('MainApp.view.Viewport', {
 					flex:4
 				},{
 					xtype: 'searchbar',
-					//bodyStyle: "background-image:url(app/images/banner_color.png)",
+					bodyStyle: "background-image:url(app/images/ewatch_banner_color.png)",
 					//x: 1100,
 					//align: 'left',
 					margins:'20 0 15 0',

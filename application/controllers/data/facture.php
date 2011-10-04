@@ -18,38 +18,65 @@ class Facture extends CI_Controller {
 	{
 
 		//DATAMAPPER CONSTRUCTING
-		$idPl = $this->input->post('idPl');
+		$PL = $this->input->post('idPl');
 		$p = new Pl();
-		$p->where('id', $idPl);
-		$p->get();
+		
+		$p->where('id', $PL)->get();
 		//Initialize answer array
 		$answer = array(
 					'size' 	=> 0,
 					'msg'	=> ''
 				); 
 		$answ = null;
-		//BT
+		
 		if ($p->Tension=='BT'){
-			$fieldArray=array('id', 'No_de_facture', 'Code_tarif', 'Puisance_souscrite', 'Ancien_index', 'Nouvel_index', 'Consommation_mensuelle', 'Redevance', 'Contribution_Speciale', 'Montant_PF', 'Montant_HT', 'Montant_tva', 'Montant_net', 'Date_index', 'Nb_jours');
-			foreach($p->facturebt->get()->all as $facture){  //->order_by("Date_index", "asc")
-				//Formattage des dates
-		 		
-			 		$date_array = explode("-",$facture->Date_index); // split the array
-					$var_year = $date_array[0]; //day seqment
-					$var_month = $date_array[1]; //month segment
-					$var_day = $date_array[2]; //year segment
-					$date = $var_day.'-'.$var_month.'-'.$var_year;
-					$facture->Date_index=$date;
+			if (substr($p->No_compteur,0,1)=='E'){
+ 				//BT
+ 				$fieldArray=array('id', 'No_de_facture', 'Code_tarif', 'Puisance_souscrite', 'Ancien_index', 'Nouvel_index', 'Consommation_mensuelle', 'Redevance', 'Contribution_Speciale', 'Montant_PF', 'Montant_HT', 'Montant_tva', 'Montant_net', 'Date_index', 'Nb_jours');
+				foreach($p->facturebt->get()->all as $facture){  //->order_by("Date_index", "asc")
+					//Formattage des dates
+			 		
+				 		$date_array = explode("-",$facture->Date_index); // split the array
+						$var_year = $date_array[0]; //day seqment
+						$var_month = $date_array[1]; //month segment
+						$var_day = $date_array[2]; //year segment
+						$date = $var_day.'-'.$var_month.'-'.$var_year;
+						$facture->Date_index=$date;
 				
-				foreach($fieldArray as $field){
-					if (is_numeric($facture->$field)){
-						$facture->$field= (int) $facture->$field; 
+					foreach($fieldArray as $field){
+						if (is_numeric($facture->$field)){
+							$facture->$field= (int) $facture->$field; 
+						}
+						$answ[$field]=$facture->$field;
 					}
-					$answ[$field]=$facture->$field;
+					$answer['data'][] = $answ;
 				}
-				$answer['data'][] = $answ;
-			}
-			$answer['size'] = count($answer['data']);
+				$answer['size'] = count($answer['data']);
+ 			}
+ 			else{
+ 				//EAU
+ 				$fieldArray=array('id', 'No_de_facture', 'Code_tarif', 'Puisance_souscrite', 'Ancien_index', 'Nouvel_index', 'Consommation_mensuelle', 'Redevance', 'Contribution_Speciale', 'Montant_PF', 'Montant_HT', 'Montant_tva', 'Montant_net', 'Date_index', 'Nb_jours');
+				foreach($p->factureeau->get()->all as $facture){  //->order_by("Date_index", "asc")
+					//Formattage des dates
+			 		
+				 		$date_array = explode("-",$facture->Date_index); // split the array
+						$var_year = $date_array[0]; //day seqment
+						$var_month = $date_array[1]; //month segment
+						$var_day = $date_array[2]; //year segment
+						$date = $var_day.'-'.$var_month.'-'.$var_year;
+						$facture->Date_index=$date;
+				
+					foreach($fieldArray as $field){
+						if (is_numeric($facture->$field)){
+							$facture->$field= (int) $facture->$field; 
+						}
+						$answ[$field]=$facture->$field;
+					}
+					$answer['data'][] = $answ;
+				}
+				$answer['size'] = count($answer['data']);
+ 			}
+			
 		}
 		//MT
 		elseif($p->Tension=='MT'){
@@ -100,108 +127,168 @@ class Facture extends CI_Controller {
 		$answ = null;
 		//BT
 		if ($p->Tension=='BT'){
-			$fieldArray=array('Consommation_mensuelle','Redevance','Contribution_Speciale','Montant_PF','Montant_HT','Montant_tva','Montant_net','Nb_jours');
-			//creation du tableau answer avec une seule ligne par mois
-			foreach($p->donnees_conso_bt->get()->all as $facture){
+			if (substr($p->No_compteur,0,1)=='E'){
+	 		//BT
+				$fieldArray=array('Consommation_mensuelle','Redevance','Contribution_Speciale','Montant_PF','Montant_HT','Montant_tva','Montant_net','Nb_jours');
+				//creation du tableau answer avec une seule ligne par mois
+				foreach($p->donnees_conso_bt->get()->all as $facture){
 				
-				//Formatte les dates
-	 			$date_array = explode("-",$facture->Date_index); // split the array
-				$var_year = $date_array[0]; //day seqment
-				$var_month = $date_array[1]; //month segment
-				$var_day = $date_array[2]; //year segment
-				$date = $var_day.'-'.$var_month.'-'.$var_year;
-				$facture->Date_index=$date;
+					//Formatte les dates
+		 			$date_array = explode("-",$facture->Date_index); // split the array
+					$var_year = $date_array[0]; //day seqment
+					$var_month = $date_array[1]; //month segment
+					$var_day = $date_array[2]; //year segment
+					$date = $var_day.'-'.$var_month.'-'.$var_year;
+					$facture->Date_index=$date;
 				
 				
-				//Remplit $answ
-				$answ['Date_index']=$facture->Date_index;
+					//Remplit $answ
+					$answ['Date_index']=$facture->Date_index;
 				
-				foreach($fieldArray as $field){
+					foreach($fieldArray as $field){
 					
-					if (is_numeric($facture->$field) and ($field!='Consommation_mensuelle')){
-						$facture->$field= (int) $facture->$field; 
+						if (is_numeric($facture->$field) and ($field!='Consommation_mensuelle')){
+							$facture->$field= (int) $facture->$field; 
+						}
+						$answ[$field]=$facture->$field;
 					}
-					$answ[$field]=$facture->$field;
-				}
 				
 				
 				
-				//regroupe les donnees de conso par mois
-				$same_month=false;
-				if (isset($answer['data'])){
-					foreach ($answer['data'] as $key=>$donneesconso){
-						$date_array2 = explode("-",$donneesconso['Date_index']);
-						if ($date_array[1].$date_array[0]==$date_array2[1].$date_array2[2]){ //test même mois même année. attention les deux dates ne sont pas au même format
-							$same_month=true;
-							$key_same_month=$key;
+					//regroupe les donnees de conso par mois
+					$same_month=false;
+					if (isset($answer['data'])){
+						foreach ($answer['data'] as $key=>$donneesconso){
+							$date_array2 = explode("-",$donneesconso['Date_index']);
+							if ($date_array[1].$date_array[0]==$date_array2[1].$date_array2[2]){ //test même mois même année. attention les deux dates ne sont pas au même format
+								$same_month=true;
+								$key_same_month=$key;
+							}
 						}
 					}
-				}
-				if ($same_month){
-					foreach ($fieldArray as $field){
-						$answer['data'][$key_same_month][$field]=$answer['data'][$key_same_month][$field]+$answ[$field];
+					if ($same_month){
+						foreach ($fieldArray as $field){
+							$answer['data'][$key_same_month][$field]=$answer['data'][$key_same_month][$field]+$answ[$field];
+						}
 					}
-				}
-				else{
-					$answer['data'][] = $answ;
-				}
+					else{
+						$answer['data'][] = $answ;
+					}
 								
-				//Trie le tableau par date croissante
+					//Trie le tableau par date croissante
+					foreach ($answer['data'] as $key => $row) {
+						$Date_index[$key]  = strtotime($row['Date_index']);
+					}			
+					array_multisort($Date_index, SORT_ASC, $answer['data']);
+				}
+			}
+			else{
+			//EAU
+				$fieldArray=array('Consommation_mensuelle','Redevance','Contribution_Speciale','Montant_PF','Montant_HT','Montant_tva','Montant_net','Nb_jours');
+				//creation du tableau answer avec une seule ligne par mois
+				foreach($p->donnees_conso_eau->get()->all as $facture){
+				
+					//Formatte les dates
+		 			$date_array = explode("-",$facture->Date_index); // split the array
+					$var_year = $date_array[0]; //day seqment
+					$var_month = $date_array[1]; //month segment
+					$var_day = $date_array[2]; //year segment
+					$date = $var_day.'-'.$var_month.'-'.$var_year;
+					$facture->Date_index=$date;
+				
+				
+					//Remplit $answ
+					$answ['Date_index']=$facture->Date_index;
+				
+					foreach($fieldArray as $field){
+					
+						if (is_numeric($facture->$field) and ($field!='Consommation_mensuelle')){
+							$facture->$field= (int) $facture->$field; 
+						}
+						$answ[$field]=$facture->$field;
+					}
+				
+				
+				
+					//regroupe les donnees de conso par mois
+					$same_month=false;
+					if (isset($answer['data'])){
+						foreach ($answer['data'] as $key=>$donneesconso){
+							$date_array2 = explode("-",$donneesconso['Date_index']);
+							if ($date_array[1].$date_array[0]==$date_array2[1].$date_array2[2]){ //test même mois même année. attention les deux dates ne sont pas au même format
+								$same_month=true;
+								$key_same_month=$key;
+							}
+						}
+					}
+					if ($same_month){
+						foreach ($fieldArray as $field){
+							$answer['data'][$key_same_month][$field]=$answer['data'][$key_same_month][$field]+$answ[$field];
+						}
+					}
+					else{
+						$answer['data'][] = $answ;
+					}
+								
+					//Trie le tableau par date croissante
+					foreach ($answer['data'] as $key => $row) {
+						$Date_index[$key]  = strtotime($row['Date_index']);
+					}			
+					array_multisort($Date_index, SORT_ASC, $answer['data']);
+				}
+			}
+			
+				//Recalcule chaque mois pour avoir 30 jours par mois
+				foreach ($answer['data'] as $key=>$row) {
+				
+					if ($row['Nb_jours']!=30){
+						foreach ($fieldArray as $field){
+						
+							if($row['Nb_jours']!=0){
+								$answer['data'][$key][$field]=round($row[$field]*30/$row['Nb_jours']*100)/100;
+							}
+							else{
+								$answer['data'][$key][$field]=0;
+							}
+						}
+						$answer['data'][$key]['Nb_jours']=30;
+					}
+					$Date_index[$key] = strtotime($row['Date_index']);
+				}
+			
+			
+				//Ajoute entrée vide pour mois vide
+				$mois_avant='';
+				foreach ($answer['data'] as $dataconso){
+					$date_array = explode("-",$dataconso['Date_index']);
+					$mois_now = $date_array[1];
+					if (($mois_avant!='') and ( (($mois_now-$mois_avant)>1) or ((($mois_now-$mois_avant)>-11) and (($mois_now-$mois_avant)<0)) ) ){
+						//Nombre de mois manquant:
+						if (($mois_now-$mois_avant)>1){
+							$nb_mois_manquant= $mois_now-$mois_avant-1;
+						}
+						else $nb_mois_manquant= $mois_now-$mois_avant+11;
+						for ($i = 1; $i <= $nb_mois_manquant; $i++) {
+							$answ['Date_index']=date('d-m-Y', strtotime('-'.$i.' month', strtotime($dataconso['Date_index'])));
+							foreach($fieldArray as $field){
+								$answ[$field]=0;
+							}
+							$answer['data'][] = $answ;
+						}
+					}
+					$mois_avant=$mois_now;
+				}
+			
+				//Retrie le tableau
 				foreach ($answer['data'] as $key => $row) {
 					$Date_index[$key]  = strtotime($row['Date_index']);
 				}			
 				array_multisort($Date_index, SORT_ASC, $answer['data']);
-			}
-			
-			//Recalcule chaque mois pour avoir 30 jours par mois
-			foreach ($answer['data'] as $key=>$row) {
-				
-				if ($row['Nb_jours']!=30){
-					foreach ($fieldArray as $field){
-						
-						if($row['Nb_jours']!=0){
-							$answer['data'][$key][$field]=round($row[$field]*30/$row['Nb_jours']*100)/100;
-						}
-						else{
-							$answer['data'][$key][$field]=0;
-						}
-					}
-					$answer['data'][$key]['Nb_jours']=30;
-				}
-				$Date_index[$key] = strtotime($row['Date_index']);
-			}
 			
 			
-			//Ajoute entrée vide pour mois vide
-			$mois_avant='';
-			foreach ($answer['data'] as $dataconso){
-				$date_array = explode("-",$dataconso['Date_index']);
-				$mois_now = $date_array[1];
-				if (($mois_avant!='') and ( (($mois_now-$mois_avant)>1) or ((($mois_now-$mois_avant)>-11) and (($mois_now-$mois_avant)<0)) ) ){
-					//Nombre de mois manquant:
-					if (($mois_now-$mois_avant)>1){
-						$nb_mois_manquant= $mois_now-$mois_avant-1;
-					}
-					else $nb_mois_manquant= $mois_now-$mois_avant+11;
-					for ($i = 1; $i <= $nb_mois_manquant; $i++) {
-						$answ['Date_index']=date('d-m-Y', strtotime('-'.$i.' month', strtotime($dataconso['Date_index'])));
-						foreach($fieldArray as $field){
-							$answ[$field]=0;
-						}
-						$answer['data'][] = $answ;
-					}
-				}
-				$mois_avant=$mois_now;
-			}
-			
-			//Retrie le tableau
-			foreach ($answer['data'] as $key => $row) {
-				$Date_index[$key]  = strtotime($row['Date_index']);
-			}			
-			array_multisort($Date_index, SORT_ASC, $answer['data']);
+				$answer['size'] = count($answer['data']);
 			
 			
-			$answer['size'] = count($answer['data']);
 		}
 		//MT
 		elseif($p->Tension=='MT'){
@@ -310,10 +397,6 @@ class Facture extends CI_Controller {
 			
 			$answer['size'] = count($answer['data']);
 		}
-		
-		
-		
-		
 		
 		
 		if ($answer['size'] == 0){

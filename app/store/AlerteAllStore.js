@@ -26,6 +26,6 @@ Ext.define('MainApp.store.AlerteAllStore', {
         direction: 'DESC'
     }],
     baseParams: {
-        idPl:'' 
+        BT_MT_EAU: BT_MT_EAU 
     }
 });

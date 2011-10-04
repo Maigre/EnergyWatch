@@ -9,30 +9,80 @@ class Alertecontrol extends CI_Controller {
 
 	public function load()
 	{
-
-		
 		//DATAMAPPER CONSTRUCTING
 		$idPl = $this->input->post('idPl');
-		$this->load->model('Alerte','run_alerte');
-		$a = $this->run_alerte;
-		$a->where_related_pl('id', $idPl);
-		$a->get();
+		$this->load->model('Pl','run_pl');
+		$p = $this->run_pl;
+		$p->where('id', $idPl)->get();
+		if($p->Tension=='BT'){
+			if (substr($p->No_compteur,0,1)=='E'){
+ 				//BT
+				$f=new Facturebt();
+			}
+			else{
+				//EAU
+				$f=new Factureeau();
+			}
+		}
+		else{
+			$f=new Facturemt();
+		}
+		$f->where_related_pl('id',$p->id)->get();
 		
 		
 		//initialize answer array TODO(should be an array design to be JSON encoded)
 		$answer = array(
 					'size' 	=> 0,
 					'msg'	=> ''
-				); 
+		);
 		//Populate the data
 		$answ = null;
 		$fieldArray=array('id', 'idAlerteParent', 'Date', 'Etat', 'Type', 'Valeur', 'Commentaire','Flux');
 		
-		foreach($a->all as $alerte){
-			foreach($fieldArray as $field){
-				$answ[$field]=$alerte->$field;
+		foreach($f->all as $facture){
+			$a=new Alerte();
+			if($p->Tension=='BT'){
+				if (substr($p->No_compteur,0,1)=='E'){
+	 				//BT
+					$a->where_related_facturebt('id',$facture->id)->get();
+				}
+				else{
+					//EAU
+					$a->where_related_factureeau('id',$facture->id)->get();
+				}
+				
 			}
-			$answer['data'][] = $answ;
+			else{
+				$a->where_related_facturemt('id',$facture->id)->get();
+			}
+			foreach($a->all as $alerte){
+				foreach($fieldArray as $field){
+					$answ[$field]=$alerte->$field;
+				}
+				//get related facture
+				//BT
+				if($p->Tension=='BT'){
+					if (substr($p->No_compteur,0,1)=='E'){
+	 					//BT
+						$this->load->model('Facturebt','run_f');
+					}
+					else{
+						//EAU
+						$this->load->model('Factureeau','run_f');
+					}
+					$f = $this->run_f;
+					$f->where_related_alerte('id', $alerte->id)->get();
+				}
+				else{
+					//MT
+					$this->load->model('Facturemt','run_f');
+					$f = $this->run_f;
+					$f->where_related_alerte('id', $alerte->id)->get();
+				}
+				$answ['No_de_facture']=$f->No_de_facture;
+			
+				$answer['data'][] = $answ;
+			}	
 		}
 		if (isset($answer['data']))	$answer['size'] = count($answer['data']);
 		
@@ -45,6 +95,25 @@ class Alertecontrol extends CI_Controller {
 	
 	public function loadall()
 	{
+		$BT_MT_EAU=$this->input->post('BT_MT_EAU');
+		//formatte la date
+		$array_periode=explode(' ',$this->input->post('PERIODE_MENSUELLE'));		
+		$tableau_mois=array('Janvier'=>'01','Février'=>'02','Mars'=>'03','Avril'=>'04','Mai'=>'05','Juin'=>'06','Juillet'=>'07','Aout'=>'08','Septembre'=>'09','Octobre'=>'10','Novembre'=>'11','Décembre'=>'12');
+		$mois= $tableau_mois[$array_periode[0]];
+		$PERIODE_MENSUELLE=$array_periode[1].'-'.$mois.'-01';
+
+		
+		if ($BT_MT_EAU=='MT'){
+			$f=new Facturemt();
+		}
+		elseif($BT_MT_EAU=='BT'){
+			$f=new Facturebt();
+		}
+		else{
+			$f=new Factureeau();
+		}
+		$f->where_related_menumensuel('Tension',$BT_MT_EAU);
+		$f->where_related_menumensuel('periode',$PERIODE_MENSUELLE);
 		$linked_field=array('Nom_prenom', 'Point_de_livraison');
 		//get parameters for infinite scrolling grid
 		$start = $this->input->post('start');
@@ -75,6 +144,8 @@ class Alertecontrol extends CI_Controller {
 			
 			if ($sort!='lastpost') $a->order_by($sort, $dir);
 			$a->limit($limit,$start);
+			$a->where_related_menumensuel('Tension',$BT_MT_EAU);
+			$a->where_related_menumensuel('periode',$PERIODE_MENSUELLE);
 			$a->get();
 			if (count($a->all)<($start+$limit)) $start=count($a->all)-$limit;
 			if ($start<0){
@@ -95,11 +166,30 @@ class Alertecontrol extends CI_Controller {
 					$this->load->model('Pl','run_pl');
 					$p = $this->run_pl;
 					$p->where_related_alerte('id', $al->id)->get();
-					//foreach($al->pl>get()->all as $pl){
-						$answ['idPl']=$p->id;
-						$answ['Nom_prenom']=$p->Nom_prenom;
-						$answ['Point_de_livraison']=$p->Point_de_livraison;
-					//}
+					$answ['idPl']=$p->id;
+					$answ['Nom_prenom']=$p->Nom_prenom;
+					$answ['Point_de_livraison']=$p->Point_de_livraison;
+					
+					//get related facture
+					
+					if ($BT_MT_EAU=='MT'){
+						//MT
+						$this->load->model('Facturemt','run_f');
+					}
+					elseif($BT_MT_EAU=='BT'){
+						//BT
+						$this->load->model('Facturebt','run_f');
+					}
+					else{
+						//EAU
+						$this->load->model('Factureeau','run_f');
+					}
+					$f = $this->run_f;
+					$f->where_related_alerte('id', $al->id)->get();
+
+					$answ['No_de_facture']=$f->No_de_facture;
+					
+					
 					
 					/*$s= new Stat();
 					$s->where_related_pl('Point_de_livraison',$pl->Point_de_livraison)->get();
@@ -129,7 +219,8 @@ class Alertecontrol extends CI_Controller {
 		}
 		//Tri sur champ lié, tri sql impossible, tri php necessite recuperation de tous les pls puis tri
 		else{
-			
+			$a->where_related_menumensuel('Tension',$BT_MT_EAU);
+			$a->where_related_menumensuel('periode',$PERIODE_MENSUELLE);
 			$a->get();
 			if (count($a->all)<($start+$limit)) $start=count($a->all)-$limit;
 			if ($start<0){
@@ -155,8 +246,6 @@ class Alertecontrol extends CI_Controller {
 				$answ['idPl']=$p->id;
 				$answ['Nom_prenom']=$p->Nom_prenom;
 				$answ['Point_de_livraison']=$p->Point_de_livraison;
-				
-				//echo 'ok'.$p->Nom_prenom.$answ['Point_de_livraison']; die;
 				$answer['data'][] = $answ;
 			}
 			//tri avec arraymultisort necessite transposer tableau (lignes->colonnes)

@@ -3,7 +3,7 @@
 Ext.define('MainApp.view.tools.ButtonAlerteView', {
 	extend: 'Ext.button.Button',
 	alias : 'widget.buttonalerte',
-	icon: 'app/images/icons/software-update-urgent',
+	icon: 'app/images/icons/warning.png',
 	tooltip : 'Alertes',
 	scale: 'large',
 	height: 40,

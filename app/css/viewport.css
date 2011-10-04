@@ -26,3 +26,7 @@ hr {
 .x-panel-header-text {
 	line-height:16px !important;
 }
+
+.emptyText {text-align: center;}
+
+.red div {color: red;}

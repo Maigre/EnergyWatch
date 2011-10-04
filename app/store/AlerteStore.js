@@ -23,7 +23,7 @@ Ext.define('MainApp.store.AlerteStore', {
 		}
     },
     baseParams: {
-            text_search:'' 
+            BT_MT_EAU: BT_MT_EAU
     }
 });
 

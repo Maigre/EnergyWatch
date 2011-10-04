@@ -10,14 +10,17 @@ Ext.define('MainApp.controller.ButtonAlerteControl', {
         });
     },
     openalerte: function() {
-		var plallstore = this.getStore('AlerteAllStore');
-		plallstore.load();
+		var alerteallstore = this.getStore('AlerteAllStore');
+		alerteallstore.load({
+			params: {
+				BT_MT_EAU: BT_MT_EAU,
+				PERIODE_MENSUELLE: PERIODE_MENSUELLE
+		}});
 		var alerteallpanel = Ext.getCmp('alerteallpanel');
 		if (!alerteallpanel){
 			var alerteallpanel = Ext.widget('alerteallpanel');
 		}
 		Ext.getCmp('centerregion').removeAll(false); //clean the center region
-		Ext.getCmp('westregion').removeAll();
 		
 		Ext.getCmp('centerregion').add(alerteallpanel);
 	}   

@@ -22,7 +22,7 @@ Ext.define('MainApp.view.tools.GridPlView', {
 			'<img src="app/images/icons/cross.png">',
 			'</tpl>',
 			'<tpl if="alerte_max == 2;">',
-			'<img src="app/images/icons/exclamation_octagon_fram.png">',
+			'<img src="app/images/icons/help.png">',
 			'</tpl>',
 			'<tpl if="alerte_max == 1;">',
 			'<img src="app/images/icons/accept.png">',

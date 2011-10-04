@@ -3,7 +3,7 @@
 class Pl extends Dmc {
 	
 	//var $has_one=array("stat");
-	var $has_many=array("facturebt","facturemt","donnees_conso_bt","donnees_conso_mt","alerte");
+	var $has_many=array("facturebt","facturemt","factureeau","donnees_conso_bt","donnees_conso_mt","donnees_conso_eau","alerte");
 	
 	var $description = array(
 		'No_client' => 	array(

@@ -25,7 +25,10 @@ Ext.define('MainApp.controller.SearchControl', {
 		//charge le store avec l'id du pl
 		var plstore = this.getStore('PlStore');
 		plstore.load({
-			params: {idPl: record.getValue()}
+			params: {
+				BT_MT_EAU: BT_MT_EAU,
+				idPl: record.getValue()
+			}
 		});
 		
 		plstore.on('load', function(database){
@@ -34,6 +37,7 @@ Ext.define('MainApp.controller.SearchControl', {
 				var plpanel = Ext.widget('plpanel');
 			}	
 			Ext.getCmp('westregion').removeAll(false);
+			Ext.getCmp('westregion').setWidth(240);
 			Ext.getCmp('westregion').add(plpanel);
 			var rec= database.getAt(0);
 			plpanel.getForm().loadRecord(rec);
@@ -68,7 +72,10 @@ Ext.define('MainApp.controller.SearchControl', {
 		
 		var alerteStore = this.getStore('AlerteStore');
 		alerteStore.load({
-			params: {idPl: record.getValue()}
+			params: {
+				idPl: record.getValue(),
+				BT_MT_EAU: BT_MT_EAU
+			}
 		});
 		
 		//Si le panel plfacturepanel n'est pas déjà affiché
