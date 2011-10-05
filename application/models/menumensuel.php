@@ -2,7 +2,7 @@
 
 class Menumensuel extends Dmc {
 	
-	var $has_one=array("facturebt", "facturemt");
+	var $has_one=array("facturebt", "facturemt","factureeau");
 	//var $has_many=array("famille");
 
 	var $description = array(

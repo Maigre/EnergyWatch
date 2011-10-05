@@ -93,11 +93,12 @@ class Alertecontrol extends CI_Controller {
 		echo json_encode($answer);
 	}
 	
-	public function loadall()
+	public function loadall($BT_MT_EAU)
 	{
-		$BT_MT_EAU=$this->input->post('BT_MT_EAU');
+		//$BT_MT_EAU=$this->input->post('BT_MT_EAU');
 		//formatte la date
-		$array_periode=explode(' ',$this->input->post('PERIODE_MENSUELLE'));		
+		$array_periode=explode(' ',$this->input->post('PERIODE_MENSUELLE'));	
+			
 		$tableau_mois=array('Janvier'=>'01','Février'=>'02','Mars'=>'03','Avril'=>'04','Mai'=>'05','Juin'=>'06','Juillet'=>'07','Aout'=>'08','Septembre'=>'09','Octobre'=>'10','Novembre'=>'11','Décembre'=>'12');
 		$mois= $tableau_mois[$array_periode[0]];
 		$PERIODE_MENSUELLE=$array_periode[1].'-'.$mois.'-01';
@@ -114,6 +115,7 @@ class Alertecontrol extends CI_Controller {
 		}
 		$f->where_related_menumensuel('Tension',$BT_MT_EAU);
 		$f->where_related_menumensuel('periode',$PERIODE_MENSUELLE);
+		
 		$linked_field=array('Nom_prenom', 'Point_de_livraison');
 		//get parameters for infinite scrolling grid
 		$start = $this->input->post('start');

@@ -26,14 +26,8 @@ Ext.define('MainApp.view.panel.PlPanel', {
 		fieldLabel: 'Nom Prenom',
 		name      : 'Nom_prenom',
 		value     : 'SANTE PUBLIQUE',
-		xtype     : 'displayfield',
-		cls       : 'red',
-		listeners: {
-			click: {
-				element: 'el',
-				fn: function() {console.info('yo');}
-			}
-		}
+		//xtype     : 'displayfield',
+		//cls       : 'red',
 		},{
 		fieldLabel: 'Tension',
 		name      : 'Tension',

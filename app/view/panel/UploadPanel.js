@@ -123,7 +123,7 @@ Ext.define('MainApp.view.panel.UploadPanel', {
 								});
 							}
 							progressbar.updateProgress(0);
-							Ext.getCmp('southregion').removeAll(false),
+							Ext.getCmp('southregion').removeAll(),
 							Ext.getCmp('southregion').add(progressbar);
 							
 	                		function request_until_end(){
@@ -139,16 +139,16 @@ Ext.define('MainApp.view.panel.UploadPanel', {
 										if(obj.info=='continue'){
 											progressbar.updateProgress(obj.progress);
 											progress=obj.progress*100;
-											progressbar.updateText(progress+'%');
+											progressbar.updateText('Traitement des factures en cours: '+progress+'% effectu&eacute;s');
 											request_until_end();
 										}
 										else{
 											progressbar.updateProgress(obj.progress);
 											progress=obj.progress*100;
-											progressbar.updateText(progress+'%');
+											progressbar.updateText('Traitement des factures termin&eacute');
 											form.owner.ownerCt.items.items[1].store.load();
 											form.owner.ownerCt.items.items[1].doLayout();
-											Ext.getCmp('southregion').removeAll(false);
+											Ext.getCmp('southregion').removeAll();
 											Ext.Msg.alert('Success', 'Le fichier a &eacute;t&eacute; import&eacute; avec succ&egrave;s. '+ obj.lignes+' requ&ecirc;tes ont &eacute;t&eacute; effectu&eacute;es.');																
 										}
 									}

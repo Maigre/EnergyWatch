@@ -11,6 +11,9 @@ Ext.define('MainApp.controller.ButtonAlerteControl', {
     },
     openalerte: function() {
 		var alerteallstore = this.getStore('AlerteAllStore');
+		
+		alerteallstore.proxy.url= BASE_URL+'data/alertecontrol/loadall/'+BT_MT_EAU; 
+		console.info(alerteallstore.proxy.url); 
 		alerteallstore.load({
 			params: {
 				BT_MT_EAU: BT_MT_EAU,
@@ -23,5 +26,6 @@ Ext.define('MainApp.controller.ButtonAlerteControl', {
 		Ext.getCmp('centerregion').removeAll(false); //clean the center region
 		
 		Ext.getCmp('centerregion').add(alerteallpanel);
+		
 	}   
 });

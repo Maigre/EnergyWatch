@@ -1,6 +1,7 @@
 Ext.define('MainApp.view.tools.ButtonBTView', {
 	extend: 'Ext.button.Button',
 	alias : 'widget.buttonbt',
+	id: 'buttonbt',
 	icon: 'app/images/icons/tension_bt.png',
 	tooltip : 'Basse Tension',
 	scale: 'large',

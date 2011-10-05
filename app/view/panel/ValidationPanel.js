@@ -112,7 +112,7 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 			padding: 5,
 			alias: 'widget.plNonValideAgainGrid',
 			//cls: 'my-grid',
-			iconCls: 'yes',
+			iconCls: 'arrow_divide',
 			multiSelect: true,
 		    frame: true,
 		    viewConfig: {
@@ -156,7 +156,7 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 			//margins: 5,
 			padding: 5,
 			alias: 'widget.plValideGrid',
-			iconCls: 'arrow_divide',
+			iconCls: 'yes',
 			multiSelect: true,
 		    frame: true,
 		    viewConfig: {
@@ -166,8 +166,17 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 		            dropGroup: 'firstGridDDGroup'
 		        },
 		        listeners: {
-		            drop: function(node, data, dropRec, dropPosition) {
+		            drop: function(node, data, dropRec, dropPosition,a,b,c) {
 		                //var dropOn = dropRec ? ' ' + dropPosition + ' ' + dropRec.get('name') : ' on empty view';
+		                console.info(node);
+		                console.info(data);
+		                console.info(dropRec);
+		                console.info(dropPosition);
+		                console.info(a);
+		                console.info(b);
+		                console.info(c);
+		                console.info(data.records[0].store.storeId);
+		                
 		                Ext.each(data.records, function(op) {
 							Ext.Ajax.request({
 								url: BASE_URL+'data/triplcontrol/save/valide',
