@@ -21,7 +21,6 @@ Ext.define('MainApp.controller.ButtonHomeControl', {
 		if (!homepanel){
 			var homepanel = Ext.widget('homepanel');
 		}
-		
 		Ext.getCmp('centerregion').removeAll(false); //clean the center region
 		Ext.getCmp('westregion').removeAll();
 		Ext.getCmp('westregion').setWidth(0);
