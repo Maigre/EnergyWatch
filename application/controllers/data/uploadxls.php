@@ -77,7 +77,7 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 	 	
 	 	$table=$u->table_mt_bt_eau;
 	 	$periode=$u->periode;
-	 	$this->periode_pour_menu=$periode."-01";
+	 	$this->periode_pour_menu=$periode;
 	 	
 	 	$prod=unserialize($u->factures);
 	 	//print_r($prod);
@@ -208,7 +208,6 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 			 		$f->Montant_HT=substr($prod[$i][20], 1, -1);
 			 		$f->Montant_tva=substr($prod[$i][21], 1, -1);
 			 		$f->Montant_net=substr($prod[$i][22], 1, -1);
-			 		
 			 		$f->Date_index=substr($prod[$i][23], 1, -1);
 			 		$f->Nb_jours=substr($prod[$i][25], 1, -1);
 		 		}
@@ -226,6 +225,7 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 		 	//creation de l'objet menumensuel
 			 	$m= new Menumensuel();
 			 	$m->where('periode',$this->periode_pour_menu);
+			 	
 			 	if ($table=='conso_bts'){
 			 		if ($tension=='BT'){
 	 					$m->where('Tension','BT')->get();
@@ -714,7 +714,7 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 					}
 				}
 				//type 6 : Dépassement de la puissance souscrite
-				if ((isset($en_cours['Conso_PA'])) and (isset($mois_precedent['Conso_PA']))){
+				if ((isset($en_cours['idFacture'])) and (isset($mois_precedent['Conso_PA']))){
 					if ($en_cours['Conso_PA']> 1.05*$en_cours['Puisance_souscrite']){
 						$idFacture=$en_cours['idFacture'];
 						$valeur = round(100*($en_cours['Conso_PA']-$en_cours['Puisance_souscrite'])/$en_cours['Puisance_souscrite']);
@@ -722,7 +722,7 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 						$Duree_validite = 1;
 						$type_alerte=6;
 						$flux='elec';
-						$date= $mois;
+						//$date= $mois;
 						$date=date('Y-m-d',$date_encours);
 						$alerte=array(
 							'idFacture'=>$idFacture,
@@ -734,6 +734,59 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 						);
 						$alerte_temp[]=$alerte;
 					}
+				}
+				
+				//type 7 : Double facturation pour un même PL
+				if (isset($en_cours['idFacture'])){
+					$p= new Pl();			
+			 		if ($table=='conso_bts'){
+		 				if ($tension=='BT'){
+		 					$p->where_related_facturebt('id',$en_cours['idFacture'])->get();
+		 					$f= new Facturebt();
+		 				}
+		 				else{
+		 					$p->where_related_factureeau('id',$en_cours['idFacture'])->get();
+		 					$f= new Factureeau();
+		 				}
+			 		}
+			 		else{
+		 				$p->where_related_facturemt('id',$en_cours['idFacture'])->get();		
+		 				$f= new Facturemt();
+			 		}
+			 		
+			 		$f->where_related_pl('id',$p->id)->get();
+			 		$array_periode=null;
+			 		$doublons=1;
+			 		foreach($f->all as $facture){
+			 			$facture->menumensuel->get();
+			 			$id_menumensuel=$facture->menumensuel->id;
+			 			if (!is_null($array_periode)){
+			 				if (in_array($id_menumensuel,$array_periode)){
+				 				$doublons++;
+				 			}
+			 			}			 			
+			 			$array_periode[]=$id_menumensuel;
+			 		}
+			 		
+			 		if ($doublons>1){
+			 			$idFacture=$en_cours['idFacture'];
+						//$Alerte='Au mois de '.$mois.' la puissance appelée a dépassé de '.$hausse.'% la puissance souscrite.';
+						$valeur = $doublons;
+						$Duree_validite = 1;
+						$type_alerte=7;
+						$flux='elec';
+						//$date= $mois;
+						$date=date('Y-m-d',$date_encours);
+						$alerte=array(
+							'Valeur'=>$valeur,
+							'idFacture'=>$idFacture,
+							'Duree_validite'=>$Duree_validite,
+							'type_alerte'=>$type_alerte,
+							'flux'=>$flux,
+							'Date'=>$date,
+						);
+						$alerte_temp[]=$alerte;
+			 		}
 				}
 				
 				//Vérifie que l'alerte n'est pas déjà présente et valide
@@ -925,10 +978,10 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 			$i=$i+$this->decoupage;
 		}
 		$this->historique_upload($this->file_name);
-		$answer['file'] = $this->file_name;
+		$answer['file'] = utf8_encode($this->file_name);
 		$answer['info'] = 'parseok';
 		$answer['success'] = true;
-		echo json_encode(utf8_encode($answer));
+		echo json_encode($answer);
 		die();
 		return $product;
 	}

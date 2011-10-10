@@ -26,8 +26,9 @@ class Bilan extends CI_Controller {
 		else{
 			$f=new Factureeau();
 		}
-		$f->where_related_menumensuel('periode',$periode_mensuelle);
+		
 		$f->where_related_menumensuel('Tension',$BT_MT_EAU);
+		$f->where_related_menumensuel('periode',$periode_mensuelle);
 		
 		$f->get();
 		$ConsoAPayer=0;
@@ -54,9 +55,8 @@ class Bilan extends CI_Controller {
 				$NbAttente++;
 				$ConsoAttente=$ConsoAttente+$facture->Montant_net;
 			}
-			//Comptage des alertes actives
-			$a=new Alerte();
-			$a->where('etat',3);
+			
+			/*
 			if ($BT_MT_EAU=='MT'){
 				$a->where_related_facturemt('id',$facture->id)->get();
 			}		
@@ -65,9 +65,17 @@ class Bilan extends CI_Controller {
 			}
 			else{
 				$a->where_related_factureeau('id',$facture->id)->get();
-			}
-			$NbAlerteActive=$NbAlerteActive+count($a->all);
+			}*/
+			
 		}
+		//Comptage des alertes actives
+		$a=new Alerte();
+		$a->where('etat',3);
+		$a->where_related_menumensuel('Tension',$BT_MT_EAU);
+		$a->where_related_menumensuel('periode',$periode_mensuelle);
+		$a->get();
+		$NbAlerteActive=count($a->all);
+		
 		$answ['ConsoAPayer'] = $ConsoAPayer;
 		$answ['NbAPayer'] = $NbAPayer;
 		$answ['ConsoAttente'] = $ConsoAttente;

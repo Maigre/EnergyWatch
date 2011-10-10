@@ -120,9 +120,11 @@ class Facture extends CI_Controller {
 		$p->where('id', $idPl);
 		$p->get();
 		//Initialize answer array
+
 		$answer = array(
 					'size' 	=> 0,
-					'msg'	=> ''
+					'msg'	=> '',
+					'data'  => array()
 				); 
 		$answ = null;
 		//BT
@@ -282,13 +284,13 @@ class Facture extends CI_Controller {
 				//Retrie le tableau
 				foreach ($answer['data'] as $key => $row) {
 					$Date_index[$key]  = strtotime($row['Date_index']);
-				}			
-				array_multisort($Date_index, SORT_ASC, $answer['data']);
-			
-			
+				}	
+				if (!empty($answer['data'])){
+					array_multisort($Date_index, SORT_ASC, $answer['data']);
+				}		
+				
 				$answer['size'] = count($answer['data']);
-			
-			
+						
 		}
 		//MT
 		elseif($p->Tension=='MT'){

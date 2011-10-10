@@ -41,6 +41,9 @@ Ext.define('MainApp.view.tools.GridAlerteView', {
 			'</tpl>',
 			'<tpl if="Type == 6;">',
 			'D&eacute;passement Puissance de {Valeur} %',
+			'</tpl>',
+			'<tpl if="Type == 7;">',
+			'{Valeur} factures en un mois pour ce P.L',
 			'</tpl>'
 		);
 		

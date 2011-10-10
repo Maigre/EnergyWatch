@@ -10,8 +10,11 @@ Ext.define('MainApp.view.panel.HomePanel', {
         'MainApp.view.panel.UploadPanel'
     ],
     layout:{
-		type:'fit',
+		type:'hbox',
+		align: 'middle',
+		pack: 'center'
 	},
+	bodyStyle: "background-image:url(app/images/home_page.png); background-repeat:no-repeat; background-position:center center;",
     //width: 300,
     //split: true,
     padding: 5,
@@ -19,17 +22,14 @@ Ext.define('MainApp.view.panel.HomePanel', {
     //height: 300,
     border:0,
 	alias : 'widget.homepanel',
-	id    : 'homepanel',
+	id    : 'homepanel',/*
 	items: [{
-		xtype: 'panel',
-		bodyStyle: "background-image:url(app/images/home_page.png); background-repeat:no-repeat; background-position:center center;",
-		//x: 80,
-		//y: 10,
-		//margins: 10,
-		border: 0,
-		//height: 62,
-		flex:4
-	}],
+		xtype: 'buttonmt'
+	},{
+		xtype: 'buttonbt'
+	},{
+		xtype: 'buttonwater'
+	}],*/
 	
 	initComponent: function() {
 		var me = this;

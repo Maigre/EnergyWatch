@@ -93,14 +93,17 @@ class Alertecontrol extends CI_Controller {
 		echo json_encode($answer);
 	}
 	
-	public function loadall()
+	public function loadall($BT_MT_EAU,$PERIODE_MENSUELLE)
 	{
-		$BT_MT_EAU=$this->input->post('BT_MT_EAU');
+		//$BT_MT_EAU=$this->input->post('BT_MT_EAU');
 		//formatte la date
-		$array_periode=explode(' ',$this->input->post('PERIODE_MENSUELLE'));		
-		$tableau_mois=array('Janvier'=>'01','Février'=>'02','Mars'=>'03','Avril'=>'04','Mai'=>'05','Juin'=>'06','Juillet'=>'07','Aout'=>'08','Septembre'=>'09','Octobre'=>'10','Novembre'=>'11','Décembre'=>'12');
-		$mois= $tableau_mois[$array_periode[0]];
-		$PERIODE_MENSUELLE=$array_periode[1].'-'.$mois.'-01';
+		if (!is_null($this->input->post('PERIODE_MENSUELLE'))){
+			$array_periode=explode('%20',$PERIODE_MENSUELLE);	
+			$tableau_mois=array('Janvier'=>'01','Février'=>'02','Mars'=>'03','Avril'=>'04','Mai'=>'05','Juin'=>'06','Juillet'=>'07','Aout'=>'08','Septembre'=>'09','Octobre'=>'10','Novembre'=>'11','Décembre'=>'12');
+			$mois= $tableau_mois[$array_periode[0]];
+			$PERIODE_MENSUELLE=$array_periode[1].'-'.$mois.'-01';		
+		}
+
 
 		
 		if ($BT_MT_EAU=='MT'){
@@ -114,7 +117,8 @@ class Alertecontrol extends CI_Controller {
 		}
 		$f->where_related_menumensuel('Tension',$BT_MT_EAU);
 		$f->where_related_menumensuel('periode',$PERIODE_MENSUELLE);
-		$linked_field=array('Nom_prenom', 'Point_de_livraison');
+		
+		$linked_field=array('Nom_prenom', 'Point_de_livraison','No_de_facture');
 		//get parameters for infinite scrolling grid
 		$start = $this->input->post('start');
 		$limit = $this->input->post('limit');
@@ -133,7 +137,8 @@ class Alertecontrol extends CI_Controller {
 		//initialize answer array TODO(should be an array design to be JSON encoded)
 		$answer = array(
 					'size' 	=> 0,
-					'msg'	=> ''
+					'msg'	=> '',
+					'data'  => array()
 		);
 		//Populate the data
 		$answ = null;
@@ -246,7 +251,23 @@ class Alertecontrol extends CI_Controller {
 				$answ['idPl']=$p->id;
 				$answ['Nom_prenom']=$p->Nom_prenom;
 				$answ['Point_de_livraison']=$p->Point_de_livraison;
+				
+				if ($BT_MT_EAU=='MT'){
+					//MT
+					$f= new Facturemt();
+				}
+				elseif($BT_MT_EAU=='BT'){
+					//BT
+					$f= new Facturebt();
+				}
+				else{
+					//EAU
+					$f= new Factureeau();
+				}
+				$f->where_related_alerte('id',$al->id)->get();
+				$answ['No_de_facture']=$f->No_de_facture;
 				$answer['data'][] = $answ;
+				
 			}
 			//tri avec arraymultisort necessite transposer tableau (lignes->colonnes)
 			foreach ($answer['data'] as $key => $row) {
@@ -261,11 +282,14 @@ class Alertecontrol extends CI_Controller {
 				$idPl[$key] = $row['idPl'];
 				$Point_de_livraison[$key]  = $row['Point_de_livraison'];
 				$Nom_prenom[$key]  = $row['Nom_prenom'];
+				$No_de_facture[$key] = $row['No_de_facture'];
 			}
 			if (($sort=='Point_de_livraison') and ($dir=='asc')) array_multisort($Point_de_livraison, SORT_ASC, $answer['data']);
 			elseif (($sort=='Point_de_livraison') and ($dir=='desc')) array_multisort($Point_de_livraison, SORT_DESC, $answer['data']);
 			elseif (($sort=='Nom_prenom') and ($dir=='asc')) array_multisort($Nom_prenom, SORT_ASC, $answer['data']);
 			elseif (($sort=='Nom_prenom') and ($dir=='desc')) array_multisort($Nom_prenom, SORT_DESC, $answer['data']);
+			elseif (($sort=='No_de_facture') and ($dir=='asc')) array_multisort($Nom_prenom, SORT_ASC, $answer['data']);
+			elseif (($sort=='No_de_facture') and ($dir=='desc')) array_multisort($Nom_prenom, SORT_DESC, $answer['data']);
 		}
 		
 		$answer['size'] = count($a->all);

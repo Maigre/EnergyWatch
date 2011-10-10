@@ -22,7 +22,7 @@ Ext.define('MainApp.view.tools.GridFactureMTView', {
 			{header: 'HT Pointe', dataIndex: 'Montant_HT_Pointe',  flex:10, hidden: true}, 
 			{header: 'Contrib. Spe. Pointe', dataIndex: 'Contribution_Speciale_Pointe',  flex:6, hidden: true}, 
 			{header: 'Net Pointe', dataIndex: 'Montant_Net_Pointe',  flex:6}, 
-			{header: 'Ancien Index HP', dataIndex: 'Ancien_Index_Hors_Pointe', xtype:'datecolumn', format:'d-m-Y',  flex:10, hidden: true}, 
+			{header: 'Ancien Index HP', dataIndex: 'Ancien_Index_Hors_Pointe', flex:10, hidden: true}, 
 			{header: 'Nouvel Index HP',  dataIndex: 'Nouvel_Index_Hors_Pointe',  flex:8, hidden: true},
 			{header: 'Conso HP', dataIndex: 'Conso_Hors_Pointe',  flex:7}, 
 			{header: 'HT HP', dataIndex: 'Montant_HT_Hors_Pointe',  flex:8, hidden: true}, 
