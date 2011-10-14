@@ -4,11 +4,14 @@ Ext.define('MainApp.view.tools.ButtonWaterView', {
 	extend: 'Ext.button.Button',
 	alias : 'widget.buttonwater',
 	icon: 'app/images/icons/water.png',
-	tooltip : 'Eau',
-	scale: 'large',
+	cls: 'x-btn-text-icon',
+	//tooltip : 'Eau',
+	scale: 'medium',
 	height: 40,
+	//width: 72,
 	width: 40,
-	text: '',
+	style: "padding-left:6px",
+	//text: 'Eau',
 	border: 0,
 	
 	initComponent: function() {

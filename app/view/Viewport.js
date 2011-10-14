@@ -38,7 +38,7 @@ Ext.define('MainApp.view.Viewport', {
 				id: 'centerregion',
 				region: 'center',
 				layout: 'fit',
-				//bodyPadding: 10,
+				bodyStyle: "padding-left: 2px; padding-right: 2px;",
 				items:[{
 					xtype: 'homepanel'
 				}]
@@ -48,7 +48,7 @@ Ext.define('MainApp.view.Viewport', {
 				width: 0,
 				id: 'westregion',
 				layout: 'fit',
-				padding: 2,
+				padding: 0,
 				region: 'west',
 				items:[{
 					xtype: 'menumensuelpanel'
@@ -65,17 +65,19 @@ Ext.define('MainApp.view.Viewport', {
 					align: 'middle',
 					pack: 'center'
 				},
-				bodyStyle: "background-image:url(app/images/banner_color.png); border:0px;"
+				bodyStyle: "background-image:url(app/images/back_top.png); border:0px;  background-repeat:repeat; line-height:30px; text-align:center; font-style: italic;",
+				padding: 2,
+				html: "EnergyWatch - AirLab 2011"
 			},
 			{
 				xtype: 'panel',
 				height: 58,
 				region: 'north',
-				bodyStyle: "background-image:url(app/images/ewatch_banner_color.png); border:0px;",
+				padding: 2,
+				bodyStyle: "background-image:url(app/images/back_top.png); border:0px;  background-repeat:repeat;",
 				layout:{
 					type:'hbox',
 					align:'stretch'
-					//padding: 10
 				},
 				items:[{
 					xtype: 'buttonhome',
@@ -119,7 +121,7 @@ Ext.define('MainApp.view.Viewport', {
 					//width: 80
 				},{
 					xtype: 'panel',
-					bodyStyle: "background-image:url(app/images/ewatch_banner.png); background-repeat:no-repeat;",
+					bodyStyle: "background-image:url(app/images/back_mid.png); background-color: transparent; background-repeat:no-repeat; background-position:center;",
 					//x: 80,
 					//y: 10,
 					//margins: 10,
@@ -128,7 +130,6 @@ Ext.define('MainApp.view.Viewport', {
 					flex:4
 				},{
 					xtype: 'searchbar',
-					bodyStyle: "background-image:url(app/images/ewatch_banner_color.png)",
 					//x: 1100,
 					//align: 'left',
 					margins:'20 0 15 0',
@@ -137,8 +138,7 @@ Ext.define('MainApp.view.Viewport', {
 					flex:1
 				},{
 					xtype: 'searchbaricon',
-					margins: '20 15 17 0',
-					flex:0.08
+					margins: '20 15 17 0'
 				}]
 			}];
 

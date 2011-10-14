@@ -2,7 +2,7 @@ Ext.define('MainApp.view.panel.UploadPanel', {
 	extend: 'Ext.form.Panel',
 	alias : 'widget.uploadpanel',
 	width : 400,
-	bodyPadding: 10,
+	bodyPadding: 1,
 	margin: 50,
 	url:'',
     frame : true,

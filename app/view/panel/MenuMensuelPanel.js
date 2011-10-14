@@ -29,7 +29,7 @@ Ext.define('MainApp.view.panel.MenuMensuelPanel', {
 						id: 'Menu-button-'+op,
 						text: op,
 						iconCls: 'money',
-						margin: 10,
+						margin: 5,
 						width: 120, 
 						handler: function(){
 							PERIODE_MENSUELLE = op;

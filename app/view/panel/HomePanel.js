@@ -14,10 +14,10 @@ Ext.define('MainApp.view.panel.HomePanel', {
 		align: 'middle',
 		pack: 'center'
 	},
-	bodyStyle: "background-image:url(app/images/home_page.png); background-repeat:no-repeat; background-position:center center;",
+	bodyStyle: "background-image:url(app/images/2.jpg); background-repeat:no-repeat; background-position:center center;-moz-background-size: cover; -webkit-background-size: cover;-o-background-size: cover;background-size: cover;",
     //width: 300,
     //split: true,
-    padding: 5,
+    padding: 0,
     opacity:0,
     //height: 300,
     border:0,

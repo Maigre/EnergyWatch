@@ -7,7 +7,8 @@ Ext.define('MainApp.view.panel.PlAllPanel', {
 	layout: {
         type: 'fit',
         //align: 'center',
-        padding: 5
+        //padding: 5
+    	    bodyStyle: "background-image:url(app/images/2.jpg); background-repeat:no-repeat; background-position:center center;-moz-background-size: cover; -webkit-background-size: cover;-o-background-size: cover;background-size: cover;"
     },
 	
 	initComponent: function() {
