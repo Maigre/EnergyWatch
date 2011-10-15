@@ -8,6 +8,12 @@ Ext.define('MainApp.controller.ButtonWaterControl', {
         });
     },
     tensionwater: function() {
+		//buttonmt=Ext.getCmp('buttonmt');
+		
+		movebutton();//define in ButtonMTControl.js
+		westregion_appear();
+		one_button_pressed('water');
+		
 		BT_MT_EAU='EAU';
 		Ext.getCmp('westregion').removeAll();
 		Ext.getCmp('centerregion').removeAll(false);

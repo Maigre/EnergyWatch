@@ -76,13 +76,13 @@ class Bilan extends CI_Controller {
 		$a->get();
 		$NbAlerteActive=count($a->all);
 		
-		$answ['ConsoAPayer'] = $ConsoAPayer;
-		$answ['NbAPayer'] = $NbAPayer;
-		$answ['ConsoAttente'] = $ConsoAttente;
-		$answ['NbAttente'] = $NbAttente;
-		$answ['ConsoRejete'] = $ConsoRejete;
-		$answ['NbRejete'] = $NbRejete;
-		$answ['NbAlerteActive'] = $NbAlerteActive;
+		$answ['ConsoAPayer'] = $ConsoAPayer.' CFA';
+		$answ['NbAPayer'] = $NbAPayer.' Factures';
+		$answ['ConsoAttente'] = $ConsoAttente.' CFA';
+		$answ['NbAttente'] = $NbAttente.' Factures';
+		$answ['ConsoRejete'] = $ConsoRejete.' CFA';
+		$answ['NbRejete'] = $NbRejete.' Factures';
+		$answ['NbAlerteActive'] = $NbAlerteActive.' Factures';
 		
 		$answer['data'][]=$answ;
 		

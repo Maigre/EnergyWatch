@@ -4,6 +4,8 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 	id    : 'validationpanel',
   	requires:['MainApp.view.tools.GridPlView'],
 	bodyPadding: 5,
+	//margins: 5,
+	//padding: 5,
 	layout: {
         type: 'table',
         columns: 2/*,
@@ -14,35 +16,13 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
             }
         }*/
         //align: 'stretch',
-        //padding: 5
     },
-    //defaults     : { frame: true },
+    bodyStyle: "background-image:url(app/images/2.jpg); background-repeat:no-repeat; background-position:center center;-moz-background-size: cover; -webkit-background-size: cover;-o-background-size: cover;background-size: cover;",
+    //defaults : { margins: 5 },
 	
 	initComponent: function() {
 		var me = this;
-		/*var myData = [
-		    { name : "Rec 0", column1 : "0", column2 : "0" },
-		    { name : "Rec 1", column1 : "1", column2 : "1" },
-		    { name : "Rec 2", column1 : "2", column2 : "2" },
-		    { name : "Rec 3", column1 : "3", column2 : "3" },
-		    { name : "Rec 4", column1 : "4", column2 : "4" },
-		    { name : "Rec 5", column1 : "5", column2 : "5" },
-		    { name : "Rec 6", column1 : "6", column2 : "6" },
-		    { name : "Rec 7", column1 : "7", column2 : "7" },
-		    { name : "Rec 8", column1 : "8", column2 : "8" },
-		    { name : "Rec 9", column1 : "9", column2 : "9" }
-		];
 		
-		var myData2 = [
-		    { name : "Rec 10", column1 : "10", column2 : "10" },
-		    { name : "Rec 11", column1 : "11", column2 : "11" },
-		    { name : "Rec 12", column1 : "12", column2 : "12" }
-		];*/
-
-
-		
-		
-
 		// Column Model shortcut array
 		var columns = [
 		    {text: "Point de Livraison", flex: 1, sortable: true, dataIndex: 'Nom_prenom',
@@ -63,7 +43,7 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 		var NouveauPlGrid = Ext.create('Ext.grid.Panel', {
 			height: 280,
 			width:550,
-			//margins: 5,
+			margin: 5,
 			padding: 5,
 			iconCls: 'arrow_divide',
 		    alias: 'widget.nouveauPlGrid',
@@ -108,7 +88,7 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 		var PlNonValideAgainGrid = Ext.create('Ext.grid.Panel', {
 			height: 280,
 			width:550,
-			//margins: 5,
+			margin: 5,
 			padding: 5,
 			alias: 'widget.plNonValideAgainGrid',
 			//cls: 'my-grid',
@@ -153,7 +133,7 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 		var PlValideGrid = Ext.create('Ext.grid.Panel', {
 			height: 280,
 			width:550,
-			//margins: 5,
+			margin: 5,
 			padding: 5,
 			alias: 'widget.plValideGrid',
 			iconCls: 'yes',
@@ -207,7 +187,7 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 		var PlNonValideGrid = Ext.create('Ext.grid.Panel', {
 			height: 280,
 			width:550,
-			//margins: 5,
+			margin: 5,
 			padding: 5,
 			alias: 'widget.plNonValideGrid',
 			iconCls: 'no',

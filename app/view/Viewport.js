@@ -46,6 +46,7 @@ Ext.define('MainApp.view.Viewport', {
 			{
 				xtype: 'container',
 				width: 0,
+				//collapsed: true,
 				id: 'westregion',
 				layout: 'fit',
 				padding: 0,
@@ -91,16 +92,22 @@ Ext.define('MainApp.view.Viewport', {
 					xtype: 'buttonupload',
 					//x: 80,
 					//y: 10,
+					id: 'buttonuploadheader',
+					hidden	: true,
 					margins: 10,
 					border: 0,
+					width   : 38
 					//height: 62,
 					//width: 80
 				},{
-					xtype: 'buttonwater',
+					xtype	: 'buttonwater',
 					//x: 80,
 					//y: 10,
-					margins: 10,
-					border: 0,
+					margins	: 10,
+					border	: 0,
+					hidden	: true,
+					id		: 'buttonwaterheader',
+					width   : 38
 					//height: 62,
 					//width: 80
 				},{
@@ -109,6 +116,9 @@ Ext.define('MainApp.view.Viewport', {
 					//y: 10,
 					margins: 10,
 					border: 0,
+					hidden	: true,
+					id		: 'buttonbtheader',
+					width   : 38
 					//height: 62,
 					//width: 80
 				},{
@@ -117,6 +127,9 @@ Ext.define('MainApp.view.Viewport', {
 					//y: 10,
 					margins: 10,
 					border: 0,
+					hidden	: true,
+					id		: 'buttonmtheader',
+					width   : 38
 					//height: 62,
 					//width: 80
 				},{

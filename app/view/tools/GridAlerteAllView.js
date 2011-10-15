@@ -7,7 +7,7 @@ Ext.define('MainApp.view.tools.GridAlerteAllView', {
 	//forceFit: true,
 	//width: 1100,
 	frame: true,
-	margin: 5,
+	margin: '10 20 20 10',
 	/*dockedItems:[{
         xtype: 'toolbar',
         dock: 'bottom',

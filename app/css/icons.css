@@ -89,3 +89,12 @@
 .arrow_divide{
 	background: url(../images/icons/arrow_divide.png) no-repeat !important;
 }
+
+
+.alert{  
+    background: url(../images/icons/error.png) no-repeat !important;  
+} 
+
+.help{  
+    background: url(../images/icons/help.png) no-repeat !important;  
+} 
