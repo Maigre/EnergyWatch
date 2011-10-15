@@ -130,7 +130,7 @@ westregion_desappear= function(){
 one_button_pressed= function(tension){
 	all_button=['buttonmt','buttonmtheader','buttonbt','buttonbtheader','buttonwater','buttonwaterheader'];
 	Ext.each(all_button,function(button){
-		button.toggle(false);
+		Ext.getCmp(button).toggle(false);
 	})
 	Ext.getCmp('button'+tension).toggle(true);
 	Ext.getCmp('button'+tension+'header').toggle(true);

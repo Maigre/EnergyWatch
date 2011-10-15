@@ -34,18 +34,14 @@ Ext.define('MainApp.view.panel.MenuMensuelPanel', {
 						width: 120, 
 						handler: function(){
 							//deselectionne les autres buttons pour ne selectionner que celui qui est cliqué
-							console.info(this.up('panel').items.items);
-							Ext.each(this.up('panel').items.items,function(button){
-								console.info('ok');
-								console.info(button);
-								
+							Ext.each(this.up('panel').items.items,function(button){							
 								button.toggle(false);
 							})
-							
 							this.toggle(true);
 							
 							PERIODE_MENSUELLE = op;
 							Ext.getCmp('centerregion').removeAll(false);
+							
 							var bilanstore = Ext.getStore('BilanStore');
 							bilanstore.load({
 								params: {
@@ -89,10 +85,10 @@ Ext.define('MainApp.view.panel.MenuMensuelPanel', {
 								bilanattentepanel.title='Attente - '+op;
 								bilanalertepanel.title='Alertes - '+op;
 								*/
-								
+								//homepanel=Ext.getCmp('homepanel');
+								//Ext.getCmp('centerregion').add(homepanel);
 								Ext.getCmp('centerregion').add(bilanmainpanel);
-								
-								bilanvalidepanel.animate({
+								/*bilanvalidepanel.animate({
 									duration: 1000,
 									from: {
 										opacity: 0
@@ -128,6 +124,7 @@ Ext.define('MainApp.view.panel.MenuMensuelPanel', {
 										opacity: 1
 									}
 								});  
+								*/
 								//bilanpanel.center();
 								//bilanpanel.setTitle('Bilan '+op+' '+BT_MT_EAU);
 								

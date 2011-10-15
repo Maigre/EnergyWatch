@@ -4,11 +4,12 @@ Ext.define('MainApp.view.tools.ButtonValidationView', {
 	extend: 'Ext.button.Button',
 	alias : 'widget.buttonvalidation',
 	icon: 'app/images/icons/tri_coloured.png',
+	iconAlign: 'top',
+	text: 'Validation',
 	tooltip : 'Validation P.L',
 	scale: 'large',
-	height: 40,
-	width: 40,
-	text: '',
+	height: 60,
+	width: 60,
 	border: 0,
 	
 	initComponent: function() {

@@ -14,9 +14,9 @@ Ext.define('MainApp.view.panel.PlFacturePanel', {
 	initComponent: function() {
 		var me = this;
 		me.items = [
-			{
+			/*{
 				xtype: 'facturechart'
-			},{
+			},*/{
 				xtype: 'gridfacture',
 				padding:5,
 				flex:2
