@@ -6,11 +6,11 @@ Ext.define('MainApp.view.tools.ButtonBTView', {
 	//tooltip : 'Basse Tension',
 	scale: 'medium',
 	height: 40,
-	//width: 115,
-	style: "padding-left:9px",
-	width: 40,
-	//text: 'Basse Tension',
+	width: 115,
+	style: "padding-left:6px",
+	text: 'Basse Tension',
 	border: 0,
+	enableToggle : true,
 	
 	initComponent: function() {
 		var me = this;

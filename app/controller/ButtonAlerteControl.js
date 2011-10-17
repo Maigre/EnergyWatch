@@ -23,6 +23,8 @@ Ext.define('MainApp.controller.ButtonAlerteControl', {
 		if (!alerteallpanel){
 			var alerteallpanel = Ext.widget('alerteallpanel');
 		}
+		//Ext.getCmp('bilanmainpanelup').removeAll(false);
+		//Ext.getCmp('bilanmainpaneldown').removeAll(false);
 		Ext.getCmp('centerregion').removeAll(false); //clean the center region
 		
 		Ext.getCmp('centerregion').add(alerteallpanel);

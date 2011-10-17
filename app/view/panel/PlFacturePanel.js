@@ -8,14 +8,15 @@ Ext.define('MainApp.view.panel.PlFacturePanel', {
         align: 'stretch',
         //padding: 5,
     },
+    bodyStyle: "background-image:url(app/images/2.jpg); background-repeat:no-repeat; background-position:center center;-moz-background-size: cover; -webkit-background-size: cover;-o-background-size: cover;background-size: cover;",
 	//baseCls: 'x-box',
 	
 	initComponent: function() {
 		var me = this;
 		me.items = [
-			{
+			/*{
 				xtype: 'facturechart'
-			},{
+			},*/{
 				xtype: 'gridfacture',
 				padding:5,
 				flex:2

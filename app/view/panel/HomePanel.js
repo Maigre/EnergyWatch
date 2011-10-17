@@ -17,19 +17,23 @@ Ext.define('MainApp.view.panel.HomePanel', {
 	bodyStyle: "background-image:url(app/images/2.jpg); background-repeat:no-repeat; background-position:center center;-moz-background-size: cover; -webkit-background-size: cover;-o-background-size: cover;background-size: cover;",
     //width: 300,
     //split: true,
-    padding: 0,
     opacity:0,
     //height: 300,
     border:0,
 	alias : 'widget.homepanel',
-	id    : 'homepanel',/*
+	id    : 'homepanel',
+	defaults : {
+		margins : 20
+	},
 	items: [{
-		xtype: 'buttonmt'
+		xtype: 'buttonupload'
+	},{
+		xtype: 'buttonwater'
 	},{
 		xtype: 'buttonbt'
 	},{
-		xtype: 'buttonwater'
-	}],*/
+		xtype: 'buttonmt'
+	}],
 	
 	initComponent: function() {
 		var me = this;
