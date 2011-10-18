@@ -7,15 +7,8 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 	//margins: 5,
 	//padding: 5,
 	layout: {
-        type: 'table',
-        columns: 2/*,
-        tableAttrs: {
-            style: {
-                width: '50%',
-                height: '50%'
-            }
-        }*/
-        //align: 'stretch',
+        type: 'vbox',
+        align: 'stretch'
     },
     bodyStyle: "background-image:url(app/images/2.jpg); background-repeat:no-repeat; background-position:center center;-moz-background-size: cover; -webkit-background-size: cover;-o-background-size: cover;background-size: cover;",
     //defaults : { margins: 5 },
@@ -41,8 +34,7 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 
 		// declare the source Grid
 		var NouveauPlGrid = Ext.create('Ext.grid.Panel', {
-			height: 280,
-			width:550,
+			flex:1,
 			margin: 5,
 			padding: 5,
 			iconCls: 'arrow_divide',
@@ -86,12 +78,10 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 
 		// create the destination Grid
 		var PlNonValideAgainGrid = Ext.create('Ext.grid.Panel', {
-			height: 280,
-			width:550,
+			flex:1,
 			margin: 5,
 			padding: 5,
 			alias: 'widget.plNonValideAgainGrid',
-			//cls: 'my-grid',
 			iconCls: 'arrow_divide',
 			multiSelect: true,
 		    frame: true,
@@ -131,8 +121,7 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 
 		// create the destination Grid
 		var PlValideGrid = Ext.create('Ext.grid.Panel', {
-			height: 280,
-			width:550,
+			flex:1,
 			margin: 5,
 			padding: 5,
 			alias: 'widget.plValideGrid',
@@ -185,8 +174,7 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 
 		// create the destination Grid
 		var PlNonValideGrid = Ext.create('Ext.grid.Panel', {
-			height: 280,
-			width:550,
+			flex:1,
 			margin: 5,
 			padding: 5,
 			alias: 'widget.plNonValideGrid',
@@ -232,12 +220,31 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 		});
 
 		
-		me.items = [
-				NouveauPlGrid,
-				PlValideGrid,
-				PlNonValideAgainGrid,
+		me.items = [{
+			xtype: 'panel',
+			bodyStyle: "background-color: transparent;",
+			border: 0,
+			flex: 1,
+			layout:{
+				type:'hbox',
+				align: 'stretch'
+			},
+			items:[NouveauPlGrid,
+				PlValideGrid
+			]
+		},{
+			xtype: 'panel',
+			bodyStyle: "background-color: transparent;",
+			border: 0,
+			flex: 1,
+			layout:{
+				type:'hbox',
+				align: 'stretch'
+			},
+			items:[PlNonValideAgainGrid,
 				PlNonValideGrid
-		];
+			]
+		}];
 		
 		me.callParent(arguments);
   	}
