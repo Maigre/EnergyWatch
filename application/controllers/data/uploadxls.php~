@@ -715,7 +715,7 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 				}
 				//type 6 : Dépassement de la puissance souscrite
 				if ((isset($en_cours['idFacture'])) and (isset($mois_precedent['Conso_PA']))){
-					if (($en_cours['Conso_PA']> 1.10*$en_cours['Puisance_souscrite'])or($en_cours['Conso_PA']<0.90*$en_cours['Puisance_souscrite'])){
+					if ($en_cours['Conso_PA']> 1.05*$en_cours['Puisance_souscrite']){
 						$idFacture=$en_cours['idFacture'];
 						$valeur = round(100*($en_cours['Conso_PA']-$en_cours['Puisance_souscrite'])/$en_cours['Puisance_souscrite']);
 						//$Alerte='Au mois de '.$mois.' la puissance appelée a dépassé de '.$hausse.'% la puissance souscrite.';

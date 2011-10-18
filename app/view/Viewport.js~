@@ -96,8 +96,7 @@ Ext.define('MainApp.view.Viewport', {
 					hidden	: true,
 					margins: 10,
 					border: 0,
-					width   : 38,
-					text	: ''
+					width   : 38
 					//height: 62,
 					//width: 80
 				},{
@@ -119,7 +118,6 @@ Ext.define('MainApp.view.Viewport', {
 					margins: 10,
 					border: 0,
 					hidden	: true,
-					text	: '',
 					id		: 'buttonbtheader',
 					width   : 38
 					//height: 62,
@@ -131,7 +129,6 @@ Ext.define('MainApp.view.Viewport', {
 					margins: 10,
 					border: 0,
 					hidden	: true,
-					text	: '',
 					id		: 'buttonmtheader',
 					width   : 38
 					//height: 62,

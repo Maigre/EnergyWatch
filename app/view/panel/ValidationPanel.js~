@@ -204,7 +204,7 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 		                //data.records[0]
 		                window_validation = Ext.create('Ext.window.Window', {
 							title: 'Confirmation rejet PL',
-							height: 130,
+							height: 200,
 							width: 400,
 							layout: 'fit',
 							items: {  // Let's put an empty grid in just to illustrate fit layout

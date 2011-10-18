@@ -10,7 +10,7 @@ Ext.define('MainApp.view.tools.ButtonWaterView', {
 	scale: 'medium',
 	height: 40,
 	width: 72,
-	style: "padding-left:3px",
+	style: "padding-left:5px",
 	text: ' Eau',
 	border: 0,
 	enableToggle : true,

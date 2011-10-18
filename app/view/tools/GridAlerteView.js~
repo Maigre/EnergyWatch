@@ -85,7 +85,7 @@ Ext.define('MainApp.view.tools.GridAlerteView', {
 		
 		this.columns = [
 			{header: 'N&deg; Facture', dataIndex: 'No_de_facture', flex:1},
-			{header: 'Date', dataIndex: 'Date', xtype:'datecolumn', format:'d-m-Y', width:80},
+			{header: 'Daa', dataIndex: 'Date', xtype:'datecolumn', format:'d-m-Y', width:80},
 			{header: 'Alerte', dataIndex: 'Type', xtype: 'templatecolumn', tpl: type_tpl, flex:1}, 
 			
 			//{header: 'Hausse', dataIndex: 'Valeur', xtype: 'templatecolumn', tpl: valeur_tpl, flex:1},

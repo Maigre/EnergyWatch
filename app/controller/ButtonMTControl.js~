@@ -154,6 +154,7 @@ Ext.define('MainApp.controller.ButtonMTControl', {
 		one_button_pressed('mt');
 		
 		
+		//if(this.up(''))
 		BT_MT_EAU='MT';
 		Ext.getCmp('westregion').removeAll();
 		
