@@ -101,7 +101,7 @@ Ext.define('MainApp.view.tools.GridAlerteView', {
 			{header: 'Commentaire', dataIndex: 'Commentaire', flex:2,
 				editor: {
 		            xtype: 'textfield',
-		            allowBlank: false,
+		            allowBlank: true,
 		            //triggerAction: 'all',
 		            selectOnTab: true//,
 		            //lazyRender: true,

@@ -16,7 +16,7 @@ Ext.define('MainApp.view.panel.PlPanel', {
 	fieldDefaults: {
 		msgTarget: 'side',
 		labelWidth: 75,
-		allowBlank:false
+		allowBlank:true
 	},
 	defaultType  : 'textfield',
 	defaults     : {

@@ -145,7 +145,7 @@ class Triplcontrol extends CI_Controller {
 		$p->get();
 		$p->etat=$etat;
 		echo $etat;
-		if($etat==3){
+		if($etat=='nonvalide'){
 			$p->date_validation=$date_validation;
 			echo $p->date_validation;
 		} 

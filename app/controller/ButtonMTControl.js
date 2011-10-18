@@ -2,7 +2,6 @@ movebutton = function(){
 	
 	
 	//if(buttonmt.up('container').id=='homepanel'){
-	console.info(Ext.getCmp('buttonmtheader').hidden);
 		if(Ext.getCmp('buttonmtheader').hidden==true){
 			Ext.getCmp('buttonwaterheader').opacity=0;
 			Ext.getCmp('buttonbtheader').opacity=0;
@@ -155,7 +154,6 @@ Ext.define('MainApp.controller.ButtonMTControl', {
 		one_button_pressed('mt');
 		
 		
-		//if(this.up(''))
 		BT_MT_EAU='MT';
 		Ext.getCmp('westregion').removeAll();
 		

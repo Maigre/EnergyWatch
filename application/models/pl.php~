@@ -111,14 +111,14 @@ class Pl extends Dmc {
 				'type'		=> 'normal',
 				'formfield' 	=> array('text', 15)
 		),
-		'etat' => array(
+		'etat' = > array(
 				'label' 	=> array('etat',false),
 				'rules' 	=> array('required', 'xss_clean'),
 				'defval'	=> '',
 				'type'		=> 'normal',
 				'formfield' 	=> array('text', 15)
 		),
-		'date_validation' => array(
+		'date_validation' = > array(
 				'label' 	=> array('date_validation',false),
 				'rules' 	=> array('required', 'xss_clean'),
 				'defval'	=> '',

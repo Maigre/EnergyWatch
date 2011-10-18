@@ -7,7 +7,7 @@ Ext.define('MainApp.view.tools.GridAlerteAllView', {
 	//forceFit: true,
 	//width: 1100,
 	frame: true,
-	margin: '10 20 20 10',
+	margin: '10 50 50 10',
 	/*dockedItems:[{
         xtype: 'toolbar',
         dock: 'bottom',
@@ -34,18 +34,34 @@ Ext.define('MainApp.view.tools.GridAlerteAllView', {
 		
 		type_tpl= new Ext.XTemplate(
 			'<tpl if="Type == 1;">',
-			'Hausse de {Valeur}% des Consommations',
+			'Hausse des Consommations',
 			'</tpl>',
 			'<tpl if="Type == 4;">',
 			'Changement Puissance Souscrite',
 			'</tpl>',
 			'<tpl if="Type == 6;">',
-			'D&eacute;passement Puissance de {Valeur} %',
+			'D&eacute;passement Puissance',
 			'</tpl>',
 			'<tpl if="Type == 7;">',
-			'{Valeur} factures en un mois pour ce P.L',
+			'Plusieurs factures en un mois pour ce P.L',
 			'</tpl>'
 		);
+		
+		valeur_tpl= new Ext.XTemplate(
+			'<tpl if="Type == 1;">',
+			'{Valeur}%',
+			'</tpl>',
+			'<tpl if="Type == 4;">',
+			'',
+			'</tpl>',
+			'<tpl if="Type == 6;">',
+			'{Valeur} %',
+			'</tpl>',
+			'<tpl if="Type == 7;">',
+			'{Valeur}',
+			'</tpl>'
+		);
+		
 		
 		/*valeur_tpl= new Ext.XTemplate(
 			'{Valeur} %'
@@ -87,9 +103,9 @@ Ext.define('MainApp.view.tools.GridAlerteAllView', {
 			{header: 'Nom PL', dataIndex: 'Nom_prenom', flex:3},
 			{header: 'N&deg; PL', dataIndex: 'Point_de_livraison', flex:1},
 			{header: 'N&deg; Facture', dataIndex: 'No_de_facture', flex:1},
-			{header: 'Date', dataIndex: 'Date', xtype:'datecolumn', format:'d-m-Y', width:80},
-			//{header: 'Alerte', dataIndex: 'Type', xtype: 'templatecolumn', tpl: type_tpl, flex:2}, 
-			{header: 'Alerte', dataIndex: 'Valeur', xtype: 'templatecolumn', tpl: type_tpl, flex:2},
+			{header: 'Date', dataIndex: 'Date', xtype:'datecolumn', format:'d-m-Y', width:80}, 
+			{header: 'Alerte', dataIndex: 'Type', xtype: 'templatecolumn', tpl: type_tpl, flex:2},
+			{header: 'Valeur', dataIndex: 'Valeur', xtype: 'templatecolumn', tpl: valeur_tpl, width:60},
 			{header: 'Etat', dataIndex: 'Etat', xtype: 'templatecolumn', tpl: flagtpl , align:'center', width:40,
 				editor: {
 		            xtype: 'flagcombobox',

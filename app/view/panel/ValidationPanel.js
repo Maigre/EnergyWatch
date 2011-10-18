@@ -29,6 +29,7 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 			},
 		    {text: "Num&eacute;ro P.L", width: 70, sortable: true, dataIndex: 'Point_de_livraison'},
 		    {text: "Num&eacute;ro Facture", width: 70, sortable: true, dataIndex: 'No_de_facture'},
+		    {text: "", width: 70, sortable: true, dataIndex: 'date_validation', hidden: true, Value: 10},
 		    {text: "Montant net", width: 70, sortable: true, dataIndex: 'Montant_net'}
 		];
 
@@ -118,6 +119,7 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 		    //,		    margins          : '5 5 5 5'
 		});
 		
+		
 
 		// create the destination Grid
 		var PlValideGrid = Ext.create('Ext.grid.Panel', {
@@ -137,14 +139,6 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 		        listeners: {
 		            drop: function(node, data, dropRec, dropPosition,a,b,c) {
 		                //var dropOn = dropRec ? ' ' + dropPosition + ' ' + dropRec.get('name') : ' on empty view';
-		                console.info(node);
-		                console.info(data);
-		                console.info(dropRec);
-		                console.info(dropPosition);
-		                console.info(a);
-		                console.info(b);
-		                console.info(c);
-		                console.info(data.records[0].store.storeId);
 		                
 		                Ext.each(data.records, function(op) {
 							Ext.Ajax.request({
@@ -181,6 +175,9 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 			iconCls: 'no',
 			multiSelect: true,
 		    frame: true,
+		    beforeDragDrop: function(){
+		    	console.info('ok');
+		    },
 			//cls: 'my-grid',
 			viewConfig: {
 		        plugins: {
@@ -192,28 +189,102 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 		            drop: function(node, data, dropRec, dropPosition) {
 		                //var dropOn = dropRec ? ' ' + dropPosition + ' ' + dropRec.get('name') : ' on empty view';
 		                //var idfacture=data.records[0].get('id');
-		                Ext.each(data.records, function(op) {
-							Ext.Ajax.request({
-								url: BASE_URL+'data/triplcontrol/save/nonvalide',
-								method : 'POST',
-								params : {
-									idfacture: op.get('id'),
-									BT_MT_EAU: BT_MT_EAU
-								}/*,
-								success: function(response){
-										Ext.get('working-area').insertHtml('beforeBegin',response.responseText,true);
-								}*/
-							});
-		                	//console.info(op.get('id'));
-		                })
-		                
+		                //data.records[0]
+		                window_validation = Ext.create('Ext.window.Window', {
+							title: 'Confirmation rejet PL',
+							height: 130,
+							width: 400,
+							layout: 'fit',
+							items: {  // Let's put an empty grid in just to illustrate fit layout
+								xtype: 'form',
+								border: false,
+								frame: true,
+								items:[{
+									xtype		: 'datefield',
+									id			: 'date_validation',
+									anchor		: '96%',
+									fieldLabel	: 'Date de prise d\'effet',
+									name		: 'date_validation',
+									minValue	: new Date(),
+									value		: new Date()
+								},{
+									xtype		: 'textfield',
+									inputType	: 'password',
+									anchor		: '96%',
+									fieldLabel	: 'Mot de passe',
+									name		: 'password'
+								}],
+								
+							},
+							buttonAlign : 'right',
+							buttons: [{ 
+								text: 'O.K',
+								listeners: {
+									click: function() {
+										// this == the button, as we are in the local scope
+										
+										date_validation=Ext.getCmp('date_validation').value;
+										console.info(date_validation);
+										if ((date_validation.getMonth()+1)<10){
+											date_validation=date_validation.getFullYear()+'-0'+(date_validation.getMonth()+1)+'-'+date_validation.getDate();
+										}
+										else{
+											date_validation=date_validation.getFullYear()+'-'+(date_validation.getMonth()+1)+'-'+date_validation.getDate();
+										}
+										
+										data.records[0].data['date_validation']=date_validation;
+										
+										console.info(data.records[0].get('date_validation'));
+										
+										//data.records[0].get('date_validation')=0;
+										this.up('window').close();
+										Ext.each(data.records, function(op) {
+											Ext.Ajax.request({
+												url: BASE_URL+'data/triplcontrol/save/nonvalide',
+												method : 'POST',
+												params : {
+													idfacture: op.get('id'),
+													BT_MT_EAU: BT_MT_EAU,
+													date_validation: op.get('date_validation')
+												}/*,
+												success: function(response){
+														Ext.get('working-area').insertHtml('beforeBegin',response.responseText,true);
+												}*/
+											});
+											//console.info(op.get('id'));
+										})
+										var nonvalidestore = Ext.getStore('TriPlNonValideStore');
+										nonvalidestore.load({
+											params: {
+												BT_MT_EAU: BT_MT_EAU,
+												PERIODE_MENSUELLE: PERIODE_MENSUELLE
+											}}
+										);
+									}
+								}
+							}]
+						}).show();
 		            }		            
 		        },
 		        deferEmptyText : false,
 		        emptyText: '<br><br><br><br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Glisser-D&eacute;poser les factures non-valides ici.<br>&nbsp;&nbsp;Laisser la touche Ctrl enfonc&eacute;e pour d&eacute;placer plusieurs lignes.'				
 		    },
 		    store            : 'TriPlNonValideStore',
-		    columns          : columns,
+		    columns          : [
+				{text: "Point de Livraison", flex: 1, sortable: true, dataIndex: 'Nom_prenom',
+					renderer: function(value, metaData, record, rowIndex) {
+						if (value == ''){
+							metaData.tdCls = 'emptyText';
+						} 
+						return value;
+					
+					}
+				},
+				{text: "Num&eacute;ro P.L", width: 70, sortable: true, dataIndex: 'Point_de_livraison'},
+				{text: "Num&eacute;ro Facture", width: 70, sortable: true, dataIndex: 'No_de_facture'},
+				{text: "Montant net", width: 70, sortable: true, dataIndex: 'Montant_net'},
+				{text: "Date r&eacute;sil.", width: 80, sortable: true, dataIndex: 'date_validation', xtype: 'datecolumn',   format:'d-m-Y' }
+			],
 		    stripeRows       : true,
 		    title            : 'P.L rejet&eacute;s'
 		    //,		    margins          : '5 5 5 5'
