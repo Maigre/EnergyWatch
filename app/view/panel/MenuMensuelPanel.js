@@ -149,6 +149,25 @@ Ext.define('MainApp.view.panel.MenuMensuelPanel', {
 							});
 						}
 					});
+					
+					contextMenu = new Ext.menu.Menu({
+						  items: [{
+								text: 'Edit',
+								iconCls: 'edit',
+								handler: function(){
+									console.info('ok');
+								}
+						  }]
+					});
+					//console.info(Ext.get('Menu-button-'+op));
+					Ext.getCmp('Menu-button-'+op).on('render',function() {
+						Ext.getCmp('Menu-button-'+op).getEl().on('contextmenu', function(e) {
+							 console.info('ok');
+							 e.preventDefault();
+							 contextMenu.showBy(Ext.getCmp('Menu-button-'+op));
+						});
+					});
+
 					me.add(MensuelButton);
 				})
 				// process server response here

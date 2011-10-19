@@ -123,7 +123,8 @@ Ext.define('MainApp.view.panel.UploadPanel', {
 								});
 							}
 							progressbar.updateProgress(0);
-							Ext.getCmp('southregion').removeAll(),
+							Ext.getCmp('southregion').removeAll();
+							Ext.getCmp('southregion').height = 100;
 							Ext.getCmp('southregion').add(progressbar);
 							
 	                		function request_until_end(){
@@ -149,6 +150,7 @@ Ext.define('MainApp.view.panel.UploadPanel', {
 											form.owner.ownerCt.items.items[1].store.load();
 											form.owner.ownerCt.items.items[1].doLayout();
 											Ext.getCmp('southregion').removeAll();
+											Ext.getCmp('southregion').height = 30;
 											Ext.Msg.alert('Success', 'Le fichier a &eacute;t&eacute; import&eacute; avec succ&egrave;s. '+ obj.lignes+' requ&ecirc;tes ont &eacute;t&eacute; effectu&eacute;es.');																
 										}
 									}

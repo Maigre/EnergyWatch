@@ -270,13 +270,10 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 											date_validation=date_validation.getFullYear()+'-'+(date_validation.getMonth()+1)+'-'+date_validation.getDate();
 										}
 										
-										data.records[0].data['date_validation']=date_validation;
-										
-										console.info(data.records[0].get('date_validation'));
-										
-										//data.records[0].get('date_validation')=0;
+										//data.records[0].data['date_validation']=date_validation;
 										this.up('window').close();
 										Ext.each(data.records, function(op) {
+											op.data['date_validation']=date_validation;
 											Ext.Ajax.request({
 												url: BASE_URL+'data/triplcontrol/save/nonvalide',
 												method : 'POST',
@@ -284,20 +281,20 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 													idfacture: op.get('id'),
 													BT_MT_EAU: BT_MT_EAU,
 													date_validation: op.get('date_validation')
-												}/*,
+												},
 												success: function(response){
-														Ext.get('working-area').insertHtml('beforeBegin',response.responseText,true);
-												}*/
+													var nonvalidestore = Ext.getStore('TriPlNonValideStore');
+													nonvalidestore.load({
+														params: {
+															BT_MT_EAU: BT_MT_EAU,
+															PERIODE_MENSUELLE: PERIODE_MENSUELLE
+														}}
+													);
+												}
 											});
 											//console.info(op.get('id'));
 										})
-										var nonvalidestore = Ext.getStore('TriPlNonValideStore');
-										nonvalidestore.load({
-											params: {
-												BT_MT_EAU: BT_MT_EAU,
-												PERIODE_MENSUELLE: PERIODE_MENSUELLE
-											}}
-										);
+										
 									}
 								}
 							}]
@@ -314,70 +311,18 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 						if (value == ''){
 							metaData.tdCls = 'emptyText';
 						} 
-						return value;
-					
+						return value;					
 					}
 				},
 				{text: "Num&eacute;ro P.L", width: 70, sortable: true, dataIndex: 'Point_de_livraison'},
 				{text: "Num&eacute;ro Facture", width: 70, sortable: true, dataIndex: 'No_de_facture'},
 				{text: "Montant net", width: 70, sortable: true, dataIndex: 'Montant_net'},
-				{text: "Date r&eacute;sil.", width: 80, sortable: true, dataIndex: 'date_validation', xtype: 'datecolumn',   format:'d-m-Y' }
+				{text: "Date r&eacute;sil.", width: 80, sortable: true, dataIndex: 'date_validation', xtype: 'datecolumn',   format:'d-m-Y'}
 			],
 		    stripeRows       : true,
 		    title            : 'P.L rejet&eacute;s'
 		    //,		    margins          : '5 5 5 5'
 		});
-
-
-		//ADD A TIP ON MOUSEOVER 
-		/*NouveauPlGrid.getView().on('render', function(view) {
-			view.tip = Ext.create('Ext.tip.ToolTip', {
-				// The overall target element.
-				target: view.el,
-				// Each grid row causes its own seperate show and hide.
-				delegate: view.itemSelector,
-				// Moving within the row should not hide the tip.
-				trackMouse: false,
-				anchor: 'right',4 Factures
-427399 CFA
-5 Factures
-1046539 CFA
-2278 Factures
-359771463 CFA
-1 Factures
-EnergyWatch - AirLab 2011
-
-	            closable: true,
-                autoHide: false,
-				// Render immediately so that tip.body can be referenced prior to the first show.
-				renderTo: Ext.getBody(),
-				items: {
-					xtype	: 'plpanel',
-					id		: 'plpaneltip'
-				},
-				listeners: {
-				    // Change content dynamically depending on which element triggered the show.
-				    beforeshow: function updateTipBody(tip) {
-				        var plstore = Ext.getStore('PlStore');
-						plstore.load({
-							params: {
-								BT_MT_EAU: BT_MT_EAU,
-								idFacture: view.getRecord(tip.triggerElement).get('id')
-							}
-						});
-		
-						plstore.on('load', function(database){
-							var plpanel = Ext.getCmp('plpaneltip');
-							if (!plpanel){
-								var plpanel = Ext.widget('plpanel');
-							}	
-							var rec= database.getAt(0);
-							plpanel.getForm().loadRecord(rec);
-						});
-				    }
-				}
-			});
-		});*/
 		
 		
 		me.items = [{
