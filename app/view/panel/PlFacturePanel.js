@@ -1,9 +1,10 @@
 Ext.define('MainApp.view.panel.PlFacturePanel', {
-	extend: 'Ext.panel.Panel',
+	extend	: 'Ext.panel.Panel',
 	requires:['MainApp.view.tools.ChartLinesView','MainApp.view.tools.GridFactureView','MainApp.view.tools.GridAlerteView'],
-	alias : 'widget.plfacturepanel',
+	alias 	: 'widget.plfacturepanel',
+	id		:'plfacturepanel',
 	bodyPadding: 5,
-	layout: {
+	layout	: {
         type: 'vbox',
         align: 'stretch',
         //padding: 5,

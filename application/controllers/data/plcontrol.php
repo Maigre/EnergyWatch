@@ -11,13 +11,32 @@ class Plcontrol extends CI_Controller {
 
 	public function load()
 	{
-		//DATAMAPPER CONSTRUCTING
-		$idPl = $this->input->post('idPl');
-		$this->load->model('Pl','run_pl');
-		$p = $this->run_pl;
-		$p->where('id', $idPl);
-		$p->get();
 		
+		//DATAMAPPER CONSTRUCTING
+		if ($this->input->post('idFacture')!=''){
+			//RECHERCHE DU PL PAR IDFACTURE
+			$idFacture=$this->input->post('idFacture');
+			$this->load->model('Pl','run_pl');
+			$p = $this->run_pl;
+			$BT_MT_EAU=$this->input->post('BT_MT_EAU');
+			if($BT_MT_EAU=='MT'){
+				$p->where_related_facturemt('id', $idFacture);
+			}
+			elseif($BT_MT_EAU=='BT'){
+				$p->where_related_facturebt('id', $idFacture);
+			}
+			else{
+				$p->where_related_factureeau('id', $idFacture);
+			}			
+			$p->get();
+		}
+		else{;
+			$idPl = $this->input->post('idPl');
+			$this->load->model('Pl','run_pl');
+			$p = $this->run_pl;
+			$p->where('id', $idPl);
+			$p->get();
+		}
 		//initialize answer array TODO(should be an array design to be JSON encoded)
 		$answer = array(
 					'size' 	=> 0//,

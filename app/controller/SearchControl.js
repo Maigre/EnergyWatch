@@ -21,7 +21,7 @@ Ext.define('MainApp.controller.SearchControl', {
 
 	doselect: function(record) {
 		
-		console.info(record.displayTplData[0].tension);
+		
 		//charge le store avec l'id du pl
 		var plstore = this.getStore('PlStore');
 		plstore.load({
@@ -32,22 +32,22 @@ Ext.define('MainApp.controller.SearchControl', {
 		});
 		
 		plstore.on('load', function(database){
-			var plpanel = Ext.getCmp('plpanel');
-			if (!plpanel){
-				var plpanel = Ext.widget('plpanel');
-			}	
-			Ext.getCmp('westregion').removeAll(false);
-			Ext.getCmp('westregion').setWidth(240);
-			Ext.getCmp('westregion').add(plpanel);
-			var rec= database.getAt(0);
-			plpanel.getForm().loadRecord(rec);
-
-			
+			if(Ext.getCmp('centerregion').items.items[0].id=='plfacturepanel' || Ext.getCmp('centerregion').items.items[0].id=='plfacturemtpanel' ){
+				var plpanel = Ext.getCmp('plpanel');
+				if (!plpanel){
+					var plpanel = Ext.widget('plpanel');
+				}	
+				Ext.getCmp('westregion').removeAll(false);
+				Ext.getCmp('westregion').setWidth(240);
+				Ext.getCmp('westregion').add(plpanel);
+				var rec= database.getAt(0);
+				plpanel.getForm().loadRecord(rec);
+			}
 		});
 		
 		if (record.displayTplData[0].tension=='BT'){
 			var facturestore = this.getStore('FactureStore');
-			var donneesConsoStore = this.getStore('DonneesConsoStore');
+			//var donneesConsoStore = this.getStore('DonneesConsoStore');
 			var plfacturepanel = Ext.getCmp('plfacturepanel');
 			if (!plfacturepanel){
 				var plfacturepanel = Ext.widget('plfacturepanel');
@@ -55,7 +55,7 @@ Ext.define('MainApp.controller.SearchControl', {
 		}
 		else{
 			var facturestore = this.getStore('FactureMTStore');
-			var donneesConsoStore = this.getStore('DonneesConsoMTStore');
+			//var donneesConsoStore = this.getStore('DonneesConsoMTStore');
 			var plfacturepanel = Ext.getCmp('plfacturemtpanel');
 			if (!plfacturepanel){
 				var plfacturepanel = Ext.widget('plfacturemtpanel');
@@ -66,9 +66,9 @@ Ext.define('MainApp.controller.SearchControl', {
 			params: {idPl: record.getValue()}
 		});
 		
-		donneesConsoStore.load({
+		/*donneesConsoStore.load({
 			params: {idPl: record.getValue()}
-		});
+		});*/
 		
 		var alerteStore = this.getStore('AlerteStore');
 		alerteStore.load({

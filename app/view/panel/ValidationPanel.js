@@ -32,16 +32,30 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 		    {text: "", width: 70, sortable: true, dataIndex: 'date_validation', hidden: true, Value: 10},
 		    {text: "Montant net", width: 70, sortable: true, dataIndex: 'Montant_net'}
 		];
-
+		
+		//Pl info window show on dblclick sur le nouveauplgrid
+		var windows_info_panel= Ext.create('Ext.window.Window', {
+			title: 'Info Panel',
+			closeAction: 'hide',
+			height: 600,
+			width: 330,
+			layout: 'fit',
+			items: {  // Let's put an empty grid in just to illustrate fit layout
+				xtype	: 'plpanel',
+				id		: 'plpanelinfo'				
+			}
+		});
+		
 		// declare the source Grid
 		var NouveauPlGrid = Ext.create('Ext.grid.Panel', {
-			flex:1,
-			margin: 5,
-			padding: 5,
-			iconCls: 'arrow_divide',
-		    alias: 'widget.nouveauPlGrid',
+			flex	:1,
+			margin	: 5,
+			padding	: 5,
+			iconCls	: 'arrow_divide',
+			id		: 'nouveauPlGrid',
+		    alias	: 'widget.nouveauPlGrid',
 		    multiSelect: true,
-		    frame: true,
+		    frame	: true,
 		    viewConfig: {
 		        plugins: {
 		            ptype: 'gridviewdragdrop',
@@ -65,6 +79,30 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 							});
 		                	//console.info(op.get('id'));
 		                })
+		            },
+		            itemdblclick:function(a,b,c,d){
+
+		            	
+		            	
+		            	var plstore = Ext.getStore('PlStore');
+						plstore.load({
+							params: {
+								BT_MT_EAU: BT_MT_EAU,
+								idFacture: b.data['id']
+							}
+						});
+		
+						plstore.on('load', function(database){
+							if(Ext.getCmp('centerregion').items.items[0].id=='validationpanel'){
+								var plpanelinfo = Ext.getCmp('plpanelinfo');
+								/*if (!plpanelinfo){
+									var plpanelinfo = Ext.widget('plpanel');
+								}*/	
+								var rec= database.getAt(0);
+								plpanelinfo.getForm().loadRecord(rec);
+								windows_info_panel.show();
+							}
+						});
 		            }		            
 		        }
 		    },
@@ -146,7 +184,7 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 								method : 'POST',
 								params : {
 									idfacture: op.get('id'),
-									BT_MT_EAU: BT_MT_EAU
+									BT_MT_EAU: BT_MTwait_EAU
 								}/*,
 								success: function(response){
 										Ext.get('working-area').insertHtml('beforeBegin',response.responseText,true);
@@ -290,6 +328,57 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 		    //,		    margins          : '5 5 5 5'
 		});
 
+
+		//ADD A TIP ON MOUSEOVER 
+		/*NouveauPlGrid.getView().on('render', function(view) {
+			view.tip = Ext.create('Ext.tip.ToolTip', {
+				// The overall target element.
+				target: view.el,
+				// Each grid row causes its own seperate show and hide.
+				delegate: view.itemSelector,
+				// Moving within the row should not hide the tip.
+				trackMouse: false,
+				anchor: 'right',4 Factures
+427399 CFA
+5 Factures
+1046539 CFA
+2278 Factures
+359771463 CFA
+1 Factures
+EnergyWatch - AirLab 2011
+
+	            closable: true,
+                autoHide: false,
+				// Render immediately so that tip.body can be referenced prior to the first show.
+				renderTo: Ext.getBody(),
+				items: {
+					xtype	: 'plpanel',
+					id		: 'plpaneltip'
+				},
+				listeners: {
+				    // Change content dynamically depending on which element triggered the show.
+				    beforeshow: function updateTipBody(tip) {
+				        var plstore = Ext.getStore('PlStore');
+						plstore.load({
+							params: {
+								BT_MT_EAU: BT_MT_EAU,
+								idFacture: view.getRecord(tip.triggerElement).get('id')
+							}
+						});
+		
+						plstore.on('load', function(database){
+							var plpanel = Ext.getCmp('plpaneltip');
+							if (!plpanel){
+								var plpanel = Ext.widget('plpanel');
+							}	
+							var rec= database.getAt(0);
+							plpanel.getForm().loadRecord(rec);
+						});
+				    }
+				}
+			});
+		});*/
+		
 		
 		me.items = [{
 			xtype: 'panel',

@@ -33,12 +33,12 @@ Ext.define('MainApp.controller.GridAlerteAllControl', {
 			
 			if (d.data.Tension=='BT'){
 				var facturestore = this.getStore('FactureStore');
-				var donneesConsoStore = this.getStore('DonneesConsoStore');
+				//var donneesConsoStore = this.getStore('DonneesConsoStore');
 				this.view1 = new Ext.widget('plfacturepanel');
 			}
 			else{
 				var facturestore = this.getStore('FactureMTStore');
-				var donneesConsoStore = this.getStore('DonneesConsoMTStore');
+				//var donneesConsoStore = this.getStore('DonneesConsoMTStore');
 				this.view1 = new Ext.widget('plfacturemtpanel');
 			}
 			
@@ -46,9 +46,9 @@ Ext.define('MainApp.controller.GridAlerteAllControl', {
 				params: {idPl: d.data.idPl}
 			});
 			
-			donneesConsoStore.load({
+			/*donneesConsoStore.load({
 				params: {idPl: d.data.idPl}
-			});
+			});*/
 		
 			var alerteStore = this.getStore('AlerteStore');
 			alerteStore.load({
