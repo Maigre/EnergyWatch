@@ -10,7 +10,7 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
         type: 'vbox',
         align: 'stretch'
     },
-    bodyStyle: "background-image:url(app/images/2.jpg); background-repeat:no-repeat; background-position:center center;-moz-background-size: cover; -webkit-background-size: cover;-o-background-size: cover;background-size: cover;",
+    bodyStyle: "background-image:url(app/images/"+BCKGRND_IMAGE+".jpg); background-repeat:no-repeat; background-position:center center;-moz-background-size: cover; -webkit-background-size: cover;-o-background-size: cover;background-size: cover;",
     //defaults : { margins: 5 },
 	
 	initComponent: function() {
@@ -33,6 +33,93 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 		    {text: "Montant net", width: 70, sortable: true, dataIndex: 'Montant_net'}
 		];
 		
+		
+		var validerAction = Ext.create('Ext.Action', {
+			iconCls	: 'yes',
+			text: 'Valider',
+			disabled: true,
+			handler: function(widget, event) {
+				selecteditems = Ext.getCmp('nouveauPlGrid').getSelectionModel().getSelection();
+				Ext.each(selecteditems, function(op) {
+					Ext.Ajax.request({
+						url: BASE_URL+'data/triplcontrol/save/valide',
+						method : 'POST',
+						params : {
+							idfacture: op.get('id'),
+							BT_MT_EAU: BT_MT_EAU//,
+							//date_validation: op.get('date_validation')
+						},
+						success: function(response){
+							var nouveaustore = Ext.getStore('TriPlNouveauStore');
+							var validestore = Ext.getStore('TriPlValideStore');
+							validestore.load({
+								params: {
+									BT_MT_EAU: BT_MT_EAU,
+									PERIODE_MENSUELLE: PERIODE_MENSUELLE
+								},
+								success: function(){
+									nouveaustore.load({
+										params: {
+											BT_MT_EAU: BT_MT_EAU,
+											PERIODE_MENSUELLE: PERIODE_MENSUELLE
+										}
+									});
+								}
+							});
+						}
+					});
+				})
+			}
+		});
+		var rejeterAction = Ext.create('Ext.Action', {
+			iconCls	: 'no',
+			text: 'Rejeter',
+			disabled: true,
+			handler: function(widget, event) {
+				selecteditems = Ext.getCmp('nouveauPlGrid').getSelectionModel().getSelection();
+				Ext.each(selecteditems, function(op) {
+					Ext.Ajax.request({
+						url: BASE_URL+'data/triplcontrol/save/nonvalide',
+						method : 'POST',
+						params : {
+							idfacture: op.get('id'),
+							BT_MT_EAU: BT_MT_EAU//,
+							//date_validation: op.get('date_validation')
+						},
+						success: function(response){
+							var nouveaustore = Ext.getStore('TriPlNouveauStore');
+							var nonvalidestore = Ext.getStore('TriPlNonValideStore');
+							nonvalidestore.load({
+								params: {
+									BT_MT_EAU: BT_MT_EAU,
+									PERIODE_MENSUELLE: PERIODE_MENSUELLE
+								}
+							});
+							nonvalidestore.on('load',function(){
+								console.info('ok');
+								console.info(nouveaustore);
+								nouveaustore.load({
+									params: {
+										BT_MT_EAU: BT_MT_EAU,
+										PERIODE_MENSUELLE: PERIODE_MENSUELLE
+									}
+								});
+							});							
+						}
+					});
+				})
+			}
+		});
+		
+		var contextMenu = Ext.create('Ext.menu.Menu', {
+			items: [
+			    validerAction,
+			    rejeterAction
+			]
+		});	
+		
+		
+		
 		//Pl info window show on dblclick sur le nouveauplgrid
 		var windows_info_panel= Ext.create('Ext.window.Window', {
 			title: 'Info Panel',
@@ -53,45 +140,52 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 			padding	: 5,
 			iconCls	: 'arrow_divide',
 			id		: 'nouveauPlGrid',
-		    alias	: 'widget.nouveauPlGrid',
-		    multiSelect: true,
-		    frame	: true,
-		    viewConfig: {
-		        plugins: {
-		            ptype: 'gridviewdragdrop',
-		            dragGroup: 'firstGridDDGroup',
-		            dropGroup: 'secondGridDDGroup'
-		        },
-		        listeners: {
-		            drop: function(node, data, dropRec, dropPosition) {
-		                //var dropOn = dropRec ? ' ' + dropPosition + ' ' + dropRec.get('name') : ' on empty view';
-		                Ext.each(data.records, function(op) {
-							Ext.Ajax.request({
-								url: BASE_URL+'data/triplcontrol/save/nouveau',
-								method : 'POST',
-								params : {
-									idfacture: op.get('id'),
-									BT_MT_EAU: BT_MT_EAU
-								}/*,
-								success: function(response){
-										Ext.get('working-area').insertHtml('beforeBegin',response.responseText,true);
-								}*/
-							});
-		                	//console.info(op.get('id'));
-		                })
-		            },
-		            itemdblclick:function(a,b,c,d){
-
-		            	
-		            	
-		            	var plstore = Ext.getStore('PlStore');
+			alias	: 'widget.nouveauPlGrid',
+			multiSelect: true,
+			frame	: true,
+			store            : 'TriPlNouveauStore',
+			columns          : columns,
+			stripeRows       : true,
+			title            : 'Nouveaux P.L d&eacute;tect&eacute;s - A Valider ou Rejeter',
+			dockedItems: [{
+			    xtype: 'toolbar',
+			    items: [
+				validerAction, rejeterAction
+			    ]
+			}],
+			viewConfig: {
+			    stripeRows: true,
+			    listeners: {
+					itemcontextmenu: function(view, rec, node, index, e) {
+					    e.stopEvent();
+					    contextMenu.showAt(e.getXY());
+					    return false;
+					},
+					drop: function(node, data, dropRec, dropPosition) {
+						//var dropOn = dropRec ? ' ' + dropPosition + ' ' + dropRec.get('name') : ' on empty view';
+						Ext.each(data.records, function(op) {
+									Ext.Ajax.request({
+										url: BASE_URL+'data/triplcontrol/save/nouveau',
+										method : 'POST',
+										params : {
+											idfacture: op.get('id'),
+											BT_MT_EAU: BT_MT_EAU
+										}/*,
+										success: function(response){
+												Ext.get('working-area').insertHtml('beforeBegin',response.responseText,true);
+										}*/
+									});
+							//console.info(op.get('id'));
+						})
+					},
+					itemdblclick:function(a,b,c,d){
+						var plstore = Ext.getStore('PlStore');
 						plstore.load({
 							params: {
 								BT_MT_EAU: BT_MT_EAU,
 								idFacture: b.data['id']
 							}
 						});
-		
 						plstore.on('load', function(database){
 							if(Ext.getCmp('centerregion').items.items[0].id=='validationpanel'){
 								var plpanelinfo = Ext.getCmp('plpanelinfo');
@@ -103,17 +197,29 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 								windows_info_panel.show();
 							}
 						});
-		            }		            
-		        }
-		    },
-		    store            : 'TriPlNouveauStore',
-		    columns          : columns,
-		    stripeRows       : true,
-		    title            : 'Nouveaux P.L d&eacute;tect&eacute;s - A Valider ou Rejeter'
-		    //,		    margins          : '5 5 5 5'
+					}
+			    	}
+			},			
+			plugins: {
+			    ptype: 'gridviewdragdrop',
+			    dragGroup: 'firstGridDDGroup',
+			    dropGroup: 'secondGridDDGroup'
+			}
 		});
 
-		
+		NouveauPlGrid.getSelectionModel().on({
+			selectionchange: function(sm, selections) {
+			    console.info(selections);
+			    console.info(sm);
+			    if (selections.length) {
+				validerAction.enable();
+				rejeterAction.enable();
+			    } else {
+				buyAction.disable();
+				sellAction.disable();
+			    }
+			}
+		});
 
 		// create the destination Grid
 		var PlNonValideAgainGrid = Ext.create('Ext.grid.Panel', {
@@ -184,7 +290,7 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 								method : 'POST',
 								params : {
 									idfacture: op.get('id'),
-									BT_MT_EAU: BT_MTwait_EAU
+									BT_MT_EAU: BT_MT_EAU
 								}/*,
 								success: function(response){
 										Ext.get('working-area').insertHtml('beforeBegin',response.responseText,true);
@@ -228,6 +334,7 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 		                //var dropOn = dropRec ? ' ' + dropPosition + ' ' + dropRec.get('name') : ' on empty view';
 		                //var idfacture=data.records[0].get('id');
 		                //data.records[0]
+		                
 		                window_validation = Ext.create('Ext.window.Window', {
 							title: 'Confirmation rejet PL',
 							height: 130,

@@ -7,6 +7,7 @@ Ext.define('MainApp.view.panel.MenuMensuelPanel', {
 	//collapsible: true,
 	//collapseDirection: 'left',
 	//floatable: true,
+	bodyStyle: "background-color:#B6D0DB;",
 	layout: {
         type: 'auto'//,
         //align: 'center',
@@ -54,11 +55,11 @@ Ext.define('MainApp.view.panel.MenuMensuelPanel', {
 								var bilanmainpanel = Ext.getCmp('bilanmainpanel');
 								if (!bilanmainpanel){
 									var bilanmainpanel = Ext.widget('bilanmainpanel');
+									bilanmainpanel.bodyStyle="background-image:url(app/images/"+BCKGRND_IMAGE+".jpg); background-repeat:no-repeat; background-position:center center;-moz-background-size: cover; -webkit-background-size: cover;-o-background-size: cover;background-size: cover;";
 								}
 								
 								var bilanmainpanelup = Ext.getCmp('bilanmainpanelup');
 								var bilanmainpaneldown = Ext.getCmp('bilanmainpaneldown');
-								
 								
 								var bilanvalidepanel = Ext.getCmp('bilanvalidepanel');
 								if (!bilanvalidepanel){

@@ -100,13 +100,13 @@ movebutton = function(){
 				}
 			});
 		}	
-			
-		
 		return true;
 	//};
 };
 
 westregion_appear= function(){
+	
+	Ext.getCmp('westregion').show();
 	Ext.getCmp('westregion').animate({
 		duration: 1000,
 		to: {
@@ -123,11 +123,12 @@ westregion_desappear= function(){
 			width: 0
 		}
 	});
+	Ext.getCmp('westregion').hide();
 	return true;
 };
 
 one_button_pressed= function(tension){
-	all_button=['buttonmt','buttonmtheader','buttonbt','buttonbtheader','buttonwater','buttonwaterheader'];
+	all_button=['buttonupload','buttonuploadheader','buttonmt','buttonmtheader','buttonbt','buttonbtheader','buttonwater','buttonwaterheader'];
 	Ext.each(all_button,function(button){
 		Ext.getCmp(button).toggle(false);
 	})

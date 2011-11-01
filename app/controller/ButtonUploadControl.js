@@ -10,9 +10,17 @@ Ext.define('MainApp.controller.ButtonUploadControl', {
         });
     },
     openupload: function() {
-		//buttonmt=Ext.getCmp('buttonmt');
 		movebutton();
+		
 		if(westregion_desappear()){
+			one_button_pressed('upload');
+			
+			var homepanel= Ext.getCmp('homepanel');
+			if (!homepanel){
+				var homepanel = Ext.widget('homepanel');
+			}
+			homepanel.removeAll();
+			
 			Ext.getCmp('centerregion').removeAll(false); //clean the center region
 			Ext.getCmp('westregion').removeAll();
 	
@@ -21,9 +29,7 @@ Ext.define('MainApp.controller.ButtonUploadControl', {
 				var mainuploadpanel = Ext.widget('mainuploadpanel');
 			}
 			Ext.getCmp('centerregion').add(mainuploadpanel);		
-		};
-		
-
+		}
 
 	}   
 });

@@ -54,7 +54,8 @@ class Triplcontrol extends CI_Controller {
 		//initialize answer array TODO(should be an array design to be JSON encoded)
 		$answer = array(
 					'size' 	=> 0,
-					'msg'	=> ''
+					'msg'	=> '',
+					'success'=>true
 				); 
 		//Populate the data
 		$answ = null;
@@ -72,9 +73,7 @@ class Triplcontrol extends CI_Controller {
 			else{
 				$p->where_related_factureeau('id', $facture->id);
 			}		 
-			
 			$p->get();
-			
 			foreach($this->fieldPlArray as $field){
 				$answ[$field]=$p->$field;
 			}
@@ -144,10 +143,8 @@ class Triplcontrol extends CI_Controller {
 		
 		$p->get();
 		$p->etat=$etat;
-		echo $etat;
 		if($etat==3){
 			$p->date_validation=$date_validation;
-			echo $p->date_validation;
 		} 
 		if ($etat==4) $p->etat=3;
 		

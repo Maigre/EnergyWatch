@@ -12,7 +12,7 @@ Ext.define('MainApp.controller.GridAlerteAllControl', {
     
     gotopl: function(a,b,c,d) {
 			
-			Ext.getCmp('centerregion').removeAll(false);
+			
 		
 			var plstore = this.getStore('PlStore');
 			plstore.load({
@@ -28,19 +28,26 @@ Ext.define('MainApp.controller.GridAlerteAllControl', {
 				Ext.getCmp('westregion').add(plpanel);
 				var rec= database.getAt(0);
 				plpanel.getForm().loadRecord(rec);
-				console.info(plpanel.getForm());
 			});
 			
 			if (d.data.Tension=='BT'){
 				var facturestore = this.getStore('FactureStore');
 				//var donneesConsoStore = this.getStore('DonneesConsoStore');
-				this.view1 = new Ext.widget('plfacturepanel');
+				var plfacturepanel = Ext.getCmp('plfacturepanel');
+				if (!plfacturepanel){
+					var plfacturepanel = Ext.widget('plfacturepanel');
+				}
 			}
 			else{
 				var facturestore = this.getStore('FactureMTStore');
 				//var donneesConsoStore = this.getStore('DonneesConsoMTStore');
-				this.view1 = new Ext.widget('plfacturemtpanel');
+				var plfacturepanel = Ext.getCmp('plfacturemtpanel');
+				if (!plfacturepanel){
+					var plfacturepanel = Ext.widget('plfacturemtpanel');
+				}
 			}
+			Ext.getCmp('centerregion').removeAll(false);
+			Ext.getCmp('centerregion').add(plfacturepanel);
 			
 			facturestore.load({
 				params: {idPl: d.data.idPl}
@@ -52,7 +59,8 @@ Ext.define('MainApp.controller.GridAlerteAllControl', {
 		
 			var alerteStore = this.getStore('AlerteStore');
 			alerteStore.load({
-				params: {idPl: d.data.idPl}
+				params: {idPl: d.data.idPl,
+				BT_MT_EAU: BT_MT_EAU}
 			});
 		
 			//Si le panel plfacturepanel n'est pas déjà affiché
@@ -62,7 +70,7 @@ Ext.define('MainApp.controller.GridAlerteAllControl', {
 				//Ext.getCmp('westregion').removeAll();
 				 
 				//display panels
-				Ext.getCmp('centerregion').add(this.view1);
+				
 				//Ext.getCmp('westregion').add(view2); 
 			//}
 			

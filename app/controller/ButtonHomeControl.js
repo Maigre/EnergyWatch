@@ -21,32 +21,38 @@ Ext.define('MainApp.controller.ButtonHomeControl', {
 		Ext.getCmp('buttonbtheader').hide();
 		Ext.getCmp('buttonmtheader').hide();
 		
-		var homepanel= Ext.getCmp('homepanel');
-		if (!homepanel){
-			var homepanel = Ext.widget('homepanel');
-		}
-		homepanel.removeAll(false);
-		
-		homebuttons=Ext.getCmp('homebuttons');
-		homepanel.add(homebuttons);
-		
-
-		//homepanel.doLayout();
-		
-		Ext.getCmp('centerregion').removeAll(false); //clean the center region
 		Ext.getCmp('westregion').removeAll();
-		westregion_desappear();
-		Ext.getCmp('centerregion').add(homepanel);
-		
-		homepanel.animate({
-		   	duration: 1000,
-		   	easing: 'backIn',
-			from: {
-				opacity: 0
-			},
-			to: {
-				opacity: 1
+		if(westregion_desappear()){
+			var homepanel= Ext.getCmp('homepanel');
+			if (!homepanel){
+				var homepanel = Ext.widget('homepanel');
 			}
-		}); 
+			homepanel.removeAll(false);
+		
+			homebuttons=Ext.getCmp('homebuttons');
+			if (!homebuttons){
+				homebuttons=Ext.widget('homebuttons');
+			}
+			homepanel.add(homebuttons);
+			
+
+			Ext.getCmp('westregion').doLayout();
+		
+			Ext.getCmp('centerregion').removeAll(false); //clean the center region
+
+			Ext.getCmp('centerregion').add(homepanel);
+			
+		
+			homepanel.animate({
+			   	duration: 1000,
+			   	easing: 'backIn',
+				from: {
+					opacity: 0
+				},
+				to: {
+					opacity: 1
+				}
+			}); 
+		}
 	}
 });

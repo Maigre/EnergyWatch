@@ -22,6 +22,10 @@
      	<script 
      			type="text/javascript">PERIODE_MENSUELLE = '';
      	</script>
+     	
+     	<script 
+     			type="text/javascript">BCKGRND_IMAGE = 9;
+     	</script>
 
      	<link rel="stylesheet" type="text/css" href="app/css/icons.css" />
      	<link rel="stylesheet" type="text/css" href="app/css/viewport.css" />

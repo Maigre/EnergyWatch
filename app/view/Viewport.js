@@ -4,6 +4,7 @@ Ext.define('MainApp.view.Viewport', {
 	//alias : 'widget.viewport',
     requires: [
     	'MainApp.view.panel.HomePanel',
+    	'MainApp.view.panel.HomeButtonPanel',
         'MainApp.view.panel.SearchbarPanel',
         'MainApp.view.tools.SearchView',
         'MainApp.view.image.Searchbaricon',

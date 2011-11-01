@@ -19,7 +19,7 @@ Ext.define('MainApp.view.panel.UploadMainPanel', {
    // margins: 5,
    // padding: 5,
     opacity:0,
-    bodyStyle: "background-image:url(app/images/2.jpg); background-repeat:no-repeat; background-position:center center;-moz-background-size: cover; -webkit-background-size: cover;-o-background-size: cover;background-size: cover;",
+    bodyStyle: "background-image:url(app/images/"+BCKGRND_IMAGE+".jpg); background-repeat:no-repeat; background-position:center center;-moz-background-size: cover; -webkit-background-size: cover;-o-background-size: cover;background-size: cover;",
     //height: 300,
     border:0,
 	alias : 'widget.mainuploadpanel',
