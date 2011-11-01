@@ -31,7 +31,8 @@ Ext.define('MainApp.controller.ViewportControl', {
 									});
 								}
 								progressbar.updateProgress(0);
-								Ext.getCmp('southregion').removeAll(false),
+								Ext.getCmp('southregion').removeAll(false);
+								Ext.getCmp('southregion').height = 100;
 								Ext.getCmp('southregion').add(progressbar);
 			
 			
@@ -57,8 +58,10 @@ Ext.define('MainApp.controller.ViewportControl', {
 												progressbar.updateText('Traitement des factures termin&eacute');
 												//form.owner.ownerCt.items.items[1].store.load();
 												//form.owner.ownerCt.items.items[1].doLayout();
-												Ext.Msg.alert('Success', 'Le fichier a &eacute;t&eacute; import&eacute; avec succ&egrave;s. '+ obj.lignes+' requ&ecirc;tes ont &eacute;t&eacute; effectu&eacute;es.');					
-												Ext.getCmp('southregion').removeAll(false);
+												Ext.getCmp('southregion').removeAll();
+												Ext.getCmp('southregion').height = 30;
+												Ext.Msg.alert('Success', 'Le fichier a &eacute;t&eacute; import&eacute; avec succ&egrave;s. '+ obj.lignes+' requ&ecirc;tes ont &eacute;t&eacute; effectu&eacute;es.');						
+												
 											}
 										}
 									});

@@ -52,7 +52,7 @@ Ext.define('MainApp.view.tools.GridFactureMTView', {
 			{header: 'Net CosPhi', dataIndex: 'Montant_Net_Cosinus_PHI',  flex:7}, 
 			{header: 'Redev. HT', dataIndex: 'MT_REDEVANCE_HT',  flex:8, hidden: true}, 
 			{header: 'Montant net', dataIndex: 'Montant_net',  flex:8}, 
-			{header: 'Date index', dataIndex: 'Date_index',  flex:7}, 
+			{header: 'Date index', dataIndex: 'Date_index', xtype: 'datecolumn',   format:'d-m-Y', flex:7}, 
 			{header: 'Nb jours', dataIndex: 'Nb_jours',  flex:6}
 		];
 		this.callParent(arguments);

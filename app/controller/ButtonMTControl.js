@@ -157,7 +157,8 @@ Ext.define('MainApp.controller.ButtonMTControl', {
 		BT_MT_EAU='MT';
 		Ext.getCmp('westregion').removeAll();
 		
-		var homepanel= Ext.getCmp('homepanel');
+		var homepanel= Ext.getCmp('homepanel');		
+		homepanel.removeAll(false);
 		
 		Ext.getCmp('centerregion').removeAll(false);
 		var menumensuelpanel= new Ext.widget('menumensuelpanel');

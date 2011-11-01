@@ -27,14 +27,8 @@ Ext.define('MainApp.controller.ButtonHomeControl', {
 		}
 		homepanel.removeAll(false);
 		
-		buttonupload=Ext.getCmp('buttonupload');
-		homepanel.add(buttonupload);
-		buttonwater=Ext.getCmp('buttonwater');
-		homepanel.add(buttonwater);
-		buttonbt=Ext.getCmp('buttonbt');
-		homepanel.add(buttonbt);
-		buttonmt=Ext.getCmp('buttonmt');
-		homepanel.add(buttonmt);
+		homebuttons=Ext.getCmp('homebuttons');
+		homepanel.add(homebuttons);
 		
 
 		//homepanel.doLayout();
