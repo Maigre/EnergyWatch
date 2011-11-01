@@ -258,11 +258,7 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 		 		$f->save(array($p,$m));
 				
 				$this->nombres_requetes++;
-				$end_sauvegarde=microtime(true);
-				$temp_sauvegarde=$end_sauvegarde-$start;
-				//echo 'temps d execution sauvegarde'.$temp_sauvegarde;			
-	
-			$start_donneesconso=microtime(true);
+				//echo 'temps d execution sauvegarde'.$temp_sauvegarde;	
 		
 		 		
 		//Creation des donnes utilisables pour l'affichage des graphs de consommation mensuelle
@@ -840,7 +836,7 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 				 		}
 				 		$f->where('id',$AT['idFacture'])->get();
 			 			
-						$a->save(array($p,$facture,$m));						
+						$a->save(array($p,$f,$m));						
 					}
 				}
 				

@@ -12,7 +12,7 @@ Ext.define('MainApp.controller.GridAlerteAllControl', {
     
     gotopl: function(a,b,c,d) {
 			
-			
+			Ext.getCmp('centerregion').removeAll(false);
 		
 			var plstore = this.getStore('PlStore');
 			plstore.load({
@@ -46,7 +46,7 @@ Ext.define('MainApp.controller.GridAlerteAllControl', {
 					var plfacturepanel = Ext.widget('plfacturemtpanel');
 				}
 			}
-			Ext.getCmp('centerregion').removeAll(false);
+			
 			Ext.getCmp('centerregion').add(plfacturepanel);
 			
 			facturestore.load({

@@ -161,7 +161,7 @@ Ext.define('MainApp.controller.ButtonMTControl', {
 		var homepanel= Ext.getCmp('homepanel');		
 		homepanel.removeAll(false);
 		
-		Ext.getCmp('centerregion').removeAll(false);
+		Ext.getCmp('centerregion').removeAll();
 		var menumensuelpanel= new Ext.widget('menumensuelpanel');
 		
 		Ext.getCmp('westregion').add(menumensuelpanel);

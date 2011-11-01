@@ -29,10 +29,10 @@ Ext.define('MainApp.controller.ButtonHomeControl', {
 			}
 			homepanel.removeAll(false);
 		
-			homebuttons=Ext.getCmp('homebuttons');
-			if (!homebuttons){
+			//homebuttons=Ext.getCmp('homebuttons');
+			//if (!homebuttons){
 				homebuttons=Ext.widget('homebuttons');
-			}
+			//}
 			homepanel.add(homebuttons);
 			
 
