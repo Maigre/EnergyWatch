@@ -44,10 +44,10 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 		$this->file_name='';
 		if ( ! $this->upload->do_upload('file'))
 		{
-			
-			$answer['error']= $this->upload->display_errors();
+			$answer['error'] = $this->upload->display_errors();
 			$answer['success'] = false;
-			echo json_encode($answer);
+			
+			echo json_encode ($answer);
 		}
 		else
 		{
