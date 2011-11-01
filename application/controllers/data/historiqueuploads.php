@@ -38,7 +38,10 @@ class Historiqueuploads extends CI_Controller {
 			}
 			$answer['data'][] = $answ;
 		}
-		$answer['size'] = count($answer['data']);
+		if (isset($answer['data'])){
+			$answer['size'] = count($answer['data']);
+		}
+		
 		
 		if ($answer['size'] == 0){
 			$answer['msg'] = 'aucun resultat...';

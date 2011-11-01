@@ -127,7 +127,7 @@ Ext.define('MainApp.view.panel.UploadPanel', {
 							progressbar.updateProgress(0);
 							Ext.getCmp('southregion').removeAll();
 							Ext.getCmp('southregion').height = 100;
-							Ext.getCmp('southregion').add(progressbar);
+							Ext.getCmp('southregion').insert(0,progressbar);
 							
 	                		function request_until_end(){
 								Ext.Ajax.request({

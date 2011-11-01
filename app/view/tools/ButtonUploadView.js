@@ -3,7 +3,7 @@
 Ext.define('MainApp.view.tools.ButtonUploadView', {
 	extend: 'Ext.button.Button',
 	alias : 'widget.buttonupload',
-	id	  : 'buttonupload',
+	id    : 'buttonupload',
 	icon: 'app/images/icons/upload.png',
 	//tooltip : 'Importer nouvelles factures',
 	scale: 'medium',

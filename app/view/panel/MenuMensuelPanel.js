@@ -81,59 +81,12 @@ Ext.define('MainApp.view.panel.MenuMensuelPanel', {
 									//bilanmainpaneldown.add(bilanalertepanel);
 								}
 								
-								/*bilanvalidepanel.title='Valid&eacute; - '+op;
-								bilanrejetepanel.title='Rejet&eacute; - '+op;
-								bilanattentepanel.title='Attente - '+op;
-								bilanalertepanel.title='Alertes - '+op;
-								*/
-								//homepanel=Ext.getCmp('homepanel');
-								//Ext.getCmp('centerregion').add(homepanel);
+								
 								Ext.getCmp('centerregion').add(bilanmainpanel);
-								/*bilanvalidepanel.animate({
-									duration: 1000,
-									from: {
-										opacity: 0
-									},
-									to: {
-										opacity: 1
-									}
-								});
-								bilanrejetepanel.animate({
-									duration: 1000,
-									from: {
-										opacity: 0
-									},
-									to: {
-										opacity: 1
-									}
-								}); 
-								bilanattentepanel.animate({
-									duration: 1000,
-									from: {
-										opacity: 0
-									},
-									to: {
-										opacity: 1
-									}
-								}); 
-								bilanalertepanel.animate({
-									duration: 1000,
-									from: {
-										opacity: 0
-									},
-									to: {
-										opacity: 1
-									}
-								});  
-								*/
-								//bilanpanel.center();
-								//bilanpanel.setTitle('Bilan '+op+' '+BT_MT_EAU);
+								 
+								
 								
 								bilanvalidepanel.getForm().loadRecord(rec);
-								//console.info(bilanvalidepanel);
-								//console.info(op);
-								
-								
 								bilanrejetepanel.getForm().loadRecord(rec);
 								bilanattentepanel.getForm().loadRecord(rec);
 								bilanalertepanel.getForm().loadRecord(rec);
@@ -163,7 +116,6 @@ Ext.define('MainApp.view.panel.MenuMensuelPanel', {
 					//console.info(Ext.get('Menu-button-'+op));
 					Ext.getCmp('Menu-button-'+op).on('render',function() {
 						Ext.getCmp('Menu-button-'+op).getEl().on('contextmenu', function(e) {
-							 console.info('ok');
 							 e.preventDefault();
 							 contextMenu.showBy(Ext.getCmp('Menu-button-'+op));
 						});

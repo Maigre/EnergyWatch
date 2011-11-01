@@ -108,7 +108,7 @@ Ext.define('MainApp.view.Viewport', {
 					margins	: 10,
 					border	: 0,
 					hidden	: true,
-					id		: 'buttonwaterheader',
+					id	: 'buttonwaterheader',
 					width   : 38,
 					text	: '',
 					//height: 62,
@@ -121,7 +121,7 @@ Ext.define('MainApp.view.Viewport', {
 					border: 0,
 					hidden	: true,
 					text	: '',
-					id		: 'buttonbtheader',
+					id	: 'buttonbtheader',
 					width   : 38
 					//height: 62,
 					//width: 80

@@ -27,12 +27,13 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 					
 				}
 			},
-		    {text: "Num&eacute;ro P.L", width: 70, sortable: true, dataIndex: 'Point_de_livraison'},
-		    {text: "Num&eacute;ro Facture", width: 70, sortable: true, dataIndex: 'No_de_facture'},
+		    {text: "Num&eacute;ro P.L", width: 100, sortable: true, dataIndex: 'Point_de_livraison'},
+		    {text: "Num&eacute;ro Facture", width: 100, sortable: true, dataIndex: 'No_de_facture'},
 		    {text: "", width: 70, sortable: true, dataIndex: 'date_validation', hidden: true, Value: 10},
 		    {text: "Montant net", width: 70, sortable: true, dataIndex: 'Montant_net'}
 		];
 		
+		//Actions du panel NouveauPl
 		
 		var validerAction = Ext.create('Ext.Action', {
 			iconCls	: 'yes',
@@ -41,6 +42,8 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 			handler: function(widget, event) {
 				selecteditems = Ext.getCmp('nouveauPlGrid').getSelectionModel().getSelection();
 				Ext.each(selecteditems, function(op) {
+					Ext.getStore('TriPlNouveauStore').remove(op);
+					Ext.getStore('TriPlValideStore').add(op);
 					Ext.Ajax.request({
 						url: BASE_URL+'data/triplcontrol/save/valide',
 						method : 'POST',
@@ -48,24 +51,6 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 							idfacture: op.get('id'),
 							BT_MT_EAU: BT_MT_EAU//,
 							//date_validation: op.get('date_validation')
-						},
-						success: function(response){
-							var nouveaustore = Ext.getStore('TriPlNouveauStore');
-							var validestore = Ext.getStore('TriPlValideStore');
-							validestore.load({
-								params: {
-									BT_MT_EAU: BT_MT_EAU,
-									PERIODE_MENSUELLE: PERIODE_MENSUELLE
-								},
-								success: function(){
-									nouveaustore.load({
-										params: {
-											BT_MT_EAU: BT_MT_EAU,
-											PERIODE_MENSUELLE: PERIODE_MENSUELLE
-										}
-									});
-								}
-							});
 						}
 					});
 				})
@@ -76,8 +61,12 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 			text: 'Rejeter',
 			disabled: true,
 			handler: function(widget, event) {
+				
 				selecteditems = Ext.getCmp('nouveauPlGrid').getSelectionModel().getSelection();
 				Ext.each(selecteditems, function(op) {
+					console.info(op);
+					Ext.getStore('TriPlNouveauStore').remove(op);
+					Ext.getStore('TriPlNonValideStore').add(op);
 					Ext.Ajax.request({
 						url: BASE_URL+'data/triplcontrol/save/nonvalide',
 						method : 'POST',
@@ -85,26 +74,6 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 							idfacture: op.get('id'),
 							BT_MT_EAU: BT_MT_EAU//,
 							//date_validation: op.get('date_validation')
-						},
-						success: function(response){
-							var nouveaustore = Ext.getStore('TriPlNouveauStore');
-							var nonvalidestore = Ext.getStore('TriPlNonValideStore');
-							nonvalidestore.load({
-								params: {
-									BT_MT_EAU: BT_MT_EAU,
-									PERIODE_MENSUELLE: PERIODE_MENSUELLE
-								}
-							});
-							nonvalidestore.on('load',function(){
-								console.info('ok');
-								console.info(nouveaustore);
-								nouveaustore.load({
-									params: {
-										BT_MT_EAU: BT_MT_EAU,
-										PERIODE_MENSUELLE: PERIODE_MENSUELLE
-									}
-								});
-							});							
 						}
 					});
 				})
@@ -115,6 +84,61 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 			items: [
 			    validerAction,
 			    rejeterAction
+			]
+		});
+		
+		//Actions du panel PlNonValideAgain
+		
+		var revaliderAction = Ext.create('Ext.Action', {
+			iconCls	: 'yes',
+			text: 'Valider',
+			disabled: true,
+			handler: function(widget, event) {
+				selecteditems = Ext.getCmp('plNonValideAgainGrid').getSelectionModel().getSelection();
+				Ext.each(selecteditems, function(op) {
+					Ext.getStore('TriPlNonValideAgainStore').remove(op);
+					Ext.getStore('TriPlValideStore').add(op);
+					Ext.Ajax.request({
+						url: BASE_URL+'data/triplcontrol/save/valide',
+						method : 'POST',
+						params : {
+							idfacture: op.get('id'),
+							BT_MT_EAU: BT_MT_EAU//,
+							//date_validation: op.get('date_validation')
+						}
+					});
+				})
+			}
+		});
+		
+		var rerejeterAction = Ext.create('Ext.Action', {
+			iconCls	: 'no',
+			text: 'Rejeter',
+			disabled: true,
+			handler: function(widget, event) {
+				
+				selecteditems = Ext.getCmp('plNonValideAgainGrid').getSelectionModel().getSelection();
+				Ext.each(selecteditems, function(op) {
+					console.info(op);
+					Ext.getStore('TriPlNonValideAgainStore').remove(op);
+					Ext.getStore('TriPlNonValideStore').add(op);
+					Ext.Ajax.request({
+						url: BASE_URL+'data/triplcontrol/save/nonvalide',
+						method : 'POST',
+						params : {
+							idfacture: op.get('id'),
+							BT_MT_EAU: BT_MT_EAU//,
+							//date_validation: op.get('date_validation')
+						}
+					});
+				})
+			}
+		});
+		
+		var recontextMenu = Ext.create('Ext.menu.Menu', {
+			items: [
+			    revaliderAction,
+			    rerejeterAction
 			]
 		});	
 		
@@ -132,6 +156,27 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 				id		: 'plpanelinfo'				
 			}
 		});
+		
+		displayplpanel = function(a,b,c,d){
+			var plstore = Ext.getStore('PlStore');
+			plstore.load({
+				params: {
+					BT_MT_EAU: BT_MT_EAU,
+					idFacture: b.data['id']
+				}
+			});
+			plstore.on('load', function(database){
+				if(Ext.getCmp('centerregion').items.items[0].id=='validationpanel'){
+					var plpanelinfo = Ext.getCmp('plpanelinfo');
+					/*if (!plpanelinfo){
+						var plpanelinfo = Ext.widget('plpanel');
+					}*/	
+					var rec= database.getAt(0);
+					plpanelinfo.getForm().loadRecord(rec);
+					windows_info_panel.show();
+				}
+			});
+		};
 		
 		// declare the source Grid
 		var NouveauPlGrid = Ext.create('Ext.grid.Panel', {
@@ -179,24 +224,7 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 						})
 					},
 					itemdblclick:function(a,b,c,d){
-						var plstore = Ext.getStore('PlStore');
-						plstore.load({
-							params: {
-								BT_MT_EAU: BT_MT_EAU,
-								idFacture: b.data['id']
-							}
-						});
-						plstore.on('load', function(database){
-							if(Ext.getCmp('centerregion').items.items[0].id=='validationpanel'){
-								var plpanelinfo = Ext.getCmp('plpanelinfo');
-								/*if (!plpanelinfo){
-									var plpanelinfo = Ext.widget('plpanel');
-								}*/	
-								var rec= database.getAt(0);
-								plpanelinfo.getForm().loadRecord(rec);
-								windows_info_panel.show();
-							}
-						});
+						displayplpanel(a,b,c,d);
 					}
 			    	}
 			},			
@@ -215,52 +243,72 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 				validerAction.enable();
 				rejeterAction.enable();
 			    } else {
-				buyAction.disable();
-				sellAction.disable();
+				validerAction.disable();
+				rejeterAction.disable();
 			    }
 			}
 		});
 
 		// create the destination Grid
 		var PlNonValideAgainGrid = Ext.create('Ext.grid.Panel', {
-			flex:1,
-			margin: 5,
-			padding: 5,
-			alias: 'widget.plNonValideAgainGrid',
-			iconCls: 'arrow_divide',
+			flex	:1,
+			margin	: 5,
+			padding	: 5,
+			id	: 'plNonValideAgainGrid',
+			alias	: 'widget.plNonValideAgainGrid',
+			iconCls	: 'arrow_divide',
 			multiSelect: true,
-		    frame: true,
-		    viewConfig: {
-		        plugins: {
-		            ptype: 'gridviewdragdrop',
-		            dragGroup: 'firstGridDDGroup',
-		            dropGroup: 'secondGridDDGroup'
-		        },
-		        listeners: {
-		            drop: function(node, data, dropRec, dropPosition) {
-		                //var dropOn = dropRec ? ' ' + dropPosition + ' ' + dropRec.get('name') : ' on empty view';
-		                Ext.each(data.records, function(op) {
-							Ext.Ajax.request({
-								url: BASE_URL+'data/triplcontrol/save/nonvalideagain',
-								method : 'POST',
-								params : {
-									idfacture: op.get('id'),
-									BT_MT_EAU: BT_MT_EAU
-								}/*,
-								success: function(response){
-										Ext.get('working-area').insertHtml('beforeBegin',response.responseText,true);
-								}*/
-							});
-		                	//console.info(op.get('id'));
-		                })
-		            }		            
-		        }
-		    },
-		    store            : 'TriPlNonValideAgainStore',
-		    columns          : columns,
-		    stripeRows       : true,
-		    title            : 'P.L rejet&eacute;s &agrave; nouveau factur&eacute;s - A Valider ou Rejeter'
-		    //,		    margins          : '5 5 5 5'
+		    	frame: true,
+		    	viewConfig: {
+		        	plugins: {
+		        		ptype: 'gridviewdragdrop',
+				    dragGroup: 'firstGridDDGroup',
+				    dropGroup: 'secondGridDDGroup'
+		        	},
+		        	listeners: {
+		           	 drop: function(node, data, dropRec, dropPosition) {
+		                	Ext.each(data.records, function(op) {
+						Ext.Ajax.request({
+							url: BASE_URL+'data/triplcontrol/save/nonvalideagain',
+							method : 'POST',
+							params : {
+								idfacture: op.get('id'),
+								BT_MT_EAU: BT_MT_EAU
+							}
+						});
+		                	})
+		            	},
+		            	itemcontextmenu: function(view, rec, node, index, e) {
+				   	e.stopEvent();
+				    	recontextMenu.showAt(e.getXY());
+				    	return false;
+			    	}		            
+		        	}
+		    	},
+			store            : 'TriPlNonValideAgainStore',
+			columns          : columns,
+			stripeRows       : true,
+			title            : 'P.L rejet&eacute;s &agrave; nouveau factur&eacute;s - A Valider ou Rejeter',
+			dockedItems: [{
+				xtype: 'toolbar',
+				items: [
+					revaliderAction, rerejeterAction
+				]
+			}]
+		});
+		
+		PlNonValideAgainGrid.getSelectionModel().on({
+			selectionchange: function(sm, selections) {
+			    console.info(selections);
+			    console.info(sm);
+			    if (selections.length) {
+				revaliderAction.enable();
+				rerejeterAction.enable();
+			    } else {
+				revaliderAction.disable();
+				rerejeterAction.disable();
+			    }
+			}
 		});
 		
 		
@@ -299,9 +347,9 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 		                	//console.info(op.get('id'));
 		                })
 		            }		            
-		        },
-		        deferEmptyText : false,
-				emptyText: '<br><br><br><br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Glisser-D&eacute;poser les factures valides ici.<br>&nbsp&nbspLaisser la touche Ctrl enfonc&eacute;e pour d&eacute;placer plusieurs lignes.'				
+		        }//,
+		        //deferEmptyText : false,
+			//	emptyText: '<br><br><br><br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Glisser-D&eacute;poser les factures valides ici.<br>&nbsp&nbspLaisser la touche Ctrl enfonc&eacute;e pour d&eacute;placer plusieurs lignes.'				
 		    },
 		    store            : 'TriPlValideStore',
 		    columns          : columns,
@@ -407,9 +455,9 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 							}]
 						}).show();
 		            }		            
-		        },
-		        deferEmptyText : false,
-		        emptyText: '<br><br><br><br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Glisser-D&eacute;poser les factures non-valides ici.<br>&nbsp;&nbsp;Laisser la touche Ctrl enfonc&eacute;e pour d&eacute;placer plusieurs lignes.'				
+		        }//,
+		        //deferEmptyText : false,
+		        //emptyText: '<br><br><br><br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Glisser-D&eacute;poser les factures non-valides ici.<br>&nbsp;&nbsp;Laisser la touche Ctrl enfonc&eacute;e pour d&eacute;placer plusieurs lignes.'				
 		    },
 		    store            : 'TriPlNonValideStore',
 		    columns          : [

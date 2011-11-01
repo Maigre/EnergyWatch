@@ -4,8 +4,8 @@ Ext.define('MainApp.view.panel.HistoriqueUploadPanel', {
 	frame: true,
 	title: 'Historique',
 	store: 'HistoriqueUploadStore',
-	width: 300,
-	//height: 600,
+	width: 310,
+	//height: 100,
 	x:0,
 	initComponent: function() {
 		this.columns = [
