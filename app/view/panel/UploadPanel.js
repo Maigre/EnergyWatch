@@ -97,7 +97,7 @@ Ext.define('MainApp.view.panel.UploadPanel', {
 			else{
 				var table='conso_mts';
 			}
-			console.info(Ext.getCmp('comboboxmoisfacture'));
+			//console.info(Ext.getCmp('comboboxmoisfacture'));
 			var nomperiodefacture= Ext.getCmp('comboboxanneefacture').value+'-'+Ext.getCmp('comboboxmoisfacture').value;
 			
 			var form = this.up('form').getForm();
@@ -110,6 +110,8 @@ Ext.define('MainApp.view.panel.UploadPanel', {
                     //method : 'POST', 
                     waitMsg: 'Importation en cours...',
                     success: function(fp, o) {
+                    	console.info(fp);
+                    	console.info(o);
                     	if(o.result.info=='parseok'){
 	                		
 	                		Ext.Msg.alert('Success', 'Le fichier '+o.result.file+' a &eacute;t&eacute; t&eacute;l&eacute;charg&eacute; avec succ&egrave;s. Traitement des factures en cours...');					
