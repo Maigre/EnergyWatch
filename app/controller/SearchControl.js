@@ -1,33 +1,11 @@
-Ext.define('MainApp.controller.SearchControl', {
-    extend: 'Ext.app.Controller',
-	stores: ['SearchStore'],
-	models: ['SearchModel'],
-    views: ['MainApp.view.tools.SearchView'],
+displaypl = function(idPl,tension){
 
-    init: function() {
-        this.control({
-            'searchbar': {
-                change: this.dosearch
-            },
-            'searchbar': {
-                select: this.doselect
-            }
-        });
-    },
-	
-    dosearch: function(el) {
-		this.getSearchStoreStore().baseParams['text_search']=el.getValue();
-	},
-
-	doselect: function(record) {
-		
-		
-		//charge le store avec l'id du pl
-		var plstore = this.getStore('PlStore');
+	//charge le store avec l'id du pl
+		var plstore = Ext.getStore('PlStore');
 		plstore.load({
 			params: {
 				BT_MT_EAU: BT_MT_EAU,
-				idPl: record.getValue()
+				idPl: idPl
 			}
 		});
 		
@@ -45,8 +23,8 @@ Ext.define('MainApp.controller.SearchControl', {
 			}
 		});
 		
-		if (record.displayTplData[0].tension=='BT'){
-			var facturestore = this.getStore('FactureStore');
+		if (tension!=='MT'){
+			var facturestore = Ext.getStore('FactureStore');
 			//var donneesConsoStore = this.getStore('DonneesConsoStore');
 			var plfacturepanel = Ext.getCmp('plfacturepanel');
 			if (!plfacturepanel){
@@ -54,7 +32,7 @@ Ext.define('MainApp.controller.SearchControl', {
 			}
 		}
 		else{
-			var facturestore = this.getStore('FactureMTStore');
+			var facturestore = Ext.getStore('FactureMTStore');
 			//var donneesConsoStore = this.getStore('DonneesConsoMTStore');
 			var plfacturepanel = Ext.getCmp('plfacturemtpanel');
 			if (!plfacturepanel){
@@ -63,27 +41,55 @@ Ext.define('MainApp.controller.SearchControl', {
 		}
 		
 		facturestore.load({
-			params: {idPl: record.getValue()}
+			params: {idPl: idPl}
 		});
 		
 		/*donneesConsoStore.load({
 			params: {idPl: record.getValue()}
 		});*/
 		
-		var alerteStore = this.getStore('AlerteStore');
+		var alerteStore = Ext.getStore('AlerteStore');
 		alerteStore.load({
 			params: {
-				idPl: record.getValue(),
+				idPl: idPl,
 				BT_MT_EAU: BT_MT_EAU
 			}
 		});
 		
 		//Si le panel plfacturepanel n'est pas déjà affiché
-		if(Ext.getCmp('centerregion').items.items[0].alias!='widget.plfacturepanel'){
+		//if(Ext.getCmp('centerregion').items.items[0].alias!='widget.plfacturepanel'){
 			Ext.getCmp('centerregion').removeAll(false); //clean the center region
 			Ext.getCmp('centerregion').add(plfacturepanel); //display the panel
-		}		
-		
+		//}	
+
+}
+
+Ext.define('MainApp.controller.SearchControl', {
+	extend: 'Ext.app.Controller',
+	stores: ['SearchStore'],
+		models: ['SearchModel'],
+	    views: ['MainApp.view.tools.SearchView'],
+
+	    init: function() {
+		this.control({
+		    'searchbar': {
+			change: this.dosearch
+		    },
+		    'searchbar': {
+			select: this.doselect
+		    }
+		});
+	    },
+
+	    dosearch: function(el) {
+		this.getSearchStoreStore().baseParams['text_search']=el.getValue();
+	},
+
+	doselect: function(record) {
+	
+	
+		displaypl(record.getValue(),record.displayTplData[0].tension);	
+	
 	}
 	
     

@@ -27,13 +27,68 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 					
 				}
 			},
-		    {text: "Num&eacute;ro P.L", width: 100, sortable: true, dataIndex: 'Point_de_livraison'},
+		    {text: "Num&eacute;ro P.L", width: 110, sortable: true, dataIndex: 'Point_de_livraison'},
 		    {text: "Num&eacute;ro Facture", width: 100, sortable: true, dataIndex: 'No_de_facture'},
-		    {text: "", width: 70, sortable: true, dataIndex: 'date_validation', hidden: true, Value: 10},
+		    //{text: "", width: 70, sortable: true, dataIndex: 'date_validation', hidden: true, Value: 10},
 		    {text: "Montant net", width: 70, sortable: true, dataIndex: 'Montant_net'}
 		];
 		
 		//Actions du panel NouveauPl
+		
+		var displayPlFactureAction = Ext.create('Ext.Action', {
+			iconCls	: 'help',
+			text: 'D&eacute;tail des factures',
+			//disabled: true,
+			handler: function(widget, event) {
+				console.info(event);//.selected.items[0].modelName);
+				selecteditem = Ext.getCmp('nouveauPlGrid').getSelectionModel().getSelection();
+				console.info(selecteditem[0].get('id'));
+				console.info(selecteditem[0].internalId);
+				displaypl(selecteditem[0].get('id'),BT_MT_EAU);
+			}
+		});
+		
+		//Pl info window show on dblclick sur le nouveauplgrid
+		var windows_info_panel= Ext.create('Ext.window.Window', {
+			title: 'Info Panel',
+			closeAction: 'hide',
+			height: 600,
+			width: 330,
+			layout: 'fit',
+			items: {  // Let's put an empty grid in just to illustrate fit layout
+				xtype	: 'plpanel',
+				id		: 'plpanelinfo'				
+			}
+		});
+		
+		var displayPlAction = Ext.create('Ext.Action', {
+			iconCls	: 'help',
+			text: 'Afficher P.L',
+			//disabled: true,
+			handler: function(widget, event) {
+				
+				selecteditem = Ext.getCmp('nouveauPlGrid').getSelectionModel().getSelection();
+				
+				var plstore = Ext.getStore('PlStore');
+				plstore.load({
+					params: {
+						BT_MT_EAU: BT_MT_EAU,
+						idFacture: selecteditem[0].get('id')
+					}
+				});
+				plstore.on('load', function(database){
+					if(Ext.getCmp('centerregion').items.items[0].id=='validationpanel'){
+						var plpanelinfo = Ext.getCmp('plpanelinfo');
+						/*if (!plpanelinfo){
+							var plpanelinfo = Ext.widget('plpanel');
+						}*/	
+						var rec= database.getAt(0);
+						plpanelinfo.getForm().loadRecord(rec);
+						windows_info_panel.show();
+					}
+				});
+			}
+		});
 		
 		var validerAction = Ext.create('Ext.Action', {
 			iconCls	: 'yes',
@@ -83,11 +138,56 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 		var contextMenu = Ext.create('Ext.menu.Menu', {
 			items: [
 			    validerAction,
-			    rejeterAction
+			    rejeterAction,
+			    displayPlAction,
+			    displayPlFactureAction
 			]
 		});
 		
 		//Actions du panel PlNonValideAgain
+		
+		var displayPlNonValideAgainFactureAction = Ext.create('Ext.Action', {
+			iconCls	: 'help',
+			text: 'D&eacute;tail des factures',
+			//disabled: true,
+			handler: function(widget, event) {
+				console.info(event);//.selected.items[0].modelName);
+				selecteditem = Ext.getCmp('plNonValideAgainGrid').getSelectionModel().getSelection();
+				console.info(selecteditem[0].get('id'));
+				console.info(selecteditem[0].internalId);
+				displaypl(selecteditem[0].get('id'),BT_MT_EAU);
+			}
+		});
+		
+		var displayPlNonValideAgainAction = Ext.create('Ext.Action', {
+			iconCls	: 'help',
+			text: 'Afficher P.L',
+			//disabled: true,
+			handler: function(widget, event) {
+				
+				selecteditem = Ext.getCmp('plNonValideAgainGrid').getSelectionModel().getSelection();
+				
+				var plstore = Ext.getStore('PlStore');
+				plstore.load({
+					params: {
+						BT_MT_EAU: BT_MT_EAU,
+						idFacture: selecteditem[0].get('id')
+					}
+				});
+				plstore.on('load', function(database){
+					if(Ext.getCmp('centerregion').items.items[0].id=='validationpanel'){
+						var plpanelinfo = Ext.getCmp('plpanelinfo');
+						/*if (!plpanelinfo){
+							var plpanelinfo = Ext.widget('plpanel');
+						}*/	
+						var rec= database.getAt(0);
+						plpanelinfo.getForm().loadRecord(rec);
+						windows_info_panel.show();
+					}
+				});
+			}
+		});
+		
 		
 		var revaliderAction = Ext.create('Ext.Action', {
 			iconCls	: 'yes',
@@ -135,63 +235,140 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 			}
 		});
 		
+		
+		
 		var recontextMenu = Ext.create('Ext.menu.Menu', {
 			items: [
 			    revaliderAction,
-			    rerejeterAction
+			    rerejeterAction,
+			    displayPlNonValideAgainAction,
+			    displayPlNonValideAgainFactureAction
 			]
-		});	
+		});
 		
+		//Actions du panel ValidePl
 		
-		
-		//Pl info window show on dblclick sur le nouveauplgrid
-		var windows_info_panel= Ext.create('Ext.window.Window', {
-			title: 'Info Panel',
-			closeAction: 'hide',
-			height: 600,
-			width: 330,
-			layout: 'fit',
-			items: {  // Let's put an empty grid in just to illustrate fit layout
-				xtype	: 'plpanel',
-				id		: 'plpanelinfo'				
+		var displayPlValideFactureAction = Ext.create('Ext.Action', {
+			iconCls	: 'help',
+			text: 'D&eacute;tail des factures',
+			//disabled: true,
+			handler: function(widget, event) {
+				console.info(event);//.selected.items[0].modelName);
+				selecteditem = Ext.getCmp('plValideGrid').getSelectionModel().getSelection();
+				console.info(selecteditem[0].get('id'));
+				console.info(selecteditem[0].internalId);
+				displaypl(selecteditem[0].get('id'),BT_MT_EAU);
 			}
 		});
 		
-		displayplpanel = function(a,b,c,d){
-			var plstore = Ext.getStore('PlStore');
-			plstore.load({
-				params: {
-					BT_MT_EAU: BT_MT_EAU,
-					idFacture: b.data['id']
-				}
-			});
-			plstore.on('load', function(database){
-				if(Ext.getCmp('centerregion').items.items[0].id=='validationpanel'){
-					var plpanelinfo = Ext.getCmp('plpanelinfo');
-					/*if (!plpanelinfo){
-						var plpanelinfo = Ext.widget('plpanel');
-					}*/	
-					var rec= database.getAt(0);
-					plpanelinfo.getForm().loadRecord(rec);
-					windows_info_panel.show();
-				}
-			});
-		};
+		var displayPlValideAction = Ext.create('Ext.Action', {
+			iconCls	: 'help',
+			text: 'Afficher P.L',
+			//disabled: true,
+			handler: function(widget, event) {
+				
+				selecteditem = Ext.getCmp('plValideGrid').getSelectionModel().getSelection();
+				
+				var plstore = Ext.getStore('PlStore');
+				plstore.load({
+					params: {
+						BT_MT_EAU: BT_MT_EAU,
+						idFacture: selecteditem[0].get('id')
+					}
+				});
+				plstore.on('load', function(database){
+					if(Ext.getCmp('centerregion').items.items[0].id=='validationpanel'){
+						var plpanelinfo = Ext.getCmp('plpanelinfo');
+						/*if (!plpanelinfo){
+							var plpanelinfo = Ext.widget('plpanel');
+						}*/	
+						var rec= database.getAt(0);
+						plpanelinfo.getForm().loadRecord(rec);
+						windows_info_panel.show();
+					}
+				});
+			}
+		});
+		
+		var validecontextMenu = Ext.create('Ext.menu.Menu', {
+			items: [
+			    displayPlValideAction,
+			    displayPlValideFactureAction
+			]
+		});
+		
+		//Actions du panel NonValidePl
+		
+		var displayPlNonValideFactureAction = Ext.create('Ext.Action', {
+			iconCls	: 'help',
+			text: 'D&eacute;tail des factures',
+			//disabled: true,
+			handler: function(widget, event) {
+				console.info(event);//.selected.items[0].modelName);
+				selecteditem = Ext.getCmp('plNonValideGrid').getSelectionModel().getSelection();
+				console.info(selecteditem[0].get('id'));
+				console.info(selecteditem[0].internalId);
+				displaypl(selecteditem[0].get('id'),BT_MT_EAU);
+			}
+		});
+		
+		var displayPlNonValideAction = Ext.create('Ext.Action', {
+			iconCls	: 'help',
+			text: 'Afficher P.L',
+			//disabled: true,
+			handler: function(widget, event) {
+				
+				selecteditem = Ext.getCmp('plNonValideGrid').getSelectionModel().getSelection();
+				
+				var plstore = Ext.getStore('PlStore');
+				plstore.load({
+					params: {
+						BT_MT_EAU: BT_MT_EAU,
+						idFacture: selecteditem[0].get('id')
+					}
+				});
+				plstore.on('load', function(database){
+					if(Ext.getCmp('centerregion').items.items[0].id=='validationpanel'){
+						var plpanelinfo = Ext.getCmp('plpanelinfo');
+						/*if (!plpanelinfo){
+							var plpanelinfo = Ext.widget('plpanel');
+						}*/	
+						var rec= database.getAt(0);
+						plpanelinfo.getForm().loadRecord(rec);
+						windows_info_panel.show();
+					}
+				});
+			}
+		});
+		
+		var nonvalidecontextMenu = Ext.create('Ext.menu.Menu', {
+			items: [
+			    displayPlNonValideAction,
+			    displayPlNonValideFactureAction
+			]
+		});		
 		
 		// declare the source Grid
 		var NouveauPlGrid = Ext.create('Ext.grid.Panel', {
-			flex	:1,
+			flex	: 1,
 			margin	: 5,
 			padding	: 5,
 			iconCls	: 'arrow_divide',
-			id		: 'nouveauPlGrid',
+			id	: 'nouveauPlGrid',
 			alias	: 'widget.nouveauPlGrid',
 			multiSelect: true,
 			frame	: true,
-			store            : 'TriPlNouveauStore',
-			columns          : columns,
-			stripeRows       : true,
-			title            : 'Nouveaux P.L d&eacute;tect&eacute;s - A Valider ou Rejeter',
+			store   : 'TriPlNouveauStore',
+			columns : columns,
+			stripeRows : true,
+			title      : 'Nouveaux P.L d&eacute;tect&eacute;s - A Valider ou Rejeter',
+			verticalScrollerType: 'paginggridscroller',
+			loadMask: true,
+			//disableSelection: true,
+			invalidateScrollerOnRefresh: false,
+			viewConfig: {
+				trackOver: false
+			},
 			dockedItems: [{
 			    xtype: 'toolbar',
 			    items: [
@@ -209,23 +386,20 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 					drop: function(node, data, dropRec, dropPosition) {
 						//var dropOn = dropRec ? ' ' + dropPosition + ' ' + dropRec.get('name') : ' on empty view';
 						Ext.each(data.records, function(op) {
-									Ext.Ajax.request({
-										url: BASE_URL+'data/triplcontrol/save/nouveau',
-										method : 'POST',
-										params : {
-											idfacture: op.get('id'),
-											BT_MT_EAU: BT_MT_EAU
-										}/*,
-										success: function(response){
-												Ext.get('working-area').insertHtml('beforeBegin',response.responseText,true);
-										}*/
-									});
+							Ext.Ajax.request({
+								url: BASE_URL+'data/triplcontrol/save/nouveau',
+								method : 'POST',
+								params : {
+									idfacture: op.get('id'),
+									BT_MT_EAU: BT_MT_EAU
+								}
+							});
 							//console.info(op.get('id'));
 						})
-					},
+					}/*,
 					itemdblclick:function(a,b,c,d){
 						displayplpanel(a,b,c,d);
-					}
+					}*/
 			    	}
 			},			
 			plugins: {
@@ -248,6 +422,8 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 			    }
 			}
 		});
+		
+		
 
 		// create the destination Grid
 		var PlNonValideAgainGrid = Ext.create('Ext.grid.Panel', {
@@ -259,30 +435,38 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 			iconCls	: 'arrow_divide',
 			multiSelect: true,
 		    	frame: true,
+			verticalScrollerType: 'paginggridscroller',
+			loadMask: true,
+			//disableSelection: true,
+			invalidateScrollerOnRefresh: false,
 		    	viewConfig: {
+		        	trackOver: false,
 		        	plugins: {
-		        		ptype: 'gridviewdragdrop',
+		        	ptype: 'gridviewdragdrop',
 				    dragGroup: 'firstGridDDGroup',
 				    dropGroup: 'secondGridDDGroup'
 		        	},
 		        	listeners: {
-		           	 drop: function(node, data, dropRec, dropPosition) {
-		                	Ext.each(data.records, function(op) {
-						Ext.Ajax.request({
-							url: BASE_URL+'data/triplcontrol/save/nonvalideagain',
-							method : 'POST',
-							params : {
-								idfacture: op.get('id'),
-								BT_MT_EAU: BT_MT_EAU
-							}
-						});
-		                	})
-		            	},
-		            	itemcontextmenu: function(view, rec, node, index, e) {
-				   	e.stopEvent();
-				    	recontextMenu.showAt(e.getXY());
-				    	return false;
-			    	}		            
+				   	drop: function(node, data, dropRec, dropPosition) {
+				        	Ext.each(data.records, function(op) {
+							Ext.Ajax.request({
+								url: BASE_URL+'data/triplcontrol/save/nonvalideagain',
+								method : 'POST',
+								params : {
+									idfacture: op.get('id'),
+									BT_MT_EAU: BT_MT_EAU
+								}
+							});
+				        	})
+				    	},
+				    	itemcontextmenu: function(view, rec, node, index, e) {
+					   	e.stopEvent();
+					    	recontextMenu.showAt(e.getXY());
+					    	return false;
+				    	}/*,
+					itemdblclick:function(a,b,c,d){
+						displayplpanel(a,b,c,d);
+					}*/		            
 		        	}
 		    	},
 			store            : 'TriPlNonValideAgainStore',
@@ -315,149 +499,172 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 
 		// create the destination Grid
 		var PlValideGrid = Ext.create('Ext.grid.Panel', {
-			flex:1,
-			margin: 5,
-			padding: 5,
-			alias: 'widget.plValideGrid',
-			iconCls: 'yes',
+			flex	:1,
+			margin	: 5,
+			padding	: 5,
+			alias	: 'widget.plValideGrid',
+			id	: 'plValideGrid',
+			iconCls	: 'yes',
 			multiSelect: true,
-		    frame: true,
-		    viewConfig: {
-		        plugins: {
-		            ptype: 'gridviewdragdrop',
-		            dragGroup: 'secondGridDDGroup',
-		            dropGroup: 'firstGridDDGroup'
-		        },
-		        listeners: {
-		            drop: function(node, data, dropRec, dropPosition,a,b,c) {
-		                //var dropOn = dropRec ? ' ' + dropPosition + ' ' + dropRec.get('name') : ' on empty view';
-		                
-		                Ext.each(data.records, function(op) {
-							Ext.Ajax.request({
-								url: BASE_URL+'data/triplcontrol/save/valide',
-								method : 'POST',
-								params : {
-									idfacture: op.get('id'),
-									BT_MT_EAU: BT_MT_EAU
-								}/*,
-								success: function(response){
-										Ext.get('working-area').insertHtml('beforeBegin',response.responseText,true);
-								}*/
-							});
-		                	//console.info(op.get('id'));
-		                })
-		            }		            
-		        }//,
-		        //deferEmptyText : false,
-			//	emptyText: '<br><br><br><br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Glisser-D&eacute;poser les factures valides ici.<br>&nbsp&nbspLaisser la touche Ctrl enfonc&eacute;e pour d&eacute;placer plusieurs lignes.'				
-		    },
-		    store            : 'TriPlValideStore',
-		    columns          : columns,
-		    stripeRows       : true,
-		    title            : 'P.L valid&eacute;s'
-		    //,		    margins          : '5 5 5 5'
+		        frame	: true,
+			verticalScrollerType: 'paginggridscroller',
+			loadMask: true,
+			//disableSelection: true,
+			invalidateScrollerOnRefresh: false,
+			viewConfig: {
+				trackOver: false,
+				plugins: {
+				    ptype	: 'gridviewdragdrop',
+				    dragGroup	: 'secondGridDDGroup',
+				    dropGroup	: 'firstGridDDGroup'
+				},
+				listeners: {
+				    	itemcontextmenu: function(view, rec, node, index, e) {
+					    e.stopEvent();
+					    validecontextMenu.showAt(e.getXY());
+					    return false;
+					},
+					drop: function(node, data, dropRec, dropPosition,a,b,c) {
+					//var dropOn = dropRec ? ' ' + dropPosition + ' ' + dropRec.get('name') : ' on empty view';
+		
+					Ext.each(data.records, function(op) {
+								Ext.Ajax.request({
+									url: BASE_URL+'data/triplcontrol/save/valide',
+									method : 'POST',
+									params : {
+										idfacture: op.get('id'),
+										BT_MT_EAU: BT_MT_EAU
+									}/*,
+									success: function(response){
+											Ext.get('working-area').insertHtml('beforeBegin',response.responseText,true);
+									}*/
+								});
+						//console.info(op.get('id'));
+					})
+				    }/*,
+				    itemdblclick:function(a,b,c,d){
+					displayplpanel(a,b,c,d);
+				    }*/		            
+				}//,
+				//deferEmptyText : false,
+				//	emptyText: '<br><br><br><br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Glisser-D&eacute;poser les factures valides ici.<br>&nbsp&nbspLaisser la touche Ctrl enfonc&eacute;e pour d&eacute;placer plusieurs lignes.'				
+			},
+			store            : 'TriPlValideStore',
+			columns          : columns,
+			stripeRows       : true,
+			title            : 'P.L valid&eacute;s'
+			//,		    margins          : '5 5 5 5'
 		});
 
 		// create the destination Grid
 		var PlNonValideGrid = Ext.create('Ext.grid.Panel', {
-			flex:1,
-			margin: 5,
-			padding: 5,
-			alias: 'widget.plNonValideGrid',
-			iconCls: 'no',
+			flex	:1,
+			margin	: 5,
+			padding	: 5,
+			alias	: 'widget.plNonValideGrid',
+			id	: 'plNonValideGrid',
+			iconCls	: 'no',
 			multiSelect: true,
-		    frame: true,
-		    beforeDragDrop: function(){
-		    	console.info('ok');
-		    },
+			frame	: true,
 			//cls: 'my-grid',
+			verticalScrollerType: 'paginggridscroller',
+			loadMask: true,
+			//disableSelection: true,
+			invalidateScrollerOnRefresh: false,
 			viewConfig: {
-		        plugins: {
-		            ptype: 'gridviewdragdrop',
-		            dragGroup: 'secondGridDDGroup',
-		            dropGroup: 'firstGridDDGroup'
-		        },
-		        listeners: {
-		            drop: function(node, data, dropRec, dropPosition) {
-		                //var dropOn = dropRec ? ' ' + dropPosition + ' ' + dropRec.get('name') : ' on empty view';
-		                //var idfacture=data.records[0].get('id');
-		                //data.records[0]
-		                
-		                window_validation = Ext.create('Ext.window.Window', {
-							title: 'Confirmation rejet PL',
-							height: 130,
-							width: 400,
-							layout: 'fit',
-							items: {  // Let's put an empty grid in just to illustrate fit layout
-								xtype: 'form',
-								border: false,
-								frame: true,
-								items:[{
-									xtype		: 'datefield',
-									id			: 'date_validation',
-									anchor		: '96%',
-									fieldLabel	: 'Date de prise d\'effet',
-									name		: 'date_validation',
-									minValue	: new Date(),
-									value		: new Date()
-								},{
-									xtype		: 'textfield',
-									inputType	: 'password',
-									anchor		: '96%',
-									fieldLabel	: 'Mot de passe',
-									name		: 'password'
-								}],
-								
-							},
-							buttonAlign : 'right',
-							buttons: [{ 
-								text: 'O.K',
-								listeners: {
-									click: function() {
-										// this == the button, as we are in the local scope
-										
-										date_validation=Ext.getCmp('date_validation').value;
-										console.info(date_validation);
-										if ((date_validation.getMonth()+1)<10){
-											date_validation=date_validation.getFullYear()+'-0'+(date_validation.getMonth()+1)+'-'+date_validation.getDate();
-										}
-										else{
-											date_validation=date_validation.getFullYear()+'-'+(date_validation.getMonth()+1)+'-'+date_validation.getDate();
-										}
-										
-										//data.records[0].data['date_validation']=date_validation;
-										this.up('window').close();
-										Ext.each(data.records, function(op) {
-											op.data['date_validation']=date_validation;
-											Ext.Ajax.request({
-												url: BASE_URL+'data/triplcontrol/save/nonvalide',
-												method : 'POST',
-												params : {
-													idfacture: op.get('id'),
-													BT_MT_EAU: BT_MT_EAU,
-													date_validation: op.get('date_validation')
-												},
-												success: function(response){
-													var nonvalidestore = Ext.getStore('TriPlNonValideStore');
-													nonvalidestore.load({
-														params: {
-															BT_MT_EAU: BT_MT_EAU,
-															PERIODE_MENSUELLE: PERIODE_MENSUELLE
-														}}
-													);
+				trackOver: false,
+				plugins	: {
+				    ptype: 'gridviewdragdrop',
+				    dragGroup: 'secondGridDDGroup',
+				    dropGroup: 'firstGridDDGroup'
+				},
+				listeners: {
+					    	itemcontextmenu: function(view, rec, node, index, e) {
+						    e.stopEvent();
+						    nonvalidecontextMenu.showAt(e.getXY());
+						    return false;
+						},
+						drop: function(node, data, dropRec, dropPosition) {
+						//var dropOn = dropRec ? ' ' + dropPosition + ' ' + dropRec.get('name') : ' on empty view';
+						//var idfacture=data.records[0].get('id');
+						//data.records[0]
+		
+						window_validation = Ext.create('Ext.window.Window', {
+									title	: 'Confirmation rejet PL',
+									height	: 130,
+									width	: 400,
+									layout	: 'fit',
+									items	: {  // Let's put an empty grid in just to illustrate fit layout
+										xtype	: 'form',
+										border	: false,
+										frame	: true,
+										items	:[{
+											xtype		: 'datefield',
+											id		: 'date_validation',
+											anchor		: '96%',
+											fieldLabel	: 'Date de prise d\'effet',
+											name		: 'date_validation',
+											minValue	: new Date(),
+											value		: new Date()
+										},{
+											xtype		: 'textfield',
+											inputType	: 'password',
+											anchor		: '96%',
+											fieldLabel	: 'Mot de passe',
+											name		: 'password'
+										}],
+					
+									},
+									buttonAlign : 'right',
+									buttons: [{ 
+										text: 'O.K',
+										listeners: {
+											click: function() {
+												// this == the button, as we are in the local scope
+							
+												date_validation=Ext.getCmp('date_validation').value;
+												console.info(date_validation);
+												if ((date_validation.getMonth()+1)<10){
+													date_validation=date_validation.getFullYear()+'-0'+(date_validation.getMonth()+1)+'-'+date_validation.getDate();
 												}
-											});
-											//console.info(op.get('id'));
-										})
-										
-									}
-								}
-							}]
-						}).show();
-		            }		            
-		        }//,
-		        //deferEmptyText : false,
-		        //emptyText: '<br><br><br><br><br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Glisser-D&eacute;poser les factures non-valides ici.<br>&nbsp;&nbsp;Laisser la touche Ctrl enfonc&eacute;e pour d&eacute;placer plusieurs lignes.'				
+												else{
+													date_validation=date_validation.getFullYear()+'-'+(date_validation.getMonth()+1)+'-'+date_validation.getDate();
+												}
+							
+												//data.records[0].data['date_validation']=date_validation;
+												this.up('window').close();
+												Ext.each(data.records, function(op) {
+													op.data['date_validation']=date_validation;
+													Ext.Ajax.request({
+														url	: BASE_URL+'data/triplcontrol/save/nonvalide',
+														method 	: 'POST',
+														params 	: {
+															idfacture	: op.get('id'),
+															BT_MT_EAU	: BT_MT_EAU,
+															date_validation	: op.get('date_validation')
+														},
+														success: function(response){
+															var nonvalidestore = Ext.getStore('TriPlNonValideStore');
+															nonvalidestore.load({
+																params: {
+																	BT_MT_EAU: BT_MT_EAU,
+																	PERIODE_MENSUELLE: PERIODE_MENSUELLE
+																}}
+															);
+														}
+													});
+													//console.info(op.get('id'));
+												})
+							
+											}
+										}
+									}]
+								}).show();
+					    }/*,
+					    itemdblclick:function(a,b,c,d){
+						displayplpanel(a,b,c,d);
+					    }*/	            
+				}
 		    },
 		    store            : 'TriPlNonValideStore',
 		    columns          : [
@@ -471,8 +678,8 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 				},
 				{text: "Num&eacute;ro P.L", width: 70, sortable: true, dataIndex: 'Point_de_livraison'},
 				{text: "Num&eacute;ro Facture", width: 70, sortable: true, dataIndex: 'No_de_facture'},
-				{text: "Montant net", width: 70, sortable: true, dataIndex: 'Montant_net'},
-				{text: "Date r&eacute;sil.", width: 80, sortable: true, dataIndex: 'date_validation', xtype: 'datecolumn',   format:'d-m-Y'}
+				{text: "Montant net", width: 70, sortable: true, dataIndex: 'Montant_net'}//,
+				//{text: "Date r&eacute;sil.", width: 80, sortable: true, dataIndex: 'date_validation', xtype: 'datecolumn',   format:'d-m-Y'}
 			],
 		    stripeRows       : true,
 		    title            : 'P.L rejet&eacute;s'
