@@ -51,7 +51,8 @@ Ext.define('MainApp.view.panel.UploadPanel', {
 					//name: 'id',
 					store: 'MonthStore',
 					displayField: 'mois',
-					valueField: 'value'
+					valueField: 'value',
+					tpl: '<tpl for="."><div class="x-combo-list-item">{courseDelivery:htmlEncode}</div></tpl>'
 				}]
 			},{
 				xtype: 'container',

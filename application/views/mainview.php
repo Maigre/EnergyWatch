@@ -5,6 +5,7 @@
 
 		<!-- Tools -->		
 		<script type="text/javascript" src="app/tools/print.js"></script>
+		<script type="text/javascript" src="app/tools/format.js"></script>
 		
 		<!-- ExtJS 4 -->
         <link rel="stylesheet" type="text/css" href="app/ext4/resources/css/ext-all.css" />

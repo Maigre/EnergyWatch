@@ -104,6 +104,14 @@ movebutton = function(){
 	//};
 };
 
+switch_button_to_header= function (){
+	Ext.getCmp('buttonwaterheader').show();
+	Ext.getCmp('buttonmtheader').show();
+	Ext.getCmp('buttonbtheader').show();
+	Ext.getCmp('buttonuploadheader').show();
+	return true;
+}
+
 westregion_appear= function(){
 	
 	Ext.getCmp('westregion').show();
