@@ -6,12 +6,12 @@ Ext.define('MainApp.view.tools.GridPlView', {
 	height: 570,
 	//forceFit: true,
 	verticalScrollerType: 'paginggridscroller',
-    loadMask: true,
-    disableSelection: true,
-    invalidateScrollerOnRefresh: false,
-    viewConfig: {
-        trackOver: false
-    },
+	loadMask: true,
+	disableSelection: true,
+	invalidateScrollerOnRefresh: false,
+	viewConfig: {
+	trackOver: false
+	},
 	//width: 1020,
 	frame: true,
 		

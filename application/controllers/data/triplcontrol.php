@@ -10,9 +10,28 @@ class Triplcontrol extends CI_Controller {
 
 	}
 
-	public function load($etat)
+	public function load($etat,$BT_MT_EAU,$PERIODE_MENSUELLE)
 	{
 
+		$start = $this->input->post('start');
+		$limit = $this->input->post('limit');
+		$sort = $this->input->post('sort');
+		if ($this->input->post('dir')=='ASC'){
+			$dir='asc';
+		}
+		elseif($this->input->post('dir')=='DESC'){
+			$dir='desc';
+		}
+		
+		
+		
+		if ($this->input->post('dir')=='ASC'){
+			$dir='asc';
+		}
+		elseif($this->input->post('dir')=='DESC'){
+			$dir='desc';
+		}
+		
 		if ($etat=='nouveau'){
 			$etat=1;
 		}
@@ -25,16 +44,19 @@ class Triplcontrol extends CI_Controller {
 		elseif ($etat=='nonvalideagain'){
 			$etat=4;
 		}
-		$BT_MT_EAU=$this->input->post('BT_MT_EAU');
+		//$BT_MT_EAU=$this->input->post('BT_MT_EAU');
 		
 		//formatte la date
-		$array_periode=explode(' ',$this->input->post('PERIODE_MENSUELLE'));		
+		$temp=explode('%20',$PERIODE_MENSUELLE);
+		
+		$array_periode=explode(' ',urldecode($PERIODE_MENSUELLE));		
 		$tableau_mois=array('Janvier'=>'01','Février'=>'02','Mars'=>'03','Avril'=>'04','Mai'=>'05','Juin'=>'06','Juillet'=>'07','Aout'=>'08','Septembre'=>'09','Octobre'=>'10','Novembre'=>'11','Décembre'=>'12');
 		$mois= $tableau_mois[$array_periode[0]];
 		$PERIODE_MENSUELLE=$array_periode[1].'-'.$mois.'-01';
 		
 		
 		//DATAMAPPER CONSTRUCTING
+		//Premiere fois pour renvoyer le nombre total de lignes de l'infinite scrolling grid
 		if ($BT_MT_EAU=='MT'){
 			$this->load->model('Facturemt','run_facture');
 		}
@@ -48,8 +70,35 @@ class Triplcontrol extends CI_Controller {
 		$f->where('etat', $etat);
 		$f->where_related_menumensuel('Tension',$BT_MT_EAU);
 		$f->where_related_menumensuel('periode',$PERIODE_MENSUELLE);
-		$f->get();
+		$total_f=$f->count();
 		
+		//AGAIN WITH FILTERS
+		//renvoie la portion du tableau définie par les parametre du post (start et limit)
+		
+		if ($BT_MT_EAU=='MT'){
+			$this->load->model('Facturemt','run_facture2');
+		}
+		elseif ($BT_MT_EAU=='BT'){
+			$this->load->model('Facturebt','run_facture2');
+		}
+		else{
+			$this->load->model('Factureeau','run_facture2');
+		}
+		$f = $this->run_facture2;
+		$f->where('etat', $etat);
+		$f->where_related_menumensuel('Tension',$BT_MT_EAU);
+		$f->where_related_menumensuel('periode',$PERIODE_MENSUELLE);
+		
+		if ($sort!='lastpost') $f->order_by($sort, $dir); 
+		$f->limit($limit,$start);
+		$f->get();
+		///echo count($f->all);
+		if (count($f->all)<($start+$limit)) $start=count($f->all)-$limit;
+		if ($start<0){
+			$start=0;
+			$limit=count($f->all);
+		}
+
 		
 		//initialize answer array TODO(should be an array design to be JSON encoded)
 		$answer = array(
@@ -82,7 +131,7 @@ class Triplcontrol extends CI_Controller {
 			}
 			$answer['data'][] = $answ;
 		}
-		if (isset($answer['data']))	$answer['size'] = count($answer['data']);
+		if (isset($answer['data']))	$answer['size'] = $total_f;
 		
 		if ($answer['size'] == 0){
 			$answer['msg'] = 'aucun resultat...';
@@ -162,6 +211,84 @@ class Triplcontrol extends CI_Controller {
 		//RETURN JSON !
 		$answer['success'] = true;
 		echo json_encode($answer);
+	}
+	
+	public function countresult($etat,$BT_MT_EAU,$PERIODE_MENSUELLE){
+		$start = 0;
+		$limit = 50;
+		$sort = 'lastpost';
+		$dir='asc';
+		/*if ($this->input->post('dir')=='ASC'){
+			$dir='asc';
+		}
+		elseif($this->input->post('dir')=='DESC'){
+			$dir='desc';
+		}*/
+		
+		if ($etat=='nouveau'){
+			$etat=1;
+		}
+		elseif ($etat=='valide'){
+			$etat=2;
+		}
+		elseif ($etat=='nonvalide'){
+			$etat=3;
+		}
+		elseif ($etat=='nonvalideagain'){
+			$etat=4;
+		}
+		//$BT_MT_EAU=$this->input->post('BT_MT_EAU');
+		
+		//formatte la date
+		$temp=explode('%20',$PERIODE_MENSUELLE);
+		
+		$array_periode=explode(' ',urldecode($PERIODE_MENSUELLE));		
+		$tableau_mois=array('Janvier'=>'01','Février'=>'02','Mars'=>'03','Avril'=>'04','Mai'=>'05','Juin'=>'06','Juillet'=>'07','Aout'=>'08','Septembre'=>'09','Octobre'=>'10','Novembre'=>'11','Décembre'=>'12');
+		$mois= $tableau_mois[$array_periode[0]];
+		$PERIODE_MENSUELLE=$array_periode[1].'-'.$mois.'-01';
+		
+		
+		//DATAMAPPER CONSTRUCTING
+		//Premiere fois pour renvoyer le nombre total de lignes de l'infinite scrolling grid
+		if ($BT_MT_EAU=='MT'){
+			$this->load->model('Facturemt','run_facture');
+		}
+		elseif ($BT_MT_EAU=='BT'){
+			$this->load->model('Facturebt','run_facture');
+		}
+		else{
+			$this->load->model('Factureeau','run_facture');
+		}		
+		$f = $this->run_facture;
+		$f->where('etat', $etat);
+		$f->where_related_menumensuel('Tension',$BT_MT_EAU);
+		$f->where_related_menumensuel('periode',$PERIODE_MENSUELLE);
+		$total_f=$f->count();
+		
+		//AGAIN WITH FILTERS
+		//renvoie la portion du tableau définie par les parametre du post (start et limit)
+		
+		if ($BT_MT_EAU=='MT'){
+			$this->load->model('Facturemt','run_facture2');
+		}
+		elseif ($BT_MT_EAU=='BT'){
+			$this->load->model('Facturebt','run_facture2');
+		}
+		else{
+			$this->load->model('Factureeau','run_facture2');
+		}
+		$f = $this->run_facture2;
+		$f->where('etat', $etat);
+		$f->where_related_menumensuel('Tension',$BT_MT_EAU);
+		$f->where_related_menumensuel('periode',$PERIODE_MENSUELLE);
+		
+		if ($sort!='lastpost') $f->order_by($sort, $dir); 
+		$f->limit($limit,$start);
+		$f->get();
+		$answer['size'] = count($f->all);
+		//RETURN JSON !
+		echo json_encode($answer);
+		
 	}
 	
 	
