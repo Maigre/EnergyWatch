@@ -1,9 +1,11 @@
 Ext.define('MainApp.store.MonthStore', {
     extend: 'Ext.data.Store',
-    fields: ['value','mois'],
+    fields: ['value',
+    {name : 'mois',convert:function(v){return Ext.util.Format.htmlDecode(v);}}
+    ],
 	data : [
 		{"value": "01", "mois":"Janvier"},
-		{"value": "02", "mois":"F&eacute;vrier"},
+		{"value": "02", "mois":"Février"},
 		{"value": "03", "mois":"Mars"},
 		{"value": "04", "mois":"Avril"},
 		{"value": "05", "mois":"Mai"},
