@@ -386,14 +386,14 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 					drop: function(node, data, dropRec, dropPosition) {
 						//var dropOn = dropRec ? ' ' + dropPosition + ' ' + dropRec.get('name') : ' on empty view';
 						Ext.each(data.records, function(op) {
-									Ext.Ajax.request({
-										url: BASE_URL+'data/triplcontrol/save/nouveau',
-										method : 'POST',
-										params : {
-											idfacture: op.get('id'),
-											BT_MT_EAU: BT_MT_EAU
-										}
-									});
+							Ext.Ajax.request({
+								url: BASE_URL+'data/triplcontrol/save/nouveau',
+								method : 'POST',
+								params : {
+									idfacture: op.get('id'),
+									BT_MT_EAU: BT_MT_EAU
+								}
+							});
 							//console.info(op.get('id'));
 						})
 					}/*,
