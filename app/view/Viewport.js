@@ -90,13 +90,13 @@ Ext.define('MainApp.view.Viewport', {
 					//height: 62,
 					//width: 80
 				},{
-					xtype: 'buttonupload',
+					xtype	: 'buttonupload',
 					//x: 80,
 					//y: 10,
-					id: 'buttonuploadheader',
+					id	: 'buttonuploadheader',
 					hidden	: true,
-					margins: 10,
-					border: 0,
+					margins	: 10,
+					border	: 0,
 					width   : 38,
 					text	: ''
 					//height: 62,
@@ -114,11 +114,11 @@ Ext.define('MainApp.view.Viewport', {
 					//height: 62,
 					//width: 80
 				},{
-					xtype: 'buttonbt',
+					xtype	: 'buttonbt',
 					//x: 80,
 					//y: 10,
-					margins: 10,
-					border: 0,
+					margins	: 10,
+					border	: 0,
 					hidden	: true,
 					text	: '',
 					id	: 'buttonbtheader',
@@ -126,14 +126,14 @@ Ext.define('MainApp.view.Viewport', {
 					//height: 62,
 					//width: 80
 				},{
-					xtype: 'buttonmt',
+					xtype	: 'buttonmt',
 					//x: 80,
 					//y: 10,
-					margins: 10,
-					border: 0,
+					margins	: 10,
+					border	: 0,
 					hidden	: true,
 					text	: '',
-					id		: 'buttonmtheader',
+					id	: 'buttonmtheader',
 					width   : 38
 					//height: 62,
 					//width: 80

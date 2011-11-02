@@ -5,7 +5,7 @@ Ext.define('MainApp.store.MonthStore', {
     ],
 	data : [
 		{"value": "01", "mois":"Janvier"},
-		{"value": "02", "mois":"Février"},
+		{"value": "02", "mois":"F&eacute;vrier"},
 		{"value": "03", "mois":"Mars"},
 		{"value": "04", "mois":"Avril"},
 		{"value": "05", "mois":"Mai"},
