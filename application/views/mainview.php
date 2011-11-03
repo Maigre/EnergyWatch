@@ -14,6 +14,7 @@
         
      	<!-- APPLICATION -->
      	<script type="text/javascript">BASE_URL = '<?=base_url()?>index.php/';</script>
+     	<script type="text/javascript">UPLOAD_RUNNING = false;</script>
      	<script 
      			//Application Start in MT(Moyenne Tension) Mode
      			type="text/javascript">BT_MT_EAU = 'MT';

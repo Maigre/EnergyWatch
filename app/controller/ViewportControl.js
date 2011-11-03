@@ -22,6 +22,7 @@ Ext.define('MainApp.controller.ViewportControl', {
 						function(btn) {
 							console.info(btn);
 							if(btn == 'yes'){
+								UPLOAD_RUNNING=true;
 								var progressbar = Ext.getCmp('progressbar');
 								if (!progressbar){
 									var progressbar = Ext.create('Ext.ProgressBar', {
@@ -56,11 +57,13 @@ Ext.define('MainApp.controller.ViewportControl', {
 												progressbar.updateProgress(obj.progress);
 												progress=obj.progress*100;
 												progressbar.updateText('Traitement des factures termin&eacute');
-												//form.owner.ownerCt.items.items[1].store.load();
-												//form.owner.ownerCt.items.items[1].doLayout();
+												Ext.getCmp('historiqueupload').store.load();
+												Ext.getCmp('historiqueupload').doLayout();
 												Ext.getCmp('southregion').removeAll();
 												Ext.getCmp('southregion').height = 30;
 												Ext.Msg.alert('Success', 'Le fichier a &eacute;t&eacute; import&eacute; avec succ&egrave;s. '+ obj.lignes+' requ&ecirc;tes ont &eacute;t&eacute; effectu&eacute;es.');						
+												UPLOAD_RUNNING= false;
+												Ext.getCmp('buttonimporter').enable();
 												
 											}
 										}

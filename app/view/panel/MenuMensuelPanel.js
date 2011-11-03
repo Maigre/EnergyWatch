@@ -81,10 +81,7 @@ Ext.define('MainApp.view.panel.MenuMensuelPanel', {
 									//bilanmainpaneldown.add(bilanalertepanel);
 								}
 								
-								
 								Ext.getCmp('centerregion').add(bilanmainpanel);
-								 
-								
 								
 								bilanvalidepanel.getForm().loadRecord(rec);
 								bilanrejetepanel.getForm().loadRecord(rec);

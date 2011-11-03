@@ -83,12 +83,14 @@ Ext.define('MainApp.view.panel.UploadPanel', {
 			buttonText: 'Recherche fichier...'
 		}
 	],
-    listeners:{
-		'click': function(){
-			//Ext.getCmp('viewport').items.items[0].removeAll();
+    	listeners:{
+		'render': function(){
+			if (UPLOAD_RUNNING==true){
+				 Ext.getCmp('buttonimporter').disable();
+			}
 		}
 	},
-    buttons: [{
+    	buttons: [{
         text	: 'Importer',
         id 	: 'buttonimporter',
         handler	: function() {
