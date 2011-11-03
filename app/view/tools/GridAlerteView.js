@@ -34,16 +34,19 @@ Ext.define('MainApp.view.tools.GridAlerteView', {
 		
 		type_tpl= new Ext.XTemplate(
 			'<tpl if="Type == 1;">',
-			'Hausse de {Valeur}% des Consommations',
+			'Hausse de {Valeur}% des Consommations journali&egrave;res(HorsPointe)',
 			'</tpl>',
 			'<tpl if="Type == 4;">',
 			'Changement Puissance Souscrite',
 			'</tpl>',
-			'<tpl if="Type == 6;">',
-			'D&eacute;passement Puissance de {Valeur} %',
+			'<tpl if=" ((-1)*Valeur) < 0 && Type == 6">',
+			'D&eacute;ficit de Puissance de {Valeur}%',
+			'</tpl>',
+			'<tpl if="Type == 6 && Valeur < 0">',
+			'Puissance souscrite non-atteinte ({Valeur}%)',
 			'</tpl>',
 			'<tpl if="Type == 7;">',
-			'{Valeur} factures en un mois pour ce P.L',
+			'{Valeur} factures re&ccedil;ues pour ce P.L',
 			'</tpl>'
 		);
 		
@@ -86,7 +89,7 @@ Ext.define('MainApp.view.tools.GridAlerteView', {
 		this.columns = [
 			{header: 'N&deg; Facture', dataIndex: 'No_de_facture', flex:1},
 			{header: 'Date', dataIndex: 'Date', xtype:'datecolumn', format:'d-m-Y', width:80},
-			{header: 'Alerte', dataIndex: 'Type', xtype: 'templatecolumn', tpl: type_tpl, flex:1}, 
+			{header: 'Alerte', dataIndex: 'Type', xtype: 'templatecolumn', tpl: type_tpl, flex:2}, 
 			
 			//{header: 'Hausse', dataIndex: 'Valeur', xtype: 'templatecolumn', tpl: valeur_tpl, flex:1},
 			{header: 'Etat', dataIndex: 'Etat', xtype: 'templatecolumn', tpl: flagtpl , align:'center', width:40,
@@ -98,7 +101,7 @@ Ext.define('MainApp.view.tools.GridAlerteView', {
 		            //listClass: 'x-combo-list-small'
             	}
             }, 
-			{header: 'Commentaire', dataIndex: 'Commentaire', flex:2,
+			{header: 'Commentaire', dataIndex: 'Commentaire', flex:4,
 				editor: {
 		            xtype: 'textfield',
 		            allowBlank: true,

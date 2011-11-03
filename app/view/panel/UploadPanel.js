@@ -89,8 +89,9 @@ Ext.define('MainApp.view.panel.UploadPanel', {
 		}
 	},
     buttons: [{
-        text: 'Importer',
-        handler: function() {
+        text	: 'Importer',
+        id 	: 'buttonimporter',
+        handler	: function() {
             
             if (Ext.getCmp('radiobassetensionupload').value){
 				var table='conso_bts';
@@ -105,6 +106,7 @@ Ext.define('MainApp.view.panel.UploadPanel', {
 			form.url=BASE_URL+'data/uploadxls/do_upload/'+table+'/'+nomperiodefacture;
             
             if(form.isValid()){
+                Ext.getCmp('buttonimporter').disable();
                 form.submit({
                     url: form.url,
                     actionMethods : {read: 'POST'},
@@ -131,34 +133,35 @@ Ext.define('MainApp.view.panel.UploadPanel', {
 							Ext.getCmp('southregion').insert(0,progressbar);
 							
 	                		function request_until_end(){
-								Ext.Ajax.request({
-									url: BASE_URL+'data/uploadxls/xls_to_db',//'+table+'/'+nomperiodefacture,
-									method : 'POST',
-									params : {
-										BT_MT_EAU: BT_MT_EAU
-									},
-									success: function(response){
-										var obj = Ext.decode(response.responseText);
-										
-										if(obj.info=='continue'){
-											progressbar.updateProgress(obj.progress);
-											progress=obj.progress*100;
-											progressbar.updateText('Traitement des factures en cours: '+progress+'% effectu&eacute;s');
-											request_until_end();
-										}
-										else{
-											progressbar.updateProgress(obj.progress);
-											progress=obj.progress*100;
-											progressbar.updateText('Traitement des factures termin&eacute');
-											form.owner.ownerCt.items.items[1].store.load();
-											form.owner.ownerCt.items.items[1].doLayout();
-											Ext.getCmp('southregion').removeAll();
-											Ext.getCmp('southregion').height = 30;
-											Ext.Msg.alert('Success', 'Le fichier a &eacute;t&eacute; import&eacute; avec succ&egrave;s. '+ obj.lignes+' requ&ecirc;tes ont &eacute;t&eacute; effectu&eacute;es.');																
-										}
-									}
-								});
+						Ext.Ajax.request({
+							url: BASE_URL+'data/uploadxls/xls_to_db',//'+table+'/'+nomperiodefacture,
+							method : 'POST',
+							params : {
+								BT_MT_EAU: BT_MT_EAU
+							},
+							success: function(response){
+								var obj = Ext.decode(response.responseText);
+								
+								if(obj.info=='continue'){
+									progressbar.updateProgress(obj.progress);
+									progress=obj.progress*100;
+									progressbar.updateText('Traitement des factures en cours: '+progress+'% effectu&eacute;s');
+									request_until_end();
+								}
+								else{
+									progressbar.updateProgress(obj.progress);
+									progress=obj.progress*100;
+									progressbar.updateText('Traitement des factures termin&eacute');
+									form.owner.ownerCt.items.items[1].store.load();
+									form.owner.ownerCt.items.items[1].doLayout();
+									Ext.getCmp('southregion').removeAll();
+									Ext.getCmp('southregion').height = 30;
+									Ext.Msg.alert('Success', 'Le fichier a &eacute;t&eacute; import&eacute; avec succ&egrave;s. '+ obj.lignes+' requ&ecirc;tes ont &eacute;t&eacute; effectu&eacute;es.');
+									Ext.getCmp('buttonimporter').enable();
+								}
 							}
+						});
+					}
 	                		request_until_end();
                 		}
                     },

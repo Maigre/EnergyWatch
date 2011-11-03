@@ -10,7 +10,7 @@ displaypl = function(idPl,tension){
 		});
 		
 		plstore.on('load', function(database){
-			if(Ext.getCmp('centerregion').items.items[0].id=='plfacturepanel' || Ext.getCmp('centerregion').items.items[0].id=='plfacturemtpanel' ){
+			//if(Ext.getCmp('centerregion').items.items[0].id=='plfacturepanel' || Ext.getCmp('centerregion').items.items[0].id=='plfacturemtpanel' ){
 				var plpanel = Ext.getCmp('plpanel');
 				if (!plpanel){
 					var plpanel = Ext.widget('plpanel');
@@ -20,7 +20,7 @@ displaypl = function(idPl,tension){
 				Ext.getCmp('westregion').add(plpanel);
 				var rec= database.getAt(0);
 				plpanel.getForm().loadRecord(rec);
-			}
+			//}
 		});
 		
 		if (tension!=='MT'){

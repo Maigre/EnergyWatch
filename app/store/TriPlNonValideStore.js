@@ -30,6 +30,7 @@
 
 Ext.define('MainApp.store.TriPlNonValideStore', {
     extend: 'Ext.data.Store',
+    storeId : 'triplnonvalidestore',
     requires: 'MainApp.model.TriPlModel',
     model: 'MainApp.model.TriPlModel',
     remoteSort: true,

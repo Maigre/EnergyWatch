@@ -6,19 +6,11 @@ Ext.define('MainApp.view.tools.GridAlerteAllView', {
 	//height: 200,
 	//forceFit: true,
 	//width: 1100,
+	//maxHeight: 200,
 	frame: true,
-	margin: '10 50 50 10',
-	/*dockedItems:[{
-        xtype: 'toolbar',
-        dock: 'bottom',
-        items: ['->', {
-                    icon: 'app/images/icons/disk.png',
-                    //text: '',
-                    scope: this,
-                    handler: this.onSync
-        }]
-    }],*/
-		
+	margin: '5',
+	flex:1,
+			
 	initComponent: function() {
 		flagtpl= new Ext.XTemplate(
 			'<tpl if="Etat == 3;">',
@@ -43,7 +35,7 @@ Ext.define('MainApp.view.tools.GridAlerteAllView', {
 			'D&eacute;ficit de Puissance',
 			'</tpl>',
 			'<tpl if="Type == 6 && Valeur < 0">',
-			'D&eacute;ficit de Puissance',
+			'Puissance souscrite non-atteinte',
 			'</tpl>',
 			'<tpl if="Type == 7;">',
 			'Plusieurs factures en un mois pour ce P.L',
