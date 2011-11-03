@@ -29,6 +29,7 @@ Ext.define('MainApp.store.TriPlValideStore', {
 });
 Ext.define('MainApp.store.TriPlValideStore', {
     extend: 'Ext.data.Store',
+    storeId : 'triplvalide',
     requires: 'MainApp.model.TriPlModel',
     model: 'MainApp.model.TriPlModel',
     remoteSort: true,

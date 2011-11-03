@@ -548,12 +548,12 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 				if ((isset($en_cours['Nb_jours'])) and ($en_cours['Nb_jours']!=0)){
 					if (isset($en_cours['Consommation_mensuelle']))$en_cours['Consommation_mensuelle']=$en_cours['Consommation_mensuelle']*30/$en_cours['Nb_jours'];
 					//if (isset($en_cours['Montant_net']))$en_cours['Montant_net']=$en_cours['Montant_net']*30/$en_cours['Nb_jours'];
-					//if ($en_cours['Consommation_mensuelle']!=0)$en_cours['Cout_kwh']=$en_cours['Montant_net']/$en_cours['Consommation_mensuelle'];
+					if ($en_cours['Consommation_mensuelle']!=0)$en_cours['Cout_kwh']=$en_cours['Montant_net']/$en_cours['Consommation_mensuelle'];
 				}
 				if ((isset($mois_precedent['Nb_jours'])) and ($mois_precedent['Nb_jours']!=0)){
 					if (isset($mois_precedent['Consommation_mensuelle']))$mois_precedent['Consommation_mensuelle']=$mois_precedent['Consommation_mensuelle']*30/$mois_precedent['Nb_jours'];
 					//if (isset($mois_precedent['Montant_net']))$mois_precedent['Montant_net']=$mois_precedent['Montant_net']*30/$mois_precedent['Nb_jours'];
-					//if ($mois_precedent['Consommation_mensuelle']!=0)$mois_precedent['Cout_kwh']=$mois_precedent['Montant_net']/$mois_precedent['Consommation_mensuelle'];
+					if ($mois_precedent['Consommation_mensuelle']!=0)$mois_precedent['Cout_kwh']=$mois_precedent['Montant_net']/$mois_precedent['Consommation_mensuelle'];
 				}
 				/*
 				if ((isset($mois_annee_precedente['Nb_jours'])) and ($mois_annee_precedente['Nb_jours']!=0)){
@@ -736,34 +736,39 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 				
 				//type 7 : Double facturation pour un même PL
 				if (isset($en_cours['idFacture'])){
+					
+					
 					$p= new Pl();			
 			 		if ($table=='conso_bts'){
 		 				if ($tension=='BT'){
 		 					$p->where_related_facturebt('id',$en_cours['idFacture'])->get();
 		 					$f= new Facturebt();
+		 					$f_encours= new Facturebt();
 		 				}
 		 				else{
 		 					$p->where_related_factureeau('id',$en_cours['idFacture'])->get();
 		 					$f= new Factureeau();
+		 					$f_encours= new Factureeau();
 		 				}
 			 		}
 			 		else{
 		 				$p->where_related_facturemt('id',$en_cours['idFacture'])->get();		
 		 				$f= new Facturemt();
+		 				$f_encours= new Facturemt();
 			 		}
-			 		
+			 		$f_encours->where('id',$en_cours['idFacture'])->get();
+			 		$f_encours->menumensuel->get();
+			 		$id_menumensuel_en_cours = $f_encours->menumensuel->id;
+			 		//recupere toutes les factures du PL
 			 		$f->where_related_pl('id',$p->id)->get();
 			 		$array_periode=null;
-			 		$doublons=1;
+			 		$doublons=0;
 			 		foreach($f->all as $facture){
 			 			$facture->menumensuel->get();
 			 			$id_menumensuel=$facture->menumensuel->id;
-			 			if (!is_null($array_periode)){
-			 				if (in_array($id_menumensuel,$array_periode)){
-				 				$doublons++;
-				 			}
-			 			}			 			
-			 			$array_periode[]=$id_menumensuel;
+			 			if ($id_menumensuel==$id_menumensuel_en_cours){
+				 			$doublons++;
+				 		}
 			 		}
 			 		
 			 		if ($doublons>1){

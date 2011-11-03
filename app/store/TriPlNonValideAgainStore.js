@@ -29,7 +29,8 @@
 });*/
 
 Ext.define('MainApp.store.TriPlNonValideAgainStore', {
-    extend: 'Ext.data.Store',
+    extend  : 'Ext.data.Store',
+    storeId : 'triplnonvalideagainstore',
     requires: 'MainApp.model.TriPlModel',
     model: 'MainApp.model.TriPlModel',
     remoteSort: true,

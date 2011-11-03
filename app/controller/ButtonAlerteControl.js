@@ -13,7 +13,7 @@ Ext.define('MainApp.controller.ButtonAlerteControl', {
 		var alerteallstore = this.getStore('AlerteAllStore');
 		
 		alerteallstore.proxy.url= BASE_URL+'data/alertecontrol/loadall/'+BT_MT_EAU+'/'+PERIODE_MENSUELLE; 
-		console.info(alerteallstore.proxy.url); 
+
 		alerteallstore.load({
 			params: {
 				BT_MT_EAU: BT_MT_EAU,

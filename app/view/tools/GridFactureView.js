@@ -17,7 +17,7 @@ Ext.define('MainApp.view.tools.GridFactureView', {
 			{header: 'P.S', dataIndex: 'Puisance_souscrite', flex:3}, 
 			{header: 'Ancien index', dataIndex: 'Ancien_index', flex:10}, 
 			{header: 'Nouvel Index', dataIndex: 'Nouvel_index', flex:10}, 
-			{header: 'Conso/mois', dataIndex: 'Consommation_mensuelle', flex:10}, 
+			{header: 'Conso', dataIndex: 'Consommation_mensuelle', flex:10}, 
 			{header: 'Contrib. Sp&eacute;', dataIndex: 'Contribution_Speciale',  flex:10}, 
 			{header: 'Redev', dataIndex: 'Redevance',  flex:5}, 
 			{header: 'Montant PF', dataIndex: 'Montant_PF',  flex:10}, 

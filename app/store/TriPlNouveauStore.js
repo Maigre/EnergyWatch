@@ -1,6 +1,7 @@
 
 Ext.define('MainApp.store.TriPlNouveauStore', {
     extend: 'Ext.data.Store',
+    storeId : 'triplnouveau',
     requires: 'MainApp.model.TriPlModel',
     model: 'MainApp.model.TriPlModel',
     remoteSort: true,
@@ -41,8 +42,7 @@ Ext.define('MainApp.store.TriPlNouveauStore', {
     	},
     	load : {
     		fn : function(){
-    			//console.info('nouveautotalcount');
-    			//console.info(this.totalCount);
+    			//console.info(Ext.getCmp('nouveauPlGrid').getSelectionModel().selectFirstRow()); //getView().focusRow(0);
     		}
     	},
     	beforeprefetch : {
