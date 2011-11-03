@@ -678,6 +678,18 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 						    return false;
 						},
 						drop: function(node, data, dropRec, dropPosition) {
+							Ext.each(data.records, function(op) {
+								Ext.Ajax.request({
+									url: BASE_URL+'data/triplcontrol/save/nonvalide',
+									method : 'POST',
+									params : {
+										idfacture: op.get('id'),
+										BT_MT_EAU: BT_MT_EAU
+									}
+								});
+							})
+					    	},
+						//drop: function(node, data, dropRec, dropPosition) {
 						//var dropOn = dropRec ? ' ' + dropPosition + ' ' + dropRec.get('name') : ' on empty view';
 						//var idfacture=data.records[0].get('id');
 						//data.records[0]
@@ -753,7 +765,8 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 										}
 									}]
 								}).show();*/
-					    }/*,
+					    //}
+					    /*,
 					    itemdblclick:function(a,b,c,d){
 						displayplpanel(a,b,c,d);
 					    }*/	            
