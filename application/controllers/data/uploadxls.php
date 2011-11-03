@@ -548,12 +548,12 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 				if ((isset($en_cours['Nb_jours'])) and ($en_cours['Nb_jours']!=0)){
 					if (isset($en_cours['Consommation_mensuelle']))$en_cours['Consommation_mensuelle']=$en_cours['Consommation_mensuelle']*30/$en_cours['Nb_jours'];
 					//if (isset($en_cours['Montant_net']))$en_cours['Montant_net']=$en_cours['Montant_net']*30/$en_cours['Nb_jours'];
-					if ($en_cours['Consommation_mensuelle']!=0)$en_cours['Cout_kwh']=$en_cours['Montant_net']/$en_cours['Consommation_mensuelle'];
+					//if ($en_cours['Consommation_mensuelle']!=0)$en_cours['Cout_kwh']=$en_cours['Montant_net']/$en_cours['Consommation_mensuelle'];
 				}
 				if ((isset($mois_precedent['Nb_jours'])) and ($mois_precedent['Nb_jours']!=0)){
 					if (isset($mois_precedent['Consommation_mensuelle']))$mois_precedent['Consommation_mensuelle']=$mois_precedent['Consommation_mensuelle']*30/$mois_precedent['Nb_jours'];
 					//if (isset($mois_precedent['Montant_net']))$mois_precedent['Montant_net']=$mois_precedent['Montant_net']*30/$mois_precedent['Nb_jours'];
-					if ($mois_precedent['Consommation_mensuelle']!=0)$mois_precedent['Cout_kwh']=$mois_precedent['Montant_net']/$mois_precedent['Consommation_mensuelle'];
+					//if ($mois_precedent['Consommation_mensuelle']!=0)$mois_precedent['Cout_kwh']=$mois_precedent['Montant_net']/$mois_precedent['Consommation_mensuelle'];
 				}
 				/*
 				if ((isset($mois_annee_precedente['Nb_jours'])) and ($mois_annee_precedente['Nb_jours']!=0)){
