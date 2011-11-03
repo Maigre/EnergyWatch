@@ -17,9 +17,7 @@ Main.Launch = {
 				//MainApp.ViewPort.init();
 				
 				Ext.QuickTips.init();
-				//var plallstore= this.getStore('PlAllStore');
-				// trigger the data store load
-				//plallstore.guaranteeRange(0, 199);
+
 
 				//lancer login.js ici
 			}

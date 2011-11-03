@@ -109,13 +109,16 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 							idfacture: op.get('id'),
 							BT_MT_EAU: BT_MT_EAU//,
 							//date_validation: op.get('date_validation')
+						},
+						success: function(){
+							//Test si dernier item sauvegardé et reload le grid via son store
+							if (op==selecteditems[selecteditems.length-1]){
+								nouveaustore.loadPage(1);
+								validestore.loadPage(1);
+							}
 						}
 					});
 				})
-				//nouveaustore.resetData();
-				nouveaustore.loadPage(1);
-				//validestore.resetData();
-				validestore.loadPage(1);
 
 				Ext.getCmp('nouveauPlGrid').getView().focusRow(0);
 				
@@ -133,6 +136,7 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 				nouveaustore=Ext.getStore('TriPlNouveauStore');
 				nonvalidestore=Ext.getStore('TriPlNonValideStore');
 				selecteditems = Ext.getCmp('nouveauPlGrid').getSelectionModel().getSelection();
+				
 				Ext.each(selecteditems, function(op) {
 					Ext.getStore('TriPlNouveauStore').remove(op);
 					Ext.getStore('TriPlNonValideStore').add(op);
@@ -143,13 +147,20 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 							idfacture: op.get('id'),
 							BT_MT_EAU: BT_MT_EAU//,
 							//date_validation: op.get('date_validation')
+						},
+						success: function(){
+							//Test si dernier item sauvegardé et reload le grid via son store
+							console.info(op);
+							console.info(selecteditems.length);
+							console.info(selecteditems[selecteditems.length-1]);
+							if (op==selecteditems[selecteditems.length-1]){
+								nouveaustore.loadPage(1);
+								nonvalidestore.loadPage(1);
+							}
 						}
 					});
+					
 				})
-				//nouveaustore.resetData();
-				nouveaustore.loadPage(1);
-				//nonvalidestore.resetData();
-				nonvalidestore.loadPage(1);
 			}
 		});
 		
@@ -222,13 +233,19 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 							idfacture: op.get('id'),
 							BT_MT_EAU: BT_MT_EAU//,
 							//date_validation: op.get('date_validation')
+						},
+						success: function(){
+							//Test si dernier item
+							console.info(op);
+							console.info(selecteditems.length);
+							console.info(selecteditems[selecteditems.length-1]);
+							if (op==selecteditems[selecteditems.length-1]){
+								nonvalideagainstore.loadPage(1);
+								validestore.loadPage(1);
+							}
 						}
 					});
 				})
-				//nonvalideagainstore.resetData();
-				nonvalideagainstore.loadPage(1);
-				//validestore.resetData();
-				validestore.loadPage(1);
 			}
 		});
 		
@@ -251,13 +268,19 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 							idfacture: op.get('id'),
 							BT_MT_EAU: BT_MT_EAU//,
 							//date_validation: op.get('date_validation')
+						},
+						success: function(){
+							//Test si dernier item
+							console.info(op);
+							console.info(selecteditems.length);
+							console.info(selecteditems[selecteditems.length-1]);
+							if (op==selecteditems[selecteditems.length-1]){
+								nonvalideagainstore.loadPage(1);
+								nonvalidestore.loadPage(1);
+							}
 						}
 					});
 				})
-				//nonvalideagainstore.resetData();
-				nonvalideagainstore.loadPage(1);
-				//nonvalidestore.resetData();
-				nonvalidestore.loadPage(1);
 			}
 		});
 		
@@ -321,7 +344,6 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 		});
 		
 		//Actions du panel NonValidePl
-		
 		var displayPlNonValideFactureAction = Ext.create('Ext.Action', {
 			iconCls	: 'help',
 			text: 'D&eacute;tail des factures',

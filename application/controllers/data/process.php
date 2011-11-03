@@ -34,4 +34,94 @@ class Process extends CI_Controller {
 		echo json_encode($answer);
 	}
 	
+	public function count_todelete($periode,$tension){
+		//Periode stockée par SQL sous format date Y-m-d 
+		$periode=urldecode($periode);
+		$mois = array('Janvier'=>'01', 'Février'=>'02', 'Mars'=>'03', 'Avril'=>'04', 'Mai'=>'05', 'Juin'=>'06', 'Juillet'=>'07', 'Août'=>'08', 'Septembre'=>'09', 'Octobre'=>10, 'Novembre'=>11, 'Décembre'=>12);
+		$arrayperiode=explode(' ',$periode); 
+		$periode=$arrayperiode[1].'-'.$mois[$arrayperiode[0]].'-01';
+		
+		//Supression dans l'ordre : alerte , facture , menumensuel
+		$m = new Menumensuel();
+		$m->where('Tension',$tension)->where('Periode',$periode)->get();
+		
+		if ($tension=='MT'){
+			$f = new Facturemt();
+			
+		}
+		elseif($tension=='BT'){
+			$f = new Facturebt();
+
+		}
+		else{
+			$f = new Factureeau();
+
+		}
+		
+		$answer['count']=$f->where_related_menumensuel('id',$m->id)->count();
+		$answer['success']=true;
+		echo json_encode($answer);
+		die;
+	
+	}
+	
+	public function deleteperiode($periode,$tension){
+		$decoupage=30;
+		//Periode stockée par SQL sous format date Y-m-d 
+		$periode=urldecode($periode);
+		$mois = array('Janvier'=>'01', 'Février'=>'02', 'Mars'=>'03', 'Avril'=>'04', 'Mai'=>'05', 'Juin'=>'06', 'Juillet'=>'07', 'Août'=>'08', 'Septembre'=>'09', 'Octobre'=>10, 'Novembre'=>11, 'Décembre'=>12);
+		$arrayperiode=explode(' ',$periode); 
+		$periode=$arrayperiode[1].'-'.$mois[$arrayperiode[0]].'-01';
+		
+		//Supression dans l'ordre : alerte , facture , menumensuel
+		$m = new Menumensuel();
+		$m->where('Tension',$tension)->where('Periode',$periode)->get();
+		
+		if ($tension=='MT'){
+			$f_count = new Facturemt();
+			$totalcount=$f_count->where_related_menumensuel('id',$m->id)->count();
+			$f = new Facturemt();
+			$f->where_related_menumensuel('id',$m->id)->get(10,0);
+			foreach($f->all as $facture){
+				$al=new Alerte();
+				$al->where_related_facturemt('id',$facture->id)->get();
+				$al->delete_all();
+			}
+		}
+		elseif($tension=='BT'){
+			$f_count = new Facturebt();
+			$totalcount=$f_count->where_related_menumensuel('id',$m->id)->count();
+			$f = new Facturebt();
+			$f->where_related_menumensuel('id',$m->id)->get(10,0);
+			foreach($f->all as $facture){
+				$al=new Alerte();
+				$al->where_related_facturebt('id',$facture->id)->get();
+				$al->delete_all();
+			}
+		}
+		else{
+			$f_count = new Factureeau();
+			$totalcount=$f_count->where_related_menumensuel('id',$m->id)->count();
+			$f = new Factureeau();
+			$f->where_related_menumensuel('id',$m->id)->get(10,0);
+			foreach($f->all as $facture){
+				$al=new Alerte();
+				$al->where_related_factureeau('id',$facture->id)->get();
+				$al->delete_all();
+			}
+		}
+		$f->delete_all();
+		if ($totalcount>$decoupage){
+			$answer['info']='continue';
+		}
+		else{
+			$m->delete();
+		}
+		$answer['totalrestant']=$totalcount;
+		$answer['success']=true;
+		echo json_encode($answer);
+		die();
+		
+	}
+	
 }

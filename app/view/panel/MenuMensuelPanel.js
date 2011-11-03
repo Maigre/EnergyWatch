@@ -96,31 +96,102 @@ Ext.define('MainApp.view.panel.MenuMensuelPanel', {
 								bilanattentepanel.doLayout();
 								bilanalertepanel.doLayout();
 								
-								
-								
-								
-								
 							});
 						}
 					});
 					
 					contextMenu = new Ext.menu.Menu({
-						  items: [{
+						  periode : '',
+						  items: [/*{
 								text: 'Edit',
 								iconCls: 'edit',
-								handler: function(){
+								handler: function(a,b,c,d){
 									console.info('ok');
-								}
+						  		}
+						  },*/{
+								text: 'Supprimer',
+								iconCls: 'no',
+								handler: function(a,b,c,d){
+									Ext.getCmp('Menu-button-'+a.ownerCt.periode)
+									Ext.Ajax.request({
+										url: BASE_URL+'data/process/count_todelete/'+a.ownerCt.periode+'/'+BT_MT_EAU,
+										method : 'POST',
+										params: {
+											BT_MT_EAU: BT_MT_EAU
+										},
+										success: function(response){
+											nb_facture=Ext.decode(response.responseText).count;
+											Ext.MessageBox.confirm(
+												'Supression de donn&eacute;es', 
+												'Supression de '+nb_facture+' factures . Souhaitez-vous la poursuivre?',
+												function(btn) {
+													if(btn == 'yes'){
+														var window_progress= Ext.create('Ext.window.Window', {
+															title	: 'Supression en cours',
+															id	: 'windowprogress',
+															closeAction: 'hide',
+															modal	: true, 
+															//height	: 150,
+															width	: 500,
+															layout	: 'fit',
+															items	: {  // Let's put an empty grid in just to illustrate fit layout
+																xtype	: 'progressbar',
+																id	: 'deleteprogressbar'				
+															}
+														});
+														window_progress.show();
+														delete_until_end= function(){
+															Ext.Ajax.request({
+																url: BASE_URL+'data/process/deleteperiode/'+a.ownerCt.periode+'/'+BT_MT_EAU,
+																method : 'POST',
+																params: {
+																	BT_MT_EAU: BT_MT_EAU
+																},
+																success: function(response){
+																	
+																	var obj = Ext.decode(response.responseText);
+								
+																	if(obj.info=='continue'){
+																		//progressbar.updateProgress(obj.progress);
+																		//progress=obj.progress*100;
+																		Ext.getCmp('deleteprogressbar').updateText(obj.totalrestant+' factures restantes');
+																		progress=1-(obj.totalrestant)/nb_facture;
+																		Ext.getCmp('deleteprogressbar').updateProgress(progress);
+																		delete_until_end();
+																	}
+																	else{
+																		Ext.getCmp('westregion').removeAll();
+																		var menumensuelpanel= new Ext.widget('menumensuelpanel');
+																		window_progress.destroy();
+																		Ext.getCmp('westregion').add(menumensuelpanel);
+																	}
+																
+											
+											
+											
+																	
+																}
+															});														
+														};
+														delete_until_end();
+														
+													}
+												}
+											);
+										}
+									});
+								}						  
 						  }]
 					});
 					//console.info(Ext.get('Menu-button-'+op));
 					Ext.getCmp('Menu-button-'+op).on('render',function() {
 						Ext.getCmp('Menu-button-'+op).getEl().on('contextmenu', function(e) {
 							 e.preventDefault();
-							 contextMenu.showBy(Ext.getCmp('Menu-button-'+op));
+							 menu=contextMenu;
+							 menu.periode=op;
+							 menu.showBy(Ext.getCmp('Menu-button-'+op));
 						});
 					});
-
 					me.add(MensuelButton);
 				})
 				// process server response here

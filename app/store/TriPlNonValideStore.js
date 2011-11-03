@@ -35,7 +35,7 @@ Ext.define('MainApp.store.TriPlNonValideStore', {
     model: 'MainApp.model.TriPlModel',
     remoteSort: true,
     buffered: true,
-    pageSize: 50,
+    pageSize: 25,
     //autoLoad: true,
     proxy: {
     	type: 'ajax',

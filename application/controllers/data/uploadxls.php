@@ -910,26 +910,26 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 	function parseExcel($excel_file_name_with_path, $table)
 	{
 		
-		$start_time=microtime(true);
 		$data = new spreadsheetexcelreader();
 		// Set output Encoding.
 		$data->setOutputEncoding('CP1251');
-		$data->read($excel_file_name_with_path);
 
+		$data->read($excel_file_name_with_path);
 		//efface le fichier après lecture
 		unlink($excel_file_name_with_path);
-
+		
 		
 		$this->nombres_colonnes=$data->sheets[0]['numCols'];
+		
 		if ($table=='conso_mts') $this->nombres_colonnes=56;
 		elseif ($table=='conso_bts') $this->nombres_colonnes=26;
-		
 		//Si la différence entre le nombre de colonne effectif et attendu est supérieur à 10, erreur
 		if (abs($this->nombres_colonnes-$data->sheets[0]['numCols'])>10){
 			$this->msg_error='Le nombre de colonnes du fichier est incoh&eacute;rent. Etes-vous s&ucirc;r d\'avoir s&eacute;lectionn&eacute; le bon type (BT/MT)?';
-			return FALSE;
+			$answer['error'] = $this->msg_error;
+			echo json_encode($answer);
+			die();
 		}
-		
 		$this->nombres_lignes=$data->sheets[0]['numRows'];
 		
 		

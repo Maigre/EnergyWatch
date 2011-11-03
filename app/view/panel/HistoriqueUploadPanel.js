@@ -1,6 +1,7 @@
 Ext.define('MainApp.view.panel.HistoriqueUploadPanel', {
 	extend: 'Ext.grid.Panel',
 	alias : 'widget.historiqueupload',
+	id    : 'historiqueupload',
 	frame: true,
 	title: 'Historique',
 	store: 'HistoriqueUploadStore',

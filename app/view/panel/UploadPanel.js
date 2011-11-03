@@ -5,11 +5,11 @@ Ext.define('MainApp.view.panel.UploadPanel', {
 	bodyPadding: 1,
 	margin: 50,
 	url:'',
-    frame : true,
-    fileUpload: true,
-    method: 'post',
-    headers: {'Content-type':'multipart/form-data'},
-    enctype:'multipart/form-data',
+	frame : true,
+	fileUpload: true,
+	method: 'post',
+	headers: {'Content-type':'multipart/form-data'},
+	enctype:'multipart/form-data',
 	title : 'Importation d\'une nouvelle facture ',
 
 	items : [{
@@ -152,21 +152,34 @@ Ext.define('MainApp.view.panel.UploadPanel', {
 									progressbar.updateProgress(obj.progress);
 									progress=obj.progress*100;
 									progressbar.updateText('Traitement des factures termin&eacute');
-									form.owner.ownerCt.items.items[1].store.load();
-									form.owner.ownerCt.items.items[1].doLayout();
+									Ext.getCmp('historiqueupload').store.load();
+									Ext.getCmp('historiqueupload').doLayout();
 									Ext.getCmp('southregion').removeAll();
 									Ext.getCmp('southregion').height = 30;
-									Ext.Msg.alert('Success', 'Le fichier a &eacute;t&eacute; import&eacute; avec succ&egrave;s. '+ obj.lignes+' requ&ecirc;tes ont &eacute;t&eacute; effectu&eacute;es.');
+									Ext.Msg.alert('Success', 'Le fichier a &eacute;t&eacute; import&eacute; avec succ&egrave;s. '+ obj.lignes+' factures ont &eacute;t&eacute; trait&eacute;es.');
 									Ext.getCmp('buttonimporter').enable();
 								}
-							}
+							},
+							failure:    function(response) {
+								var obj = Ext.decode(response.responseText);
+								Ext.MessageBox.show({
+									title: 'Status change',
+									msg: obj.error,
+									buttons: Ext.MessageBox.OK
+								});
+						        }
 						});
 					}
 	                		request_until_end();
                 		}
                     },
                     failure: function(fp, o) {
-                        Ext.Msg.alert('Success', 'Echec d\'importation du fichier.'+o.result.error);
+                        if(o.result.error){
+                        	Ext.Msg.alert('Error', 'Echec d\'importation du fichier.'+o.result.error);
+                        }
+                        else {
+                        	Ext.Msg.alert('Error', 'Echec d\'importation du fichier.');
+                        }                       
                     }
                 });
             }

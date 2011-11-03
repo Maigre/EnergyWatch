@@ -35,7 +35,7 @@ Ext.define('MainApp.store.TriPlNonValideAgainStore', {
     model: 'MainApp.model.TriPlModel',
     remoteSort: true,
     buffered: true,
-    pageSize: 50,
+    pageSize: 25,
     base_url: BASE_URL+'data/triplcontrol/load/nonvalideagain',
     //autoLoad: true,
     proxy: {
