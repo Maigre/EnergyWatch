@@ -35,10 +35,13 @@ Ext.define('MainApp.view.tools.GridAlerteAllView', {
 			'D&eacute;ficit de Puissance',
 			'</tpl>',
 			'<tpl if="Type == 6 && Valeur < 0">',
-			'Puissance souscrite non-atteinte',
+			'D&eacute;passement de puissance',
 			'</tpl>',
 			'<tpl if="Type == 7;">',
 			'Plusieurs factures en un mois pour ce P.L',
+			'</tpl>',
+			'<tpl if="Type == 8;">',
+			'Consommation d\'Energie R&eacute;active',
 			'</tpl>'
 		);
 		
@@ -54,6 +57,9 @@ Ext.define('MainApp.view.tools.GridAlerteAllView', {
 			'</tpl>',
 			'<tpl if="Type == 7;">',
 			'{Valeur}',
+			'</tpl>',
+			'<tpl if="Type == 8;">',
+			'{Valeur} CFA',
 			'</tpl>'
 		);
 		

@@ -81,21 +81,20 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 	 	$periode=$u->periode;
 	 	$this->periode_pour_menu=$periode;
 	 	
-	 	$prod=unserialize($u->factures);
-	 	//print_r($prod);
+	 	$prod=unserialize($u->factures); 
+	 	//ici on prend la premiere ligne de la table upload process qui contient plusieurs factures (en fonction de $decoupage, initialement fixée à 50 factures). 
+	 	//Elle sera effacée à la fin. on prendra ensuite la suivante, etc..
 	 	
 	 	
 	 	if (is_array($prod)){
 	 		
-	 		//echo 'okisarray';
-	 		//Sauvegarde sql des objets facture et pl
+
+	//******Sauvegarde sql des objets facture et pl
 			$requete_sql='';
 			for ($i = 1; $i < (count($prod)); $i++) {
 			
-				$start=microtime(true);
-			
-			
-	//Creation de l'objet pl
+							
+	//Creation de l'objet pl : $p
 		 		$p= new Pl();
 		 		$PL=substr($prod[$i][8], 1, -1);
 		 		$p->where('Point_de_livraison',$PL);
@@ -125,9 +124,10 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 			 		$p->Date_abonnement=substr($prod[$i][53], 1, -1);
 		 		}
 		 		$p->save();
-		 		
+	
+	//Creation de l'objet facture : $f	 		
 		 		if ($table=='conso_mts'){
-	//Creation de l'objet facture
+		//MT
 		 			$f= new Facturemt();
 			 		$nofacture=substr($prod[$i][2], 1, -1);
 			 		$f->where('No_de_facture',$nofacture);
@@ -182,12 +182,12 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 		 		}
 		 		else{
 		 			if (substr($p->No_compteur,0,1)=='E'){
-		 				//BT
+		 	//BT
 		 				$tension='BT';
 		 				$f= new Facturebt();
 		 			}
 		 			else{
-		 				//EAU
+		 	//EAU
 		 				$tension='EAU';
 		 				$f= new Factureeau();
 		 			}
@@ -213,8 +213,9 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 			 		$f->Date_index=substr($prod[$i][23], 1, -1);
 			 		$f->Nb_jours=substr($prod[$i][25], 1, -1);
 		 		}
+		 		
 		 		if (empty($f->etat)){
-		 			//import d'une nouvelle facture
+		 			//ETAT de la facture nouveau, valide, non valide, non valide mais refacturé
 		 			if($p->etat==3){
 		 			//Pl non valide mais refacturé. Facture en attente de confirmation 
 		 			$f->etat=4;
@@ -254,13 +255,13 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 		 		}
 			 	$m->save();
 			 	
-		 		//Link Facture & Pl
+		 		//Link Facture to Menumensuel & Pl
 		 		$f->save(array($p,$m));
 				
 				$this->nombres_requetes++;
 				//echo 'temps d execution sauvegarde'.$temp_sauvegarde;	
 		
-		 		
+	//Creation des donnees pour les graphes	 		
 		//Creation des donnes utilisables pour l'affichage des graphs de consommation mensuelle
 		//Eclatement des factures par mois. Si une facture est à cheval sur deux mois, elle est 
 		//découpée en deux.
@@ -395,33 +396,35 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 		 		*/
 		 		//$start_alerte=microtime(true);
 				
-	//Creation des alertes
-				//Get donnees conso
+	//******Creation des alertes
 				
 				if ($table=='conso_bts'){
 	 				if ($tension=='BT'){
-	 					$f= new Facturebt();
+	 					$f_pl_all= new Facturebt();
 	 				}
 	 				else{
-	 					$f= new Factureeau();
+	 					$f_pl_all= new Factureeau();
 	 				}
 		 		}
 		 		else{
-	 				$f= new Facturemt();			
+	 				$f_pl_all= new Facturemt();			
 		 		}
-	 			$f->where_related_pl('Point_de_livraison',$PL);
-		 		$f->get();
-		 		//Recherche date dernière facture
-		 		$date_encours=0;
-		 		foreach($f->all as $facture){
+	 			$f_pl_all->where_related_pl('Point_de_livraison',$PL);
+		 		$f_pl_all->get();
+		 		//date en cours de la facture traitée
+		 		
+		 		$date_encours = $f->Date_index;
+		 		$date_encours = strtotime(date("Y-m-d", strtotime($date_encours)));
+				
+		 		/*foreach($f->all as $facture){
 		 			$date_fin_facture=strtotime($facture->Date_index);
 		 			if ($date_encours<$date_fin_facture) $date_encours=$date_fin_facture;
-		 		}
+		 		}*/
 		 		
-		 		$date_fin=date('Y-m-d',$date_encours);
-		 		$date_fin_array = explode("-",$date_fin); // split the array
-				$month_encours = $date_fin_array[1]; //month segment
-				$year_encours = $date_fin_array[0]; //year segment
+		 		//$date_fin=date('Y-m-d',$date_encours);
+		 		//$date_fin_array = explode("-",$date_fin); // split the array
+				//$month_encours = $date_fin_array[1]; //month segment
+				//$year_encours = $date_fin_array[0]; //year segment
 				/*if ($month_encours=='02'){
 					$date_encours=strtotime($year_encours.'-'.$month_encours.'-28');				
 				}
@@ -433,8 +436,11 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 		 		$mois_precedent=array();
 		 		$moyenne_annuelle=array();
 		 		$mois_annee_precedente=array();
-				//Calcul des donnees necessaires pour generer les alertes
-				foreach($f->all as $facture){
+		 		
+		 		
+			//******Calcul des donnees necessaires pour generer les alertes
+				//Parcours de toutes les factures du Pl pour chercher le mois precedent et faire la moyenne annuelle
+				foreach($f_pl_all->all as $facture){
 					$date_facture=strtotime($facture->Date_index);
 					//$date_facture2=date('Y-n-d',$date_facture2);
 			 		//$date_facture_array = explode("-",$date_facture2); // split the array
@@ -445,7 +451,7 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 					}
 					
 					//mois en_cours
-					if ($date_encours==$date_facture){
+					if ($date_encours==$date_facture){ //facture en cours de traitement
 						/*if (isset($en_cours['Nb_jours'])){
 							$en_cours['Nb_jours']+=$c->Nb_jours;
 						}
@@ -466,10 +472,11 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 						}*/
 						$en_cours['Nb_jours']=$facture->Nb_jours;
 						$en_cours['Consommation_mensuelle']=$facture->Consommation_mensuelle;
-						$en_cours['idFacture']=$facture->id;
+						//$en_cours['idFacture']=$facture->id;
 						$en_cours['Puisance_souscrite']=$facture->Puisance_souscrite;
 						if ($table=='conso_mts'){
 							$en_cours['Conso_PA']=$facture->Conso_PA;
+							$en_cours['Conso_Energie_Reactive']=$facture->Conso_Energie_Reactive;
 						}
 					}
 					//mois précédent
@@ -543,15 +550,17 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 					}
 				}
 				
-				//extrapole les resultats pour avoir 30 jours/mois et 365/an
+			//extrapole les resultats pour avoir 30 jours/mois et 365/an
 				//creation des donnees cout kWh
 				if ((isset($en_cours['Nb_jours'])) and ($en_cours['Nb_jours']!=0)){
 					if (isset($en_cours['Consommation_mensuelle']))$en_cours['Consommation_mensuelle']=$en_cours['Consommation_mensuelle']*30/$en_cours['Nb_jours'];
+					
 					//if (isset($en_cours['Montant_net']))$en_cours['Montant_net']=$en_cours['Montant_net']*30/$en_cours['Nb_jours'];
 					//if ($en_cours['Consommation_mensuelle']!=0)$en_cours['Cout_kwh']=$en_cours['Montant_net']/$en_cours['Consommation_mensuelle'];
 				}
 				if ((isset($mois_precedent['Nb_jours'])) and ($mois_precedent['Nb_jours']!=0)){
 					if (isset($mois_precedent['Consommation_mensuelle']))$mois_precedent['Consommation_mensuelle']=$mois_precedent['Consommation_mensuelle']*30/$mois_precedent['Nb_jours'];
+					
 					//if (isset($mois_precedent['Montant_net']))$mois_precedent['Montant_net']=$mois_precedent['Montant_net']*30/$mois_precedent['Nb_jours'];
 					//if ($mois_precedent['Consommation_mensuelle']!=0)$mois_precedent['Cout_kwh']=$mois_precedent['Montant_net']/$mois_precedent['Consommation_mensuelle'];
 				}
@@ -570,19 +579,16 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 				*/
 				
 				
-				
-				
-				
 				$alerte_temp= null;
 				$tableaumois = array("","Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre");
 				$mois = $tableaumois[date("n",$date_encours)].' '.date("Y",$date_encours);
 				//Génère les alertes dans un tableau
 				
-				//type 1 : augmentation des consommations
+				//type 1 : augmentation des consommations mensuelles (extrapolées à 30 jours)
 				if ((isset($en_cours['Consommation_mensuelle'])) and (isset($mois_precedent['Consommation_mensuelle'])) and ($mois_precedent['Consommation_mensuelle']!=0)){
 					if ($en_cours['Consommation_mensuelle']>(1.25*$mois_precedent['Consommation_mensuelle']))
 					{
-						$idFacture=$en_cours['idFacture'];
+						$idFacture=$f->id;
 						$valeur=round((($en_cours['Consommation_mensuelle']/$mois_precedent['Consommation_mensuelle'])-1)*100);
 						//$Alerte='Au mois de '.$mois.' les consommations ont augmenté de '.$hausse.'% par rapport au mois précédent.';
 						$Duree_validite = 1;
@@ -693,7 +699,7 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 				//type 4 : Modification de la puissance souscrite
 				if ((isset($en_cours['Puisance_souscrite'])) and (isset($mois_precedent['Puisance_souscrite']))){
 					if ($en_cours['Puisance_souscrite']!=$mois_precedent['Puisance_souscrite']){
-						$idFacture=$en_cours['idFacture'];
+						$idFacture=$f->id; 
 						$valeur = round($en_cours['Puisance_souscrite']-$mois_precedent['Puisance_souscrite']);
 						//$Alerte='Au mois de '.$mois.' la puissance souscrite a augmenté de '.$hausse.'kWh';
 						$Duree_validite = 1;
@@ -712,9 +718,9 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 					}
 				}
 				//type 6 : Dépassement de la puissance souscrite
-				if ((isset($en_cours['idFacture'])) and (isset($mois_precedent['Conso_PA']))){
-					if (($en_cours['Conso_PA']> 1.10*$en_cours['Puisance_souscrite'])or($en_cours['Conso_PA']<0.90*$en_cours['Puisance_souscrite'])){
-						$idFacture=$en_cours['idFacture'];
+				if ((isset($en_cours['Conso_PA']))){
+					if (($en_cours['Conso_PA']> 1*$en_cours['Puisance_souscrite'])or($en_cours['Conso_PA']<0.90*$en_cours['Puisance_souscrite'])){
+						$idFacture=$f->id;
 						$valeur = round(100*($en_cours['Conso_PA']-$en_cours['Puisance_souscrite'])/$en_cours['Puisance_souscrite']);
 						//$Alerte='Au mois de '.$mois.' la puissance appelée a dépassé de '.$hausse.'% la puissance souscrite.';
 						$Duree_validite = 1;
@@ -735,44 +741,19 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 				}
 				
 				//type 7 : Double facturation pour un même PL
-				if (isset($en_cours['idFacture'])){
-					
-					
-					$p= new Pl();			
-			 		if ($table=='conso_bts'){
-		 				if ($tension=='BT'){
-		 					$p->where_related_facturebt('id',$en_cours['idFacture'])->get();
-		 					$f= new Facturebt();
-		 					$f_encours= new Facturebt();
-		 				}
-		 				else{
-		 					$p->where_related_factureeau('id',$en_cours['idFacture'])->get();
-		 					$f= new Factureeau();
-		 					$f_encours= new Factureeau();
-		 				}
-			 		}
-			 		else{
-		 				$p->where_related_facturemt('id',$en_cours['idFacture'])->get();		
-		 				$f= new Facturemt();
-		 				$f_encours= new Facturemt();
-			 		}
-			 		$f_encours->where('id',$en_cours['idFacture'])->get();
-			 		$f_encours->menumensuel->get();
-			 		$id_menumensuel_en_cours = $f_encours->menumensuel->id;
+					$id_menumensuel_en_cours = $f->menumensuel->id;
 			 		//recupere toutes les factures du PL
-			 		$f->where_related_pl('id',$p->id)->get();
 			 		$array_periode=null;
 			 		$doublons=0;
-			 		foreach($f->all as $facture){
+			 		foreach($f_pl_all->all as $facture){
 			 			$facture->menumensuel->get();
 			 			$id_menumensuel=$facture->menumensuel->id;
 			 			if ($id_menumensuel==$id_menumensuel_en_cours){
 				 			$doublons++;
 				 		}
 			 		}
-			 		
 			 		if ($doublons>1){
-			 			$idFacture=$en_cours['idFacture'];
+			 			$idFacture=$f->id;
 						//$Alerte='Au mois de '.$mois.' la puissance appelée a dépassé de '.$hausse.'% la puissance souscrite.';
 						$valeur = $doublons;
 						$Duree_validite = 1;
@@ -790,9 +771,32 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 						);
 						$alerte_temp[]=$alerte;
 			 		}
+				
+				
+				//type 8 : Facturation d'Energie reactive
+				if ((isset($en_cours['idFacture'])) and (isset($en_cours['Conso_Energie_Reactive']))){
+					if ($en_cours['Conso_Energie_Reactive']> 0){
+						$idFacture=$f->id;
+						$valeur = $en_cours['Conso_Energie_Reactive'];
+						//$Alerte='Au mois de '.$mois.' la puissance appelée a dépassé de '.$hausse.'% la puissance souscrite.';
+						$Duree_validite = 1;
+						$type_alerte=8;
+						$flux='elec';
+						//$date= $mois;
+						$date=date('Y-m-d',$date_encours);
+						$alerte=array(
+							'idFacture'=>$idFacture,
+							'Valeur'=>$valeur,
+							'Duree_validite'=>$Duree_validite,
+							'type_alerte'=>$type_alerte,
+							'flux'=>$flux,
+							'Date'=>$date,
+						);
+						$alerte_temp[]=$alerte;
+					}
 				}
 				
-				//Vérifie que l'alerte n'est pas déjà présente et valide
+				//Vérifie que l'alerte n'est pas déjà présente et valide avant de sauvegarder
 				if (is_array($alerte_temp)){
 					
 					foreach($alerte_temp as $AT){
@@ -808,27 +812,68 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 				 		else{
 			 				$a->where_related_facturemt('id',$AT['idFacture']);			
 				 		}
-						//$a->where_related_('Point_de_livraison',$PL);
+						
 						$a->where('Type',$AT['type_alerte']);
 						$a->where('Flux',$AT['flux']);
 						$a->where('Date',$AT['Date']);
+						//$a->order_by("Valeur", "asc"); 
 						$a->get();
 						/*$Alerte_already_done=false;
 						foreach($a->all as $same_alerte){
 							if (now() < (strtotime('+'.$AT['Duree_validite'].' month',(strtotime($same_alerte->Date))))) $Alerte_already_done=true;
 						}*/
-						
+						//Cas des doubles facturations, pour toutes les factures du PL de cette periode
+						//supprimer les alertes de ce type, avant d'en ajouter une
+						if ($AT['type_alerte']==7){
+													 		
+					 		//Get all facture pour ce PL et la periode en cours d'importation
+		 					if ($table=='conso_bts'){
+				 				if ($tension=='BT'){
+				 					$fact= new Facturebt();
+				 				}
+				 				else{
+				 					$fact= new Factureeau();
+				 				}
+					 		}
+					 		else{
+				 				$fact= new Facturemt();
+					 		}
+		 					$fact->where_related_pl('id',$p->id);
+		 					$fact->where_related_menumensuel('id',$m->id)->get();
+		 					//Get all alerte de type 7 (double facturation);
+		 					foreach($fact->all as $factu){
+		 						$ale=new Alerte();
+		 						if ($table=='conso_bts'){
+					 				if ($tension=='BT'){
+					 					$ale->where_related_facturebt('id',$factu->id);
+					 				}
+					 				else{
+					 					$ale->where_related_factureeau('id',$factu->id);
+					 				}
+						 		}
+						 		else{
+					 				$ale->where_related_facturemt('id',$factu->id);		
+						 		}
+		 						$ale->where('Type',7)->get();
+		 						//Supression des alertes précédentes
+		 						//Ainsi au lieu d'avoir une alerte à chaque doublon :
+		 						// 2 alertes pour ce mois; 3 alertes pour ce mois; 4 alertes pour ce mois
+		 						//On aura une seule alerte : 4 alertes pour ce mois.
+		 						
+		 						$ale->delete_all();
+		 					}			 					
+						}
 						//Sauvegarde l'alerte dans la DB
-						if (empty($a->id)) {
+						if (empty($a->id)) {						
 							$a=new Alerte();
 							$a->Valeur= $AT['Valeur'];    
-							$a->Flux= $AT['flux']; 
-							$a->Date= $AT['Date']; 
-							$a->Etat= 3;
-							$a->Type= $AT['type_alerte'];
+							$a->Flux  = $AT['flux']; 
+							$a->Date  = $AT['Date']; 
+							$a->Etat  = 3;
+							$a->Type  = $AT['type_alerte'];
 						}
 						
-						if ($table=='conso_bts'){
+						/*if ($table=='conso_bts'){
 			 				if ($tension=='BT'){
 			 					$f= new Facturebt();
 			 				}
@@ -839,7 +884,7 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 				 		else{
 			 				$f= new Facturemt();			
 				 		}
-				 		$f->where('id',$AT['idFacture'])->get();
+				 		$f->where('id',$AT['idFacture'])->get();*/
 			 			
 						$a->save(array($p,$f,$m));						
 					}
@@ -986,7 +1031,7 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 		$answer['success'] = true;
 		echo json_encode($answer);
 		die();
-		return $product;
+		//return $product;
 	}
 	
 	function historique_upload($file_name){

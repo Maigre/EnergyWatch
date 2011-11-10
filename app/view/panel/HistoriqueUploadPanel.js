@@ -6,7 +6,7 @@ Ext.define('MainApp.view.panel.HistoriqueUploadPanel', {
 	title: 'Historique',
 	store: 'HistoriqueUploadStore',
 	width: 310,
-	//height: 100,
+	height: 300,
 	x:0,
 	initComponent: function() {
 		this.columns = [
