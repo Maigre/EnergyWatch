@@ -5,6 +5,7 @@ Ext.define('MainApp.store.AlerteAllStore', {
     remoteSort: true,
     buffered: true,
     pageSize: 100,
+    groupField: 'Type',
     //autoLoad: true,
     proxy: {
     	type: 'ajax',
@@ -18,13 +19,13 @@ Ext.define('MainApp.store.AlerteAllStore', {
     		root: 'data',
     		totalProperty: 'size',
     		successProperty: 'success'
-    	},
-    	simpleSortMode: true
-    },
+    	}/*,
+    	simpleSortMode: true*/
+    },/*
 	sorters: [{
         property: 'lastpost',
         direction: 'DESC'
-    }],
+    }],*/
     baseParams: {
         BT_MT_EAU: BT_MT_EAU 
     }
