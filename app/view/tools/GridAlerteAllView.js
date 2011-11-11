@@ -1,6 +1,9 @@
 var groupingFeature = Ext.create('Ext.grid.feature.Grouping',{
-	groupHeaderTpl: 'Alerte: {Type} ({rows.length} Item{[values.rows.length > 1 ? "s" : ""]})',
-	enableGroupingMenu : true
+	groupHeaderTpl: '{name} ({rows.length} Alerte{[values.rows.length > 1 ? "s" : ""]})',
+	enableGroupingMenu : true,
+	groupByText : 'Grouper par ce champ',
+	showGroupsText : 'Afficher en groupes',
+	startCollapsed : true
 });
 
 Ext.define('MainApp.view.tools.GridAlerteAllView', {
@@ -49,24 +52,33 @@ Ext.define('MainApp.view.tools.GridAlerteAllView', {
 			'</tpl>',
 			'<tpl if="Type == 8;">',
 			'Consommation d\'Energie R&eacute;active',
+			'</tpl>',
+			'<tpl if="Type == 9;">',
+			'Incoh&eacute;rence d\'index',
 			'</tpl>'
 		);
 		
 		valeur_tpl= new Ext.XTemplate(
-			'<tpl if="Type == 1;">',
+			'<tpl if="Type ==\'Hausse des Consommations\';">',
 			'{Valeur}%',
 			'</tpl>',
-			'<tpl if="Type == 4;">',
+			'<tpl if="Type ==\'Changement de Puissance Souscrite\';">',
 			'',
 			'</tpl>',
-			'<tpl if="Type == 6;">',
+			'<tpl if="Type ==\'D&eacute\;ficit de puissance\';">',
 			'{Valeur} %',
 			'</tpl>',
-			'<tpl if="Type == 7;">',
+			'<tpl if="Type ==\'D&eacute\;passement de puissance\';">',
+			'{Valeur} %',
+			'</tpl>',
+			'<tpl if="Type ==\'Plusieurs factures en un mois pour ce P.L\';">',
 			'{Valeur}',
 			'</tpl>',
-			'<tpl if="Type == 8;">',
+			'<tpl if="Type ==\'Consommation Energie R&eacute;active\';">',
 			'{Valeur} CFA',
+			'</tpl>',
+			'<tpl if="Type ==\'Incoh&eacute\;rence index\';">',
+			'',
 			'</tpl>'
 		);
 		
@@ -107,7 +119,7 @@ Ext.define('MainApp.view.tools.GridAlerteAllView', {
 			{header: 'N&deg; PL', dataIndex: 'Point_de_livraison', flex:1, sortable: false},
 			{header: 'N&deg; Facture', dataIndex: 'No_de_facture', flex:1, sortable: false},
 			{header: 'Date', dataIndex: 'Date', xtype:'datecolumn', format:'d-m-Y', width:80, sortable: false}, 
-			{header: 'Alerte', dataIndex: 'Type', xtype: 'templatecolumn', tpl: type_tpl, flex:2, sortable: false},
+			{header: 'Alerte', dataIndex: 'Type'/*, xtype: 'templatecolumn', tpl: type_tpl*/, flex:2, sortable: false},
 			{header: 'Valeur', dataIndex: 'Valeur', xtype: 'templatecolumn', tpl: valeur_tpl, width:60},
 			{header: 'Etat', dataIndex: 'Etat', xtype: 'templatecolumn', tpl: flagtpl , align:'center', width:40/*,
 				editor: {

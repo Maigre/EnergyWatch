@@ -159,6 +159,27 @@ class Alertecontrol extends CI_Controller {
 			$a->where_related_menumensuel('Tension',$BT_MT_EAU);
 			$a->where_related_menumensuel('periode',$PERIODE_MENSUELLE);
 			$a->get();
+			//Remplace le type numérique par le texte correspondant
+			$tableau_type=array (
+				1 => 'Hausse des Consommations',
+				4 => 'Changement de Puissance souscrite',
+				7 => 'Plusieurs factures en un mois pour ce P.L',
+				8 => 'Consommation Energie R&eacute;active',
+				9 => 'Incoh&eacute;rence index'				
+			);
+			foreach ($a->all as $alerte){
+				if($alerte->Type!=6){
+					$alerte->Type=$tableau_type[$alerte->Type];
+				}
+				elseif($alerte->Valeur<0){
+					$alerte->Type='D&eacute;ficit de puissance';
+				}
+				else{
+					$alerte->Type='D&eacute;passement de puissance';
+				}				
+			}
+			
+			
 			if (count($a->all)<($start+$limit)) $start=count($a->all)-$limit;
 			if ($start<0){
 				$start=0;

@@ -50,6 +50,9 @@ Ext.define('MainApp.view.tools.GridAlerteView', {
 			'</tpl>',
 			'<tpl if="Type == 8;">',
 			'Consommation d\'Energie R&eacute;active : {Valeur} CFA',
+			'</tpl>',
+			'<tpl if="Type == 9;">',
+			'Incoh&eacute;rence d\'index',
 			'</tpl>'
 		);
 		

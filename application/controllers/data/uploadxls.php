@@ -474,9 +474,15 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 						$en_cours['Consommation_mensuelle']=$facture->Consommation_mensuelle;
 						//$en_cours['idFacture']=$facture->id;
 						$en_cours['Puisance_souscrite']=$facture->Puisance_souscrite;
+
 						if ($table=='conso_mts'){
 							$en_cours['Conso_PA']=$facture->Conso_PA;
 							$en_cours['Conso_Energie_Reactive']=$facture->Conso_Energie_Reactive;
+							$en_cours['Ancien_Index_Pointe']=$facture->Nouvel_Index_Pointe;
+							$en_cours['Ancien_Index_Hors_Pointe']=$facture->Nouvel_Index_Hors_Pointe;
+						}
+						else{
+							$en_cours['Ancien_index']=$facture->Nouvel_index;						
 						}
 					}
 					//mois précédent
@@ -504,7 +510,12 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 						$mois_precedent['Puisance_souscrite']=$facture->Puisance_souscrite;
 						if ($table=='conso_mts'){
 							$mois_precedent['Conso_PA']=$facture->Conso_PA;
-						}						
+							$mois_precedent['Nouvel_Index_Hors_Pointe']=$facture->Ancien_Index_Hors_Pointe;
+							$mois_precedent['Nouvel_Index_Pointe']=$facture->Ancien_Index_Pointe;
+						}
+						else{
+							$mois_precedent['Nouvel_index']=$facture->Ancien_index;
+						}				
 					}
 					//même mois année précédente
 					/*elseif ((($date_encours-$date_facture)>365*24*3600) and (($date_encours-$date_facture)<395*24*3600)){
@@ -774,7 +785,7 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 				
 				
 				//type 8 : Facturation d'Energie reactive
-				if ((isset($en_cours['idFacture'])) and (isset($en_cours['Conso_Energie_Reactive']))){
+				if (isset($en_cours['Conso_Energie_Reactive'])){
 					if ($en_cours['Conso_Energie_Reactive']> 0){
 						$idFacture=$f->id;
 						$valeur = $en_cours['Conso_Energie_Reactive'];
@@ -794,6 +805,38 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 						);
 						$alerte_temp[]=$alerte;
 					}
+				}
+				
+				//type 9 : Incohérence d'index'
+				if ($table=='conso_mts'){
+					if ((isset($mois_precedent['Nouvel_Index_Pointe'])) and (isset($mois_precedent['Nouvel_Index_Hors_Pointe']))){
+						if (($en_cours['Ancien_Index_Pointe']!=$mois_precedent['Nouvel_Index_Pointe']) or ($en_cours['Ancien_Index_Hors_Pointe']!=$mois_precedent['Nouvel_Index_Hors_Pointe'])){
+							$alerte=array(
+								'idFacture'=>$f->id,
+								'Valeur'=> '',
+								'Duree_validite'=>1,
+								'type_alerte'=>9,
+								'flux'=>'elec',
+								'Date'=>date('Y-m-d',$date_encours),
+							);
+						}
+					}
+						
+				}
+				else{
+					if (isset($mois_precedent['Nouvel_Index'])){
+						if ($en_cours['Ancien_Index']!=$mois_precedent['Nouvel_Index']){
+							$alerte=array(
+								'idFacture'=>$f->id,
+								'Valeur'=> '',
+								'Duree_validite'=>1,
+								'type_alerte'=>9,
+								'flux'=>'elec',
+								'Date'=>date('Y-m-d',$date_encours),
+							);
+						}
+					}
+					
 				}
 				
 				//Vérifie que l'alerte n'est pas déjà présente et valide avant de sauvegarder
