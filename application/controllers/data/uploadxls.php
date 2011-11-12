@@ -413,8 +413,8 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 		 		$f_pl_all->get();
 		 		//date en cours de la facture traitée
 		 		
-		 		$date_encours = $f->Date_index;
-		 		$date_encours = strtotime(date("Y-m-d", strtotime($date_encours)));
+		 		$date_encours = strtotime($f->Date_index);
+		 		//$date_encours = strtotime(date("Y-m-d", strtotime($date_encours)));
 				
 		 		/*foreach($f->all as $facture){
 		 			$date_fin_facture=strtotime($facture->Date_index);
@@ -478,11 +478,11 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 						if ($table=='conso_mts'){
 							$en_cours['Conso_PA']=$facture->Conso_PA;
 							$en_cours['Conso_Energie_Reactive']=$facture->Conso_Energie_Reactive;
-							$en_cours['Ancien_Index_Pointe']=$facture->Nouvel_Index_Pointe;
-							$en_cours['Ancien_Index_Hors_Pointe']=$facture->Nouvel_Index_Hors_Pointe;
+							$en_cours['Ancien_Index_Pointe']=$facture->Ancien_Index_Pointe;
+							$en_cours['Ancien_Index_Hors_Pointe']=$facture->Ancien_Index_Hors_Pointe;
 						}
 						else{
-							$en_cours['Ancien_index']=$facture->Nouvel_index;						
+							$en_cours['Ancien_index']=$facture->Ancien_index;						
 						}
 					}
 					//mois précédent
@@ -510,11 +510,11 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 						$mois_precedent['Puisance_souscrite']=$facture->Puisance_souscrite;
 						if ($table=='conso_mts'){
 							$mois_precedent['Conso_PA']=$facture->Conso_PA;
-							$mois_precedent['Nouvel_Index_Hors_Pointe']=$facture->Ancien_Index_Hors_Pointe;
-							$mois_precedent['Nouvel_Index_Pointe']=$facture->Ancien_Index_Pointe;
+							$mois_precedent['Nouvel_Index_Hors_Pointe']=$facture->Nouvel_Index_Hors_Pointe;
+							$mois_precedent['Nouvel_Index_Pointe']=$facture->Nouvel_Index_Pointe;
 						}
 						else{
-							$mois_precedent['Nouvel_index']=$facture->Ancien_index;
+							$mois_precedent['Nouvel_index']=$facture->Nouvel_index;
 						}				
 					}
 					//même mois année précédente
@@ -807,18 +807,20 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 					}
 				}
 				
-				//type 9 : Incohérence d'index'
+				//type 9 : Incohérence d'index
 				if ($table=='conso_mts'){
 					if ((isset($mois_precedent['Nouvel_Index_Pointe'])) and (isset($mois_precedent['Nouvel_Index_Hors_Pointe']))){
 						if (($en_cours['Ancien_Index_Pointe']!=$mois_precedent['Nouvel_Index_Pointe']) or ($en_cours['Ancien_Index_Hors_Pointe']!=$mois_precedent['Nouvel_Index_Hors_Pointe'])){
+							//echo 'AIP'.$en_cours['Ancien_Index_Pointe'].'NIP'.$mois_precedent['Nouvel_Index_Pointe'].'AIHP'.$en_cours['Ancien_Index_Hors_Pointe'].'NIHP'.$mois_precedent['Nouvel_Index_Hors_Pointe'];
 							$alerte=array(
 								'idFacture'=>$f->id,
 								'Valeur'=> '',
 								'Duree_validite'=>1,
 								'type_alerte'=>9,
 								'flux'=>'elec',
-								'Date'=>date('Y-m-d',$date_encours),
+								'Date'=>date('Y-m-d',$date_encours)								
 							);
+							$alerte_temp[]=$alerte;
 						}
 					}
 						
@@ -832,8 +834,9 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 								'Duree_validite'=>1,
 								'type_alerte'=>9,
 								'flux'=>'elec',
-								'Date'=>date('Y-m-d',$date_encours),
+								'Date'=>date('Y-m-d',$date_encours)
 							);
+							$alerte_temp[]=$alerte;
 						}
 					}
 					
@@ -902,7 +905,6 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 		 						//Ainsi au lieu d'avoir une alerte à chaque doublon :
 		 						// 2 alertes pour ce mois; 3 alertes pour ce mois; 4 alertes pour ce mois
 		 						//On aura une seule alerte : 4 alertes pour ce mois.
-		 						
 		 						$ale->delete_all();
 		 					}			 					
 						}
@@ -933,10 +935,6 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 					}
 				}
 				
-				/*$end_alerte=microtime(true);
-				$temp_alerte=$end_alerte-$start_alerte;
-				echo 'temps d execution alerte'.$temp_alerte;
-				*/
 				
 				
 				//Creation des donnees statistiques pour chaque pl

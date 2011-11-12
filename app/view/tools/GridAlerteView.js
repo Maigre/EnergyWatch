@@ -46,7 +46,7 @@ Ext.define('MainApp.view.tools.GridAlerteView', {
 			'D&eacute;ficit de Puissance de ({Valeur}%)',
 			'</tpl>',
 			'<tpl if="Type == 7;">',
-			'{Valeur} factures re&ccedil;ues pour ce P.L',
+			'{Valeur} factures re&ccedil;ues ce mois',
 			'</tpl>',
 			'<tpl if="Type == 8;">',
 			'Consommation d\'Energie R&eacute;active : {Valeur} CFA',
