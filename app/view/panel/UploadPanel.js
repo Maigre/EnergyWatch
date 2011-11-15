@@ -157,9 +157,10 @@ Ext.define('MainApp.view.panel.UploadPanel', {
 									Ext.getCmp('historiqueupload').store.load();
 									Ext.getCmp('historiqueupload').doLayout();
 									Ext.getCmp('southregion').removeAll();
+									Ext.getCmp('buttonimporter').enable();									
 									Ext.getCmp('southregion').height = 30;
 									Ext.Msg.alert('Success', 'Le fichier a &eacute;t&eacute; import&eacute; avec succ&egrave;s. '+ obj.lignes+' factures ont &eacute;t&eacute; trait&eacute;es.');
-									Ext.getCmp('buttonimporter').enable();
+									
 								}
 							},
 							failure:    function(response) {

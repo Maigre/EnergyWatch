@@ -5,7 +5,7 @@ Ext.define('MainApp.view.panel.BilanRejetePanel', {
 	frame 		 : true,
 	iconCls		 : 'no',
 	height		 : 100,
-	width 		 : 120,
+	width 		 : 150,
 	x     		 : 0,
 	y     		 : 0,
 	url   		 : BASE_URL+'data/bilan/save',

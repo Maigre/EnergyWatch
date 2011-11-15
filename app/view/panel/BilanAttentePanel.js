@@ -5,7 +5,7 @@ Ext.define('MainApp.view.panel.BilanAttentePanel', {
 	frame 		 : true,
 	iconCls		 : 'help',
 	height		 : 150,
-	width 		 : 130,
+	width 		 : 150,
 	x     		 : 0,
 	y     		 : 0,
 	url   		 : BASE_URL+'data/bilan/save',
@@ -32,7 +32,8 @@ Ext.define('MainApp.view.panel.BilanAttentePanel', {
 		},{
 			fieldLabel: '',
 			hideLabel : true,
-			name      : 'ConsoAttente'
+			name      : 'ConsoAttente',
+			renderer  : Ext.util.Format.numberRenderer('0,000.00')
 			//,value     : ''
 		},{
 			xtype	  : 'buttonvalidation'

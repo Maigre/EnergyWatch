@@ -123,7 +123,8 @@ class Alertecontrol extends CI_Controller {
 		//get parameters for infinite scrolling grid
 		$start = $this->input->post('start');
 		$limit = $this->input->post('limit');
-		$sort = $this->input->post('sort');
+		$sort = json_decode($this->input->post('sort'));
+		//print_r($sort);
 		if ($this->input->post('dir')=='ASC'){
 			$dir='asc';
 		}
@@ -148,11 +149,37 @@ class Alertecontrol extends CI_Controller {
 		//trie sur champ non lié. utilise tri sql (order_by)
 		if (!in_array($sort,$linked_field)){
 			
-			if ($sort!='lastpost') $a->order_by($sort, $dir);
-			$a->limit($limit,$start);
+			if (is_array($sort)){
+				foreach ($sort as $s){
+					if ($s->property!='lastpost')	$a->order_by($s->property,$s->direction);
+				}
+			}
+			//if ($sort!='lastpost' and isset($dir)) $a->order_by($sort, $dir);
+			//$a->limit($limit,$start);
 			$a->where_related_menumensuel('Tension',$BT_MT_EAU);
 			$a->where_related_menumensuel('periode',$PERIODE_MENSUELLE);
 			$a->get();
+			//Remplace le type numérique par le texte correspondant
+			$tableau_type=array (
+				1 => 'Hausse des Consommations',
+				4 => 'Changement de Puissance souscrite',
+				7 => 'Plusieurs factures en un mois pour ce P.L',
+				8 => 'Consommation Energie R&eacute;active',
+				9 => 'Incoh&eacute;rence index'				
+			);
+			foreach ($a->all as $alerte){
+				if($alerte->Type!=6){
+					$alerte->Type=$tableau_type[$alerte->Type];
+				}
+				elseif($alerte->Valeur<0){
+					$alerte->Type='D&eacute;ficit de puissance';
+				}
+				else{
+					$alerte->Type='D&eacute;passement de puissance';
+				}				
+			}
+			
+			
 			if (count($a->all)<($start+$limit)) $start=count($a->all)-$limit;
 			if ($start<0){
 				$start=0;
@@ -223,7 +250,7 @@ class Alertecontrol extends CI_Controller {
 				$answer['data'][] = $answ;
 			}
 		}
-		//Tri sur champ lié, tri sql impossible, tri php necessite recuperation de tous les pls puis tri
+		//Tri sur champ lié, tri sql impossible, tri php necessite recuperation de toutes les alertes puis tri
 		else{
 			$a->where_related_menumensuel('Tension',$BT_MT_EAU);
 			$a->where_related_menumensuel('periode',$PERIODE_MENSUELLE);
@@ -310,17 +337,37 @@ class Alertecontrol extends CI_Controller {
 		$data = json_decode($this->input->post('data'), true);
 		//get the entry to update
 		$this->load->model('Alerte','run_alerte');
-		$a = $this->run_alerte;
-		$a->where('id', $data['id']);
-		$a->get();
+		if (isset($data[0])){
+			foreach ($data as $al){
+				$a = $this->run_alerte;
+				$a->where('id', $al['id']);
+				$a->get();
 
-		//update values
-		foreach ($data as $field=>$value){
-			$a->$field=$value;
+				//update values
+				//print_r($al);
+				foreach ($al as $field=>$value){
+					$a->$field=$value;
+				}
+				//save updated entry into database
+				$a->save();
+			}
 		}
+		else{
+			$a = $this->run_alerte;
+			$a->where('id', $data['id']);
+			$a->get();
 
-		//save updated entry into database
-		$a->save();
+			//update values
+			//print_r($al);
+			foreach ($data as $field=>$value){
+				$a->$field=$value;
+			}
+			//save updated entry into database
+			$a->save();
+		}
+		
+		
+			
 		
 		//RETURN JSON !
 		$answer['success'] = true;

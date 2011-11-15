@@ -68,6 +68,11 @@ class Bilan extends CI_Controller {
 			}*/
 			
 		}
+		
+		$ConsoAPayer = number_format ($ConsoAPayer,0 ,'.' ,' ');
+		$ConsoAttente = number_format ($ConsoAttente,0 ,'.' ,' ');
+		$ConsoRejete = number_format ($ConsoRejete,0 ,'.' ,' ');
+		
 		//Comptage des alertes actives
 		$a=new Alerte();
 		$a->where('etat',3);

@@ -5,13 +5,18 @@ Ext.define('MainApp.controller.GridAlerteAllControl', {
     init: function() {
         this.control({
             'gridalerteall' : {
-            	cellclick: this.gotopl
+            	itemclick: this.gotopl
             }
         });
     },
     
     gotopl: function(a,b,c,d) {
-			
-		displaypl(d.data.idPl,BT_MT_EAU);	
+		
+		console.info(a);
+		console.info(b);
+		//console.info(c);	
+		console.info(b.data);
+		console.info(b.data.idPl);
+		displaypl(b.data.idPl,BT_MT_EAU);	
 	} 
 });
