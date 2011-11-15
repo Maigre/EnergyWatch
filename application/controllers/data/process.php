@@ -122,6 +122,5 @@ class Process extends CI_Controller {
 		echo json_encode($answer);
 		die();
 		
-	}
-	
+	}	
 }

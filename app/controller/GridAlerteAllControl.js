@@ -12,11 +12,18 @@ Ext.define('MainApp.controller.GridAlerteAllControl', {
     
     gotopl: function(a,b,c,d) {
 		
-		console.info(a);
-		console.info(b);
-		//console.info(c);	
-		console.info(b.data);
-		console.info(b.data.idPl);
+		//console.info(a);
+		//console.info(b);
+		//console.info(c);
+		//var plstore = Ext.getStore('PlStore');
+		
+		//plstore.proxy.api.read= BASE_URL+'data/plcontrol/loadfromalertegroupping/'+BT_MT_EAU+'/'+PERIODE_MENSUELLE; 
+		
+		//selecteditems = Ext.getCmp('gridalerteall').getSelectionModel().getSelection();	
+		//console.info(selecteditems);
+		//console.info(a);
+		//console.info(b);
+		//console.info(b.data.idPl);
 		displaypl(b.data.idPl,BT_MT_EAU);	
 	} 
 });

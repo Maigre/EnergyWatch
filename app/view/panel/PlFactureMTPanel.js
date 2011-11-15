@@ -19,8 +19,8 @@ Ext.define('MainApp.view.panel.PlFactureMTPanel', {
 				xtype: 'facturemtchart'
 			},*/{
 				xtype: 'gridfacturemt',
-				padding:5,
-				flex:2
+				padding:5/*,
+				flex:2*/
 			},{
 				xtype: 'gridalerte',
 				padding:5,

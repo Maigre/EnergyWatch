@@ -9,6 +9,85 @@ class Plcontrol extends CI_Controller {
 
 	}
 
+	public function loadfromalertegroupping($BT_MT_EAU,$PERIODE_MENSUELLE)
+	{
+		
+		//Fix le bug du gridgrouping.
+		//BUG : Après grouping lors du click sur une ligne, l'objet renvoyé n'est pas celui qui a été cliqué.
+		// L'objet renvoyé correspond à l'objet qui aurait été à cette ligne si le tri(grouping) n'avait pas eu lieu.
+		
+		//FIX
+		//-- 1 -- Recuperer le numéro de la ligne cliquée : requete pour avoir le tableau initial (non trié) des alertes et recuperer l'indice du pl renvoyé (avec idpl)
+		//-- 2 -- Recuperer le pl correspondant dans le tableau trié : requete pour avoir alertes triées par type. Puis rechercher le pl correspondant à la ligne cliquée
+		
+		//-- 1 --
+		
+		//if (!is_null($this->input->post('PERIODE_MENSUELLE'))){
+			$array_periode=explode('%20',$PERIODE_MENSUELLE);	
+			$tableau_mois=array('Janvier'=>'01','Février'=>'02','Mars'=>'03','Avril'=>'04','Mai'=>'05','Juin'=>'06','Juillet'=>'07','Aout'=>'08','Septembre'=>'09','Octobre'=>'10','Novembre'=>'11','Décembre'=>'12');
+			$array_periode[0]=urldecode($array_periode[0]);
+			$mois= $tableau_mois[$array_periode[0]];
+			$PERIODE_MENSUELLE=$array_periode[1].'-'.$mois.'-01';		
+		//}
+		$idpl = $this->input->post('idPl');
+		$a = new Alerte();
+		$a->where_related_menumensuel('Tension',$BT_MT_EAU);
+		$a->where_related_menumensuel('periode',$PERIODE_MENSUELLE);
+		$a->get();
+		//REcupere l'indice du pl avec son id
+		$indice=0;
+		foreach($a->all as $alerte){
+			$alerte->pl->get();
+			if ($alerte->pl->id == $idpl){
+				break;
+			}
+			$indice=$indice+1;
+		}
+		//-- 2 --
+		$a = new Alerte();
+		$a->where_related_menumensuel('Tension',$BT_MT_EAU);
+		$a->where_related_menumensuel('periode',$PERIODE_MENSUELLE);
+		//$a->order_by('Type');
+		$a->order_by("Type", "asc"); 
+		$a->get();
+		$indice2=0;
+		foreach($a->all as $alerte){
+			//echo '  indice1:'.$indice;
+			//echo 'indice2:'.$indice2;
+			if($indice2==$indice){
+				//echo 'ok';
+				
+				$alerte_cliquee=$alerte;
+				break;
+			}
+			$indice2++;
+		}
+		
+		$p=new Pl();
+		$p->where_related_alerte('id',$alerte_cliquee->id);
+		$p->get();
+		
+		//initialize answer array TODO(should be an array design to be JSON encoded)
+		$answer = array(
+					'size' 	=> 0//,
+					//'msg'	=> ''
+				); 
+		//Populate the data
+		$answ = null;
+		$fieldArray=array('id', 'Tension', 'No_client', 'No_personne', 'Nature', 'Categorie_client', 'No_compteur', 'No_police', 'Point_de_livraison', 'Nom_prenom', 'Adresse', 'Localisation', 'Code_Activite', 'Date_abonnement', 'Commentaire');
+		
+		foreach($fieldArray as $field){
+			$answer['data'][$field]=$p->$field;
+		}
+
+		$answer['size'] = count($answer['data']);
+		
+		
+		$answer['success'] = true;
+		//RETURN JSON !
+		echo json_encode($answer);
+	}
+	
 	public function load()
 	{
 		
@@ -30,7 +109,7 @@ class Plcontrol extends CI_Controller {
 			}			
 			$p->get();
 		}
-		else{;
+		else{
 			$idPl = $this->input->post('idPl');
 			$this->load->model('Pl','run_pl');
 			$p = $this->run_pl;
@@ -64,6 +143,8 @@ class Plcontrol extends CI_Controller {
 		//RETURN JSON !
 		echo json_encode($answer);
 	}
+	
+	
 	
 	public function save($PL){
 		//recupération de l'objet PL

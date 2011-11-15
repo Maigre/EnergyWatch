@@ -6,17 +6,20 @@ class Bilan extends CI_Controller {
 	public function load(){
 		$BT_MT_EAU=$this->input->post('BT_MT_EAU');
 		
-		$array_periode=explode(' ',$this->input->post('periode_mensuelle'));
-		
-		$tableau_mois=array('Janvier'=>'01','Février'=>'02','Mars'=>'03','Avril'=>'04','Mai'=>'05','Juin'=>'06','Juillet'=>'07','Aout'=>'08','Septembre'=>'09','Octobre'=>'10','Novembre'=>'11','Décembre'=>'12');
-		$mois= $tableau_mois[$array_periode[0]];
-		$periode_mensuelle=$array_periode[1].'-'.$mois.'-01';
-		
+		if ($this->input->post('periode_mensuelle')!='bilan'){
+			$array_periode=explode(' ',$this->input->post('periode_mensuelle'));
+			$tableau_mois=array('Janvier'=>'01','Février'=>'02','Mars'=>'03','Avril'=>'04','Mai'=>'05','Juin'=>'06','Juillet'=>'07','Aout'=>'08','Septembre'=>'09','Octobre'=>'10','Novembre'=>'11','Décembre'=>'12');
+			$mois= $tableau_mois[$array_periode[0]];
+			$periode_mensuelle=$array_periode[1].'-'.$mois.'-01';
+		}
+		else{
+			$periode_mensuelle='bilan';
+		}
 		//Initialize answer array
 		$answer = array(
-					'size' 	=> 0,
-					'msg'	=> ''
-				); 
+			'size' 	=> 0,
+			'msg'	=> ''
+		); 
 		if ($BT_MT_EAU=='MT'){
 			$f=new Facturemt();
 		}		
@@ -27,8 +30,11 @@ class Bilan extends CI_Controller {
 			$f=new Factureeau();
 		}
 		
-		$f->where_related_menumensuel('Tension',$BT_MT_EAU);
-		$f->where_related_menumensuel('periode',$periode_mensuelle);
+		if ($periode_mensuelle!='bilan'){
+			$f->where_related_menumensuel('Tension',$BT_MT_EAU);
+			$f->where_related_menumensuel('periode',$periode_mensuelle);
+		}
+		
 		
 		$f->get();
 		$ConsoAPayer=0;
@@ -77,7 +83,9 @@ class Bilan extends CI_Controller {
 		$a=new Alerte();
 		$a->where('etat',3);
 		$a->where_related_menumensuel('Tension',$BT_MT_EAU);
-		$a->where_related_menumensuel('periode',$periode_mensuelle);
+		if ($periode_mensuelle!='bilan'){
+			$a->where_related_menumensuel('periode',$periode_mensuelle);
+		}
 		$a->get();
 		$NbAlerteActive=count($a->all);
 		

@@ -486,7 +486,7 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 						}
 					}
 					//mois précédent
-					elseif ((($date_encours-$date_facture)<60*24*3600) and (($date_encours-$date_facture)>30*24*3600)){
+					elseif ((($date_encours-$date_facture)<45*24*3600) and (($date_encours-$date_facture)>15*24*3600)){
 						/*if (isset($mois_precedent['Nb_jours'])){
 							$mois_precedent['Nb_jours']+=$c->Nb_jours;
 						}
@@ -597,7 +597,7 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 				
 				//type 1 : augmentation des consommations mensuelles (extrapolées à 30 jours)
 				if ((isset($en_cours['Consommation_mensuelle'])) and (isset($mois_precedent['Consommation_mensuelle'])) and ($mois_precedent['Consommation_mensuelle']!=0)){
-					if ($en_cours['Consommation_mensuelle']>(1.25*$mois_precedent['Consommation_mensuelle']))
+					if ($en_cours['Consommation_mensuelle']>(1.5*$mois_precedent['Consommation_mensuelle']))
 					{
 						$idFacture=$f->id;
 						$valeur=round((($en_cours['Consommation_mensuelle']/$mois_precedent['Consommation_mensuelle'])-1)*100);
@@ -840,6 +840,22 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 						}
 					}
 					
+				}
+				
+				//type 10 : Consommations nulles
+				if (isset($en_cours['Consommation_mensuelle'])){
+					if ($en_cours['Consommation_mensuelle']==0)
+					{
+						$alerte=array(
+							'idFacture'=>$f->id,
+							'Valeur'=>'',
+							'Duree_validite'=>1,
+							'type_alerte'=>10,
+							'flux'=>'elec',
+							'Date'=>date('Y-m-d',$date_encours),
+						);
+						$alerte_temp[]=$alerte;
+					}
 				}
 				
 				//Vérifie que l'alerte n'est pas déjà présente et valide avant de sauvegarder

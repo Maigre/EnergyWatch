@@ -165,7 +165,8 @@ class Alertecontrol extends CI_Controller {
 				4 => 'Changement de Puissance souscrite',
 				7 => 'Plusieurs factures en un mois pour ce P.L',
 				8 => 'Consommation Energie R&eacute;active',
-				9 => 'Incoh&eacute;rence index'				
+				9 => 'Incoh&eacute;rence index',
+				10 => 'Consommation nulle'				
 			);
 			foreach ($a->all as $alerte){
 				if($alerte->Type!=6){

@@ -23,7 +23,84 @@ Ext.define('MainApp.view.panel.MenuMensuelPanel', {
 			},
 			success: function(response){
 				var options = Ext.decode(response.responseText).data;
-
+				
+				BilanButton = new Ext.Button({
+					id: 'bilanbutton',
+					text: 'BILAN',
+					iconCls: 'money',
+					enableToggle: true,
+					margin: 5,
+					width: 120, 
+					handler: function(){
+					
+					
+						//deselectionne les autres buttons pour ne selectionner que celui qui est cliqué
+						Ext.each(this.up('panel').items.items,function(button){							
+							button.toggle(false);
+						})
+						this.toggle(true);
+						
+						PERIODE_MENSUELLE = 'bilan';
+						Ext.getCmp('centerregion').removeAll(false);
+						
+						var bilanstore = Ext.getStore('BilanStore');
+						bilanstore.load({
+							params: {
+								periode_mensuelle: PERIODE_MENSUELLE,
+								BT_MT_EAU: BT_MT_EAU
+							}
+						});
+						bilanstore.on('load', function(database){
+							var rec= database.getAt(0);
+							var bilanmainpanel = Ext.getCmp('bilanmainpanel');
+							if (!bilanmainpanel){
+								var bilanmainpanel = Ext.widget('bilanmainpanel');
+								bilanmainpanel.bodyStyle="background-image:url(app/images/"+BCKGRND_IMAGE+".jpg); background-repeat:no-repeat; background-position:center center;-moz-background-size: cover; -webkit-background-size: cover;-o-background-size: cover;background-size: cover;";
+							}
+							
+							var bilanmainpanelup = Ext.getCmp('bilanmainpanelup');
+							var bilanmainpaneldown = Ext.getCmp('bilanmainpaneldown');
+							
+							var bilanvalidepanel = Ext.getCmp('bilanvalidepanel');
+							if (!bilanvalidepanel){
+								var bilanvalidepanel = Ext.widget('bilanvalidepanel');
+								//bilanmainpanelup.add(bilanvalidepanel);
+							}
+							var bilanrejetepanel = Ext.getCmp('bilanrejetepanel');
+							if (!bilanrejetepanel){
+								var bilanrejetepanel = Ext.widget('bilanrejetepanel');
+								//bilanmainpanelup.add(bilanrejetepanel);
+							}
+							var bilanattentepanel = Ext.getCmp('bilanattentepanel');
+							if (!bilanattentepanel){
+								var bilanattentepanel = Ext.widget('bilanattentepanel');
+							}
+							var bilanalertepanel = Ext.getCmp('bilanalertepanel');
+							if (!bilanalertepanel){
+								var bilanalertepanel = Ext.widget('bilanalertepanel');
+								//bilanmainpaneldown.add(bilanalertepanel);
+							}
+							
+							Ext.getCmp('centerregion').add(bilanmainpanel);
+							
+							bilanvalidepanel.getForm().loadRecord(rec);
+							bilanrejetepanel.getForm().loadRecord(rec);
+							bilanattentepanel.getForm().loadRecord(rec);
+							bilanalertepanel.getForm().loadRecord(rec);
+							
+							bilanattentepanel.down('button').hide();
+							bilanalertepanel.down('button').hide();
+							
+							bilanvalidepanel.doLayout();
+							bilanrejetepanel.doLayout();
+							bilanattentepanel.doLayout();
+							bilanalertepanel.doLayout();								
+						});
+					}
+				});
+				me.add(BilanButton);
+				
+				
 				//console.info(options);
 				Ext.each(options, function(op) {
 					MensuelButton = new Ext.Button({
@@ -88,6 +165,9 @@ Ext.define('MainApp.view.panel.MenuMensuelPanel', {
 								bilanattentepanel.getForm().loadRecord(rec);
 								bilanalertepanel.getForm().loadRecord(rec);
 								
+								bilanattentepanel.down('button').show();
+								bilanalertepanel.down('button').show();
+								
 								bilanvalidepanel.doLayout();
 								bilanrejetepanel.doLayout();
 								bilanattentepanel.doLayout();
@@ -99,13 +179,7 @@ Ext.define('MainApp.view.panel.MenuMensuelPanel', {
 					
 					contextMenu = new Ext.menu.Menu({
 						  periode : '',
-						  items: [/*{
-								text: 'Edit',
-								iconCls: 'edit',
-								handler: function(a,b,c,d){
-									console.info('ok');
-						  		}
-						  },*/{
+						  items: [{
 								text: 'Supprimer',
 								iconCls: 'no',
 								handler: function(a,b,c,d){
@@ -181,7 +255,7 @@ Ext.define('MainApp.view.panel.MenuMensuelPanel', {
 						  }]
 					});
 					//console.info(Ext.get('Menu-button-'+op));
-					Ext.getCmp('Menu-button-'+op).on('render',function() {
+					Ext.getCmp('Menu-button-'+op).on('render',function(){
 						Ext.getCmp('Menu-button-'+op).getEl().on('contextmenu', function(e) {
 							 e.preventDefault();
 							 menu=contextMenu;
@@ -191,7 +265,6 @@ Ext.define('MainApp.view.panel.MenuMensuelPanel', {
 					});
 					me.add(MensuelButton);
 				})
-				// process server response here
 			}
 		});
 		

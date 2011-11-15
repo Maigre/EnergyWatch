@@ -1,13 +1,14 @@
 Ext.define('MainApp.view.tools.GridFactureMTView', {
-	extend: 'Ext.grid.Panel',
-	alias : 'widget.gridfacturemt',
-	title: 'Factures SEEG',
-	store: 'FactureMTStore',
-	//height: 200,
+	extend	: 'Ext.grid.Panel',
+	alias 	: 'widget.gridfacturemt',
+	title	: 'Factures SEEG',
+	store	: 'FactureMTStore',
+	resizable : true,
+	minHeight : 50,
 	//forceFit: true,
 	//width: 1000,
-	margin: 5,
-	frame: true,
+	margin	: 5,
+	frame	: true,
 		
 	initComponent: function() { 
 		this.columns = [

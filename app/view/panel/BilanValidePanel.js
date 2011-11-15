@@ -34,29 +34,7 @@ Ext.define('MainApp.view.panel.BilanValidePanel', {
 			//hideLabel : true,
 			name      : 'ConsoAPayer'
 			//,value     : ''
-		}/*,{
-			fieldLabel: 'Nombre de Factures Rejet&eacute;es',
-			name      : 'NbRejete',
-			value     : ''
-		},{
-			fieldLabel: 'Pour un Montant total de (CFA)',
-			name      : 'ConsoRejete',
-			value     : ''
-		},{
-			fieldLabel: 'Nombre de Factures en Attente de Validation',
-			name      : 'NbAttente',
-			value     : '',
-			cls 	  : 'red'
-		},{
-			fieldLabel: 'Pour un Montant total de (CFA)',
-			name      : 'ConsoAttente',
-			value     : ''
-		},{
-			fieldLabel: 'Nombre d\'Alertes Actives', 
-			name      : 'NbAlerteActive',
-			cls 	  : 'red',
-			value     : ''
-		}*/
+		}
 	],
 	initComponent: function() {
 		this.callParent(arguments);
