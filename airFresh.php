@@ -97,21 +97,21 @@ flush();
 				
 		$ask = http_post($config['airTraffic_url'],array('action'=>'dump','airlab_key'=>AIRLAB_KEY));
 
-		if ($ask['content'] != '') @file_put_contents($dumpfile_gz,$ask['content']);
+		if ($ask['content'] != '') $f=$ask['content'];//@file_put_contents($dumpfile_gz,$ask['content']);
 		else sorry('http: impossible to get dump from the server..');
 	
 	echo ' [ok]';
 	
 	echo '<br />database unzip......';
 flush();		
-		$dumpfile = str_replace('.sql.bz2','.sql',$dumpfile_gz);
-		@unlink($dumpfile);
+		//$dumpfile = str_replace('.sql.bz2','.sql',$dumpfile_gz);
+		//@unlink($dumpfile);
 		
-		$f = file_get_contents($dumpfile_gz);
-		if(!$f) sorry('fail to open compressed dump file !');
+		//$f = file_get_contents($dumpfile_gz);
+		//if(!$f) sorry('fail to open compressed dump file !');
 		
-		$f = bzdecompress($f);
-		if(is_numeric($f)) sorry('bunzip error '.$f);
+		$f = gzuncompress($f);
+		if(!$f) sorry('gunzip error '.$f);
 		
 ///		$f = file_put_contents($dumpfile,$f);
 //		if(!$f) sorry('fail to write uncompressed sql file !');
