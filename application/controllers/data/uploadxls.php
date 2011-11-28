@@ -822,8 +822,7 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 							);
 							$alerte_temp[]=$alerte;
 						}
-					}
-						
+					}						
 				}
 				else{
 					if (isset($mois_precedent['Nouvel_Index'])){
