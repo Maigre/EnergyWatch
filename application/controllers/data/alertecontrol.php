@@ -124,6 +124,7 @@ class Alertecontrol extends CI_Controller {
 		$start = $this->input->post('start');
 		$limit = $this->input->post('limit');
 		$sort = json_decode($this->input->post('sort'));
+		$group = json_decode($this->input->post('group'));
 		//print_r($sort);
 		if ($this->input->post('dir')=='ASC'){
 			$dir='asc';
@@ -145,13 +146,28 @@ class Alertecontrol extends CI_Controller {
 		//Populate the data
 		$answ = null;
 		$fieldArray=array('id', 'idAlerteParent', 'Date', 'Etat', 'Type', 'Valeur', 'Commentaire','Flux');
+		$group_by_alerte=false;
 		
 		//trie sur champ non lié. utilise tri sql (order_by)
 		if (!in_array($sort,$linked_field)){
 			
 			if (is_array($sort)){
 				foreach ($sort as $s){
-					if ($s->property!='lastpost')	$a->order_by($s->property,$s->direction);
+					if ($s->property!='lastpost'){
+					
+						$a->order_by($s->property,$s->direction);
+					}
+					
+				}
+			}
+			if (is_array($group)){
+				foreach ($group as $g){
+					if ($g->property!='lastpost'){
+					
+						//$a->order_by($s->property,$s->direction);
+						if ($g->property=='Type') $group_by_alerte=true;
+					}
+					
 				}
 			}
 			//if ($sort!='lastpost' and isset($dir)) $a->order_by($sort, $dir);
@@ -186,11 +202,20 @@ class Alertecontrol extends CI_Controller {
 				$start=0;
 				$limit=count($a->all);
 			}
+			$compteur=1;
 			foreach($a->all as $al){
 				if (isset($al)){
+					$answ['id']=$compteur;
+					$answ['AlGrouped']=$group_by_alerte;
+					$compteur++;
 					foreach($fieldArray as $field){
 						if (is_numeric($al->$field)){
-							$answ[$field]= (int) $al->$field; 
+							if ($field=='id'){
+								$answ['idAl']= (int) $al->$field;;
+							}
+							else{
+								$answ[$field]= (int) $al->$field; 
+							}
 						}
 						else{
 							$answ[$field]=$al->$field;
@@ -366,12 +391,117 @@ class Alertecontrol extends CI_Controller {
 			//save updated entry into database
 			$a->save();
 		}
-		
-		
-			
-		
 		//RETURN JSON !
 		$answer['success'] = true;
 		echo json_encode($answer);
 	}
+	
+	//l'id renvoyé est la position actuelle de l'alerte dans le tableau. 
+	//Il faut donc recreer la requete qui a construit le tableau et chercher dedans l'indice correspondant
+	public function giveplid(){
+		$id= $this->input->post('id');
+		$BT_MT_EAU= $this->input->post('BT_MT_EAU');
+		$PERIODE_MENSUELLE= $this->input->post('PERIODE_MENSUELLE');
+		
+		if (!is_null($this->input->post('PERIODE_MENSUELLE'))){
+			$array_periode=explode(' ',$PERIODE_MENSUELLE);	
+			$tableau_mois=array('Janvier'=>'01','Février'=>'02','Mars'=>'03','Avril'=>'04','Mai'=>'05','Juin'=>'06','Juillet'=>'07','Aout'=>'08','Septembre'=>'09','Octobre'=>'10','Novembre'=>'11','Décembre'=>'12');
+			$array_periode[0]=urldecode($array_periode[0]);
+			$mois= $tableau_mois[$array_periode[0]];
+			$PERIODE_MENSUELLE=$array_periode[1].'-'.$mois.'-01';		
+		}
+		
+		$this->load->model('Alerte','run_al');
+		$a = $this->run_al;
+		$a->where_related_menumensuel('Tension',$BT_MT_EAU);
+		$a->where_related_menumensuel('periode',$PERIODE_MENSUELLE);
+		$a->order_by('Type');
+		$a->get();
+		$answer=array();
+		$compteur=1;
+		$premier_type6=0;
+		$found=false;
+		//Cherche dans la liste des alertes (non groupées) celle au rang $id
+		foreach($a->all as $alerte){
+			if (($compteur==$id) and ($alerte->Type!=6)){
+				//get related pl
+				$this->load->model('Pl','run_pl');
+				$p = $this->run_pl;
+				$p->where_related_alerte('id', $alerte->id)->get();
+				$answer['idPl']=$p->id;
+				$answer['nom']=$p->Nom_prenom;
+				$found=true;
+				break;
+			}
+			if (($alerte->Type==6) and ($premier_type6==0)){
+				$premier_type6=$compteur;
+			}
+			$compteur++;
+		}
+		if(!$found){ //Si l'adresse est de type6 il y a un classement different car deux possibilité (Déficit ou depassement de puissance)
+		//le tableau a été groupé suivant ces deux possibilités (sans tri de valeur)
+		//Il faut recréer ces deux tableaux. Donc classer par valeur superieure ou inferieure à 0.
+		//Puis reconcaténer ce tableau en mettant en premier les alertes de valeur <0.  Rechercher dedans l'indice = indice_cliqué - premiertype6 +1
+		
+			$indice_dans_type6=$id-$premier_type6+1;
+			
+			$this->load->model('Alerte','run_al');
+			$a = $this->run_al;
+			$a->where('Type',6);
+			$a->where_related_menumensuel('Tension',$BT_MT_EAU);
+			$a->where_related_menumensuel('periode',$PERIODE_MENSUELLE);
+			
+			$a->get();
+			
+			$tableau_al=array();
+			foreach($a->all as $alerte){
+				if ($alerte->Valeur<0){
+					$tableau_al[]=array($alerte->id,$alerte->valeur);					
+				}
+				else{
+					$tableau_al2[]=$alerte->id;
+				}
+			}
+			//$tableau_al[]=sort($tableau_al);
+			//print_r($tableau_al);
+			//$tableau_al2[]=sort($tableau_al2);
+			
+			
+			//concatenation
+			foreach($tableau_al2 as $alerteid){
+				$tableau_al[]=$alerteid;
+			}
+			//print_r($tableau_al);
+			
+			$compteur=1;
+			foreach($tableau_al as $alerteid){
+				if ($compteur==$indice_dans_type6){
+					$this->load->model('Pl','run_pl');
+					$p = $this->run_pl;
+					$p->where_related_alerte('id', $alerteid)->get();
+					$answer['idPl']=$p->id;
+					$answer['nom']=$p->Nom_prenom;
+					$found=true;
+					break;
+				}
+				$compteur++;
+			}
+			
+		}
+		echo json_encode($answer);			
+	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+

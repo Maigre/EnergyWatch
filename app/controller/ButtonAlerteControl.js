@@ -13,12 +13,16 @@ Ext.define('MainApp.controller.ButtonAlerteControl', {
 		var alerteallstore = this.getStore('AlerteAllStore');
 		
 		alerteallstore.proxy.url= BASE_URL+'data/alertecontrol/loadall/'+BT_MT_EAU+'/'+PERIODE_MENSUELLE; 
-
+		
+		
+		alerteallstore.group('Type');
+		alerteallstore.sort('Type', 'ASC');
 		alerteallstore.load({
 			params: {
 				BT_MT_EAU: BT_MT_EAU,
 				PERIODE_MENSUELLE: PERIODE_MENSUELLE
 		}});
+		
 		var alerteallpanel = Ext.getCmp('alerteallpanel');
 		if (!alerteallpanel){
 			var alerteallpanel = Ext.widget('alerteallpanel');

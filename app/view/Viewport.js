@@ -17,6 +17,7 @@ Ext.define('MainApp.view.Viewport', {
         'MainApp.view.tools.ButtonWaterView',
         'MainApp.view.tools.ButtonMTView',
         'MainApp.view.tools.ButtonBTView',
+        'MainApp.view.tools.ButtonSynchroView',
         'MainApp.view.panel.UploadMainPanel',
         //'MainApp.view.panel.UploadPanel',
         //'MainApp.view.panel.HistoriqueUploadPanel',
@@ -156,7 +157,11 @@ Ext.define('MainApp.view.Viewport', {
 					flex:1
 				},{
 					xtype: 'searchbaricon',
-					margins: '20 15 17 0'
+					margins: '23 15 17 -25'
+				},{
+					xtype: 'buttonsynchro',
+					margins: 10,
+					scale: 'medium'
 				}]
 			}];
 
