@@ -3,9 +3,11 @@ Ext.define('MainApp.store.AlerteAllStore', {
     requires: 'MainApp.model.AlerteModel',
     model: 'MainApp.model.AlerteModel',
     remoteSort: true,
+    remoteGroup : true,
     buffered: true,
     pageSize: 100,
     groupField: 'Type',
+    groupDir  : 'ASC',
     //autoLoad: true,
     proxy: {
     	type: 'ajax',
@@ -21,11 +23,7 @@ Ext.define('MainApp.store.AlerteAllStore', {
     		successProperty: 'success'
     	}/*,
     	simpleSortMode: true*/
-    },/*
-	sorters: [{
-        property: 'lastpost',
-        direction: 'DESC'
-    }],*/
+    },
     baseParams: {
         BT_MT_EAU: BT_MT_EAU 
     }

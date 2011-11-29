@@ -6,14 +6,65 @@ var groupingFeature = Ext.create('Ext.grid.feature.Grouping',{
 	startCollapsed : true
 });
 
+var actionTrier = Ext.create('Ext.Action', {
+	iconCls	: 'yes',
+	text: 'Trier par alerte',
+	disabled: false,
+	handler: function(widget, event) {
+		
+		store  = Ext.getStore('AlerteAllStore');
+		store.group
+		
+		/*selecteditems = Ext.getCmp('nouveauPlGrid').getSelectionModel().getSelection();
+		nouveaustore  = Ext.getStore('TriPlNouveauStore');
+		validestore   = Ext.getStore('TriPlValideStore');
+		Ext.each(selecteditems, function(op) {
+			nouveaustore.remove(op);
+			Ext.getStore('TriPlValideStore').add(op);
+			Ext.Ajax.request({
+				url: BASE_URL+'data/triplcontrol/save/valide',
+				method : 'POST',
+				params : {
+					idfacture: op.get('id'),
+					BT_MT_EAU: BT_MT_EAU//,
+					//date_validation: op.get('date_validation')
+				},
+				success: function(){
+					//Test si dernier item sauvegardé et reload le grid via son store
+					if (op==selecteditems[selecteditems.length-1]){
+						nouveaustore.loadPage(1);
+						validestore.loadPage(1);
+					}
+				}
+			});
+		})
+
+		Ext.getCmp('nouveauPlGrid').getView().focusRow(0);
+		
+		var gridEl = Ext.getCmp('nouveauPlGrid').getEl();*/
+		//console.info(rowEl);
+		//rowEl.scrollIntoView(gridEl,false);
+		
+	}
+});
+
+
+
+
 Ext.define('MainApp.view.tools.GridAlerteAllView', {
 	extend	: 'Ext.grid.Panel',
 	alias 	: 'widget.gridalerteall',
 	id 	: 'gridalerteall',
 	title	: 'Alertes',
 	store	: 'AlerteAllStore',
-	//features: [groupingFeature],
-	//sortableColumns: false,
+	features: [groupingFeature],
+	sortableColumns: false,
+	dockedItems: [{
+	    xtype: 'toolbar',
+	    items: [
+		actionTrier
+	    ]
+	}],
 	//height: 200,
 	//forceFit: true,
 	//width: 1100,
@@ -35,32 +86,7 @@ Ext.define('MainApp.view.tools.GridAlerteAllView', {
 			'</tpl>'
 		);
 		
-		/*type_tpl= new Ext.XTemplate(
-			'<tpl if="Type == 1;">',
-				'Hausse des Consommations',
-			'</tpl>',
-			'<tpl if="Type == 4;">',
-				'Changement de Puissance Souscrite',
-			'</tpl>',
-			'<tpl if=" ((-1)*Valeur) < 0 && Type == 6">',
-				'D&eacute;passement de puissance',
-			'</tpl>',
-			'<tpl if="Type == 6 && Valeur < 0">',
-				'D&eacute;ficit de Puissance',
-			'</tpl>',
-			'<tpl if="Type == 7;">',
-				'Plusieurs factures en un mois pour ce P.L',
-			'</tpl>',
-			'<tpl if="Type == 8;">',
-				'Consommation d\'Energie R&eacute;active',
-			'</tpl>',
-			'<tpl if="Type == 9;">',
-				'Incoh&eacute;rence d\'index',
-			'</tpl>',
-			'<tpl if="Type == 10;">',
-				'Consommation nulle',
-			'</tpl>'
-		);*/
+
 		
 		valeur_tpl= new Ext.XTemplate(
 			'<tpl if="Type ==\'Hausse des Consommations\';">',
@@ -112,50 +138,38 @@ Ext.define('MainApp.view.tools.GridAlerteAllView', {
 			valueField: 'Etat'
 			//,tpl: flagtpl
 		});
-		/*flagcombobox= new Ext.form.ComboBox({
-			alias: 'widget.flagcombobox',
-			fieldLabel: 'Etat',
-			store: flagcomboboxstore,          //[['1'],['2'],['3']],
-			queryMode: 'local',
-			displayField: 'Etat',
-			valueField: 'Etat'
-		});*/
 		
 		this.columns = [
 			{header: 'Nom PL', dataIndex: 'Nom_prenom', flex:3, sortable: false},
 			{header: 'N&deg; PL', dataIndex: 'Point_de_livraison', flex:1, sortable: false},
 			{header: 'N&deg; Facture', dataIndex: 'No_de_facture', flex:1, sortable: false},
 			{header: 'Date', dataIndex: 'Date', xtype:'datecolumn', format:'d-m-Y', width:80, sortable: false}, 
-			{header: 'Alerte', dataIndex: 'Type'/*, xtype: 'templatecolumn', tpl: type_tpl*/, flex:2, sortable: true},
-			{header: 'Valeur', dataIndex: 'Valeur', xtype: 'templatecolumn', tpl: valeur_tpl, width:60},
-			{header: 'Etat', dataIndex: 'Etat', xtype: 'templatecolumn', tpl: flagtpl , align:'center', width:40/*,
-				editor: {
-		            xtype: 'flagcombobox',
-		            //triggerAction: 'all',
-		            selectOnTab: true//,
-		            //lazyRender: true,
-		            //listClass: 'x-combo-list-small'
-            	}*/
-            } 
-            /*,
-			{header: 'Commentaire', dataIndex: 'Commentaire', flex:2,
-				editor: {
-		            xtype: 'textfield',
-		            allowBlank: false,
-		            //triggerAction: 'all',
-		            selectOnTab: true//,
-		            //lazyRender: true,
-		            //listClass: 'x-combo-list-small'
-            	}
-			}*/
+			{header: 'Alerte', dataIndex: 'Type'/*, xtype: 'templatecolumn', tpl: type_tpl*/, flex:2, sortable: false},
+			{header: 'Valeur', dataIndex: 'Valeur', xtype: 'templatecolumn', tpl: valeur_tpl, width:60, sortable: false},
+			{header: 'Etat', dataIndex: 'Etat', /*xtype: 'templatecolumn', tpl: flagtpl ,*/ align:'center', width:40,sortable: false}
 		];
-		/*this.plugins = [
-		    Ext.create('Ext.grid.plugin.CellEditing', {
-		        clicksToEdit: 1
-		    })
-		];*/
 		
-
+		
+		alertgridcontextmenu = new Ext.menu.Menu({
+			  width: 160,
+			  items: [{
+					text: 'Changer le fond d\'&eacutecran',
+					iconCls: 'edit',
+					width : 160,
+					
+					handler: function(){
+						console.info('ok');
+						
+					}
+			  }]
+		});
+		
+		this.on('render',function() {
+			this.getEl().on('contextmenu', function(e) {
+				 e.preventDefault();
+				 alertgridcontextmenu.showAt(e.getXY());
+			});
+		});
 		
 		this.callParent(arguments);
 	},

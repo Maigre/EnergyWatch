@@ -3,6 +3,8 @@ Ext.define('MainApp.store.AlerteStore', {
     requires: 'MainApp.model.AlerteModel',
     model: 'MainApp.model.AlerteModel', //put more field here like 'idfamille'
     autoSync: true,
+    groupField: 'Type',
+    groupDir  : 'ASC',
     proxy: {
     	type: 'ajax',
     	api: {
@@ -15,12 +17,12 @@ Ext.define('MainApp.store.AlerteStore', {
     		root: 'data',
     		successProperty: 'success'
     	},
-		writer: {
-			type: 'json',
-			encode: 'false',
-			writeAllFields: false,
-			root: 'data'
-		}
+	writer: {
+		type: 'json',
+		encode: 'false',
+		writeAllFields: false,
+		root: 'data'
+	}
     },
     baseParams: {
             BT_MT_EAU: BT_MT_EAU

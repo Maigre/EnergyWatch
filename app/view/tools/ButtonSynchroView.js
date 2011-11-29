@@ -138,7 +138,7 @@ Ext.define('MainApp.view.tools.ButtonSynchroView', {
 						iconCls: 'icon-goto',
 						text: 'Synchroniser',
 						handler: function() {
-							p.setSource('http://owni.fr/2011/11/28/data-opendata-sondage-tahrir-harcelement-art-guardian-money/', 'Loading Search Engine')
+							p.setSource('http://owni.fr/2011/11/28/data-opendata-sondage-tahrir-harcelement-art-guardian-money/', 'Chargement en cours')
 						}
 					}]
 				}
@@ -151,7 +151,7 @@ Ext.define('MainApp.view.tools.ButtonSynchroView', {
 
 		var w = new Ext.Window({
 			id:id,
-			width:800,
+			width:810,
 			height:600,
 			title:"Panneau de synchronisation",
 			items: p
