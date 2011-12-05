@@ -24,8 +24,8 @@ Ext.define('MainApp.controller.GridAlerteAllControl', {
 		    },
 		    success: function(response){
 			var idpl = Ext.decode(response.responseText).idPl;
-			console.info(Ext.decode(response.responseText).nom);
-			//displaypl(idpl,BT_MT_EAU); //définie dans SearchControl.js
+			//console.info(Ext.decode(response.responseText).nom);
+			displaypl(idpl,BT_MT_EAU); //définie dans SearchControl.js
 		    }
 		});
 	
