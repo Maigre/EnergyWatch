@@ -5,7 +5,7 @@ Ext.define('Ext.panel.iframePanel', {
 	/**
 	 * iframe source url
 	 */
-	src: 'http://soundcloud.com/dashboard',
+	src: 'http://localhost/EnergyBat/index.php/welcome',
 
 	/**
 	 * Loading text for the loading mask
@@ -128,7 +128,7 @@ Ext.define('MainApp.view.tools.ButtonSynchroView', {
 			layout: 'fit',
 			//title: 'Panneau de synchronisation',
 			renderTo: Ext.getBody(),
-			src: 'http://soundcloud.com/dashboard',
+			src: 'http://localhost/EnergyBat/index.php/welcome',
 			dockedItems: [
 				{
 					xtype: 'toolbar',

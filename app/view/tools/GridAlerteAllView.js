@@ -6,7 +6,7 @@ var groupingFeature = Ext.create('Ext.grid.feature.Grouping',{
 	startCollapsed : true
 });
 
-var actionTrier = Ext.create('Ext.Action', {
+/*var actionTrier = Ext.create('Ext.Action', {
 	iconCls	: 'yes',
 	text: 'Trier par alerte',
 	disabled: false,
@@ -15,7 +15,7 @@ var actionTrier = Ext.create('Ext.Action', {
 		store  = Ext.getStore('AlerteAllStore');
 		store.group
 		
-		/*selecteditems = Ext.getCmp('nouveauPlGrid').getSelectionModel().getSelection();
+		selecteditems = Ext.getCmp('nouveauPlGrid').getSelectionModel().getSelection();
 		nouveaustore  = Ext.getStore('TriPlNouveauStore');
 		validestore   = Ext.getStore('TriPlValideStore');
 		Ext.each(selecteditems, function(op) {
@@ -41,12 +41,12 @@ var actionTrier = Ext.create('Ext.Action', {
 
 		Ext.getCmp('nouveauPlGrid').getView().focusRow(0);
 		
-		var gridEl = Ext.getCmp('nouveauPlGrid').getEl();*/
+		var gridEl = Ext.getCmp('nouveauPlGrid').getEl();
 		//console.info(rowEl);
 		//rowEl.scrollIntoView(gridEl,false);
 		
 	}
-});
+});*/
 
 
 
@@ -57,14 +57,22 @@ Ext.define('MainApp.view.tools.GridAlerteAllView', {
 	id 	: 'gridalerteall',
 	title	: 'Alertes',
 	store	: 'AlerteAllStore',
-	features: [groupingFeature],
+	//features: [groupingFeature],
+	features: [{
+            id: 'group',
+            ftype: 'groupingsummary',
+            groupHeaderTpl: '{name} ({rows.length} Alerte{[values.rows.length > 1 ? "s" : ""]})',
+            hideGroupedHeader: true,
+            enableGroupingMenu: false,
+            startCollapsed : true
+        }],
 	sortableColumns: false,
-	dockedItems: [{
+	/*dockedItems: [{
 	    xtype: 'toolbar',
 	    items: [
 		actionTrier
 	    ]
-	}],
+	}],*/
 	//height: 200,
 	//forceFit: true,
 	//width: 1100,
@@ -112,6 +120,9 @@ Ext.define('MainApp.view.tools.GridAlerteAllView', {
 			'</tpl>',
 			'<tpl if="Type ==\'Consommation nulle\';">',
 				'',
+			'</tpl>',
+			'<tpl if="Type ==\'Avoir\';">',
+				'{Valeur} CFA',
 			'</tpl>'
 		);
 		
@@ -145,7 +156,44 @@ Ext.define('MainApp.view.tools.GridAlerteAllView', {
 			{header: 'N&deg; Facture', dataIndex: 'No_de_facture', flex:1, sortable: false},
 			{header: 'Date', dataIndex: 'Date', xtype:'datecolumn', format:'d-m-Y', width:80, sortable: false}, 
 			{header: 'Alerte', dataIndex: 'Type'/*, xtype: 'templatecolumn', tpl: type_tpl*/, flex:2, sortable: false},
-			{header: 'Valeur', dataIndex: 'Valeur', xtype: 'templatecolumn', tpl: valeur_tpl, width:60, sortable: false},
+			{header: 'Valeur', dataIndex: 'Valeur', align: 'center', xtype: 'templatecolumn', tpl: valeur_tpl, width:140, sortable: false,
+				summaryType: 'sum',
+				summaryRenderer: function(value, summaryData, dataIndex) {
+					/*this.summaryData['Changement de Puissance souscrite'].Valeur=0;
+					
+					this.summaryData['D&eacute\;ficit de puissance'].Valeur=0;
+					this.summaryData['D&eacute\;passement de puissance'].Valeur=0;
+					
+					this.summaryData['Hausse des Consommations'].Valeur=0;*/
+					//this.summaryData['Plusieurs factures en un mois pour ce P.L'].Valeur=0;
+					if (this.summaryData['Changement de Puissance souscrite']){
+						this.summaryData['Changement de Puissance souscrite'].Valeur=0;
+					}
+					if (this.summaryData['D&eacute\;ficit de puissance']){
+						this.summaryData['D&eacute\;ficit de puissance'].Valeur=0;
+					}
+					if (this.summaryData['D&eacute\;passement de puissance']){
+						this.summaryData['D&eacute\;passement de puissance'].Valeur=0;
+					}
+					if (this.summaryData['Hausse des Consommations']){
+						this.summaryData['Hausse des Consommations'].Valeur=0;
+					}
+					if (this.summaryData['Incoh&eacute\;rence index']){
+						this.summaryData['Incoh&eacute\;rence index'].Valeur=0;
+					}
+					if (this.summaryData['Plusieurs factures en un mois pour ce P.L']){
+						this.summaryData['Plusieurs factures en un mois pour ce P.L'].Valeur=0;
+					}
+
+					if (summaryData.Valeur==0){
+						return '';
+					}
+					else{
+						return value + ' CFA';
+					}
+					
+				}	
+			},
 			{header: 'Etat', dataIndex: 'Etat', /*xtype: 'templatecolumn', tpl: flagtpl ,*/ align:'center', width:40,sortable: false}
 		];
 		
