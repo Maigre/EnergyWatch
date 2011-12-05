@@ -148,20 +148,21 @@ Ext.define('MainApp.view.Viewport', {
 					//height: 62,
 					flex:4
 				},{
-					xtype: 'searchbar',
+					xtype	: 'searchbar',
+					id	: 'searchbar',
 					//x: 1100,
 					//align: 'left',
-					margins:'20 0 15 0',
+					margins	:'20 0 15 0',
 					//y:20,
-					border: 0,
-					flex:1
+					border	: 0,
+					flex	:1
 				},{
-					xtype: 'searchbaricon',
-					margins: '23 15 17 -25'
+					xtype	: 'searchbaricon',
+					margins	: '23 15 17 -25'
 				},{
-					xtype: 'buttonsynchro',
-					margins: 10,
-					scale: 'medium'
+					xtype	: 'buttonsynchro',
+					margins	: 10,
+					scale	: 'medium'
 				}]
 			}];
 

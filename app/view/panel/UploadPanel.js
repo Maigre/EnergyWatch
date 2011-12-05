@@ -73,6 +73,7 @@ Ext.define('MainApp.view.panel.UploadPanel', {
 			}]
 		},{
 			xtype     : 'filefield',
+			id	  : 'filefieldupload',
 			name      : 'file',
 			fieldLabel: '',
 			hideLabel : true,
@@ -159,6 +160,9 @@ Ext.define('MainApp.view.panel.UploadPanel', {
 									Ext.getCmp('southregion').removeAll();
 									Ext.getCmp('buttonimporter').enable();									
 									Ext.getCmp('southregion').height = 30;
+									//Ext.getCmp('filefieldupload');
+									Ext.getCmp('filefieldupload').setRawValue('');
+									Ext.getCmp('southregion').setHeight(30);
 									Ext.Msg.alert('Success', 'Le fichier a &eacute;t&eacute; import&eacute; avec succ&egrave;s. '+ obj.lignes+' factures ont &eacute;t&eacute; trait&eacute;es.');
 									
 								}

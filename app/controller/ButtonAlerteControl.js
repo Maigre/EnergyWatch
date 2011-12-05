@@ -14,14 +14,18 @@ Ext.define('MainApp.controller.ButtonAlerteControl', {
 		
 		alerteallstore.proxy.url= BASE_URL+'data/alertecontrol/loadall/'+BT_MT_EAU+'/'+PERIODE_MENSUELLE; 
 		
+		//alerteallstore.sort('Valeur', 'ASC');
+		alerteallstore.group('Type', 'ASC');
 		
-		alerteallstore.group('Type');
-		alerteallstore.sort('Type', 'ASC');
-		alerteallstore.load({
+		/*alerteallstore.load({
 			params: {
 				BT_MT_EAU: BT_MT_EAU,
 				PERIODE_MENSUELLE: PERIODE_MENSUELLE
-		}});
+		}});*/
+		
+		alerteallstore.on('groupchange', function(){
+			alerteallstore.sort('Type', 'ASC');
+		})
 		
 		var alerteallpanel = Ext.getCmp('alerteallpanel');
 		if (!alerteallpanel){

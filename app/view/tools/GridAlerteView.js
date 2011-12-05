@@ -5,7 +5,22 @@ Ext.define('MainApp.view.tools.GridAlerteView', {
 	store	: 'AlerteStore',
 	resizable: true,
 	frame	: true,
-	margin	: 5,		
+	margin	: 5,
+	tools:[{
+		type:'refresh',
+		tooltip: 'Rafraichir',
+		// hidden:true,
+		handler: function(event, toolEl, panel){
+
+			Ext.getStore('AlerteStore').load({
+				params: {
+					BT_MT_EAU 	: BT_MT_EAU,
+					idPl		: Ext.getStore('PlStore').data.items[0].data.id,
+					only_active	: true
+				}
+			});		
+		}
+	}],		
 	initComponent: function() {
 		flagtpl= new Ext.XTemplate(
 			'<tpl if="Etat == 3;">',

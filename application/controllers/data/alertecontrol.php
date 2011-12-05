@@ -11,6 +11,7 @@ class Alertecontrol extends CI_Controller {
 	{
 		//DATAMAPPER CONSTRUCTING
 		$idPl = $this->input->post('idPl');
+		$only_active = $this->input->post('only_active');
 		$this->load->model('Pl','run_pl');
 		$p = $this->run_pl;
 		$p->where('id', $idPl)->get();
@@ -44,16 +45,22 @@ class Alertecontrol extends CI_Controller {
 			if($p->Tension=='BT'){
 				if (substr($p->No_compteur,0,1)=='E'){
 	 				//BT
-					$a->where_related_facturebt('id',$facture->id)->get();
+					$a->where_related_facturebt('id',$facture->id);
+					if ($only_active) $a->where('Etat', 3);
+					$a->get();
 				}
 				else{
 					//EAU
-					$a->where_related_factureeau('id',$facture->id)->get();
+					$a->where_related_factureeau('id',$facture->id);
+					if ($only_active) $a->where('Etat', 3);
+					$a->get();
 				}
 				
 			}
 			else{
-				$a->where_related_facturemt('id',$facture->id)->get();
+				$a->where_related_facturemt('id',$facture->id);
+				if ($only_active) $a->where('Etat', 3);
+				$a->get();
 			}
 			foreach($a->all as $alerte){
 				foreach($fieldArray as $field){
@@ -160,6 +167,8 @@ class Alertecontrol extends CI_Controller {
 					
 				}
 			}
+			
+			
 			if (is_array($group)){
 				foreach ($group as $g){
 					if ($g->property!='lastpost'){
@@ -174,6 +183,8 @@ class Alertecontrol extends CI_Controller {
 			//$a->limit($limit,$start);
 			$a->where_related_menumensuel('Tension',$BT_MT_EAU);
 			$a->where_related_menumensuel('periode',$PERIODE_MENSUELLE);
+			$a->order_by('Valeur','ASC');
+			$a->order_by('Type','ASC');
 			$a->get();
 			//Remplace le type numérique par le texte correspondant
 			$tableau_type=array (
@@ -182,7 +193,8 @@ class Alertecontrol extends CI_Controller {
 				7 => 'Plusieurs factures en un mois pour ce P.L',
 				8 => 'Consommation Energie R&eacute;active',
 				9 => 'Incoh&eacute;rence index',
-				10 => 'Consommation nulle'				
+				10 => 'Consommation nulle',
+				11 => 'Avoir'				
 			);
 			foreach ($a->all as $alerte){
 				if($alerte->Type!=6){
@@ -396,6 +408,8 @@ class Alertecontrol extends CI_Controller {
 		echo json_encode($answer);
 	}
 	
+	
+	//FIX le bug du click event après le array grouping
 	//l'id renvoyé est la position actuelle de l'alerte dans le tableau. 
 	//Il faut donc recreer la requete qui a construit le tableau et chercher dedans l'indice correspondant
 	public function giveplid(){
@@ -415,13 +429,15 @@ class Alertecontrol extends CI_Controller {
 		$a = $this->run_al;
 		$a->where_related_menumensuel('Tension',$BT_MT_EAU);
 		$a->where_related_menumensuel('periode',$PERIODE_MENSUELLE);
-		$a->order_by('Type');
+		$a->order_by('Type','asc');
+		$a->order_by('Valeur','asc');
+		$a->order_by('Type','asc');
 		$a->get();
 		$answer=array();
 		$compteur=1;
 		$premier_type6=0;
 		$found=false;
-		//Cherche dans la liste des alertes (non groupées) celle au rang $id
+		//Cherche dans la liste des alertes (groupées) celle au rang $id
 		foreach($a->all as $alerte){
 			if (($compteur==$id) and ($alerte->Type!=6)){
 				//get related pl
@@ -448,9 +464,10 @@ class Alertecontrol extends CI_Controller {
 			$this->load->model('Alerte','run_al');
 			$a = $this->run_al;
 			$a->where('Type',6);
+			
 			$a->where_related_menumensuel('Tension',$BT_MT_EAU);
 			$a->where_related_menumensuel('periode',$PERIODE_MENSUELLE);
-			
+			$a->order_by('Valeur','asc');
 			$a->get();
 			
 			$tableau_al=array();

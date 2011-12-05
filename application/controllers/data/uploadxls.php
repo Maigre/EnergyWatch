@@ -217,8 +217,8 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 		 		if (empty($f->etat)){
 		 			//ETAT de la facture nouveau, valide, non valide, non valide mais refacturé
 		 			if($p->etat==3){
-		 			//Pl non valide mais refacturé. Facture en attente de confirmation 
-		 			$f->etat=4;
+			 			//Pl non valide mais refacturé. Facture en attente de confirmation 
+			 			$f->etat=4;
 			 		}
 			 		else{
 			 			$f->etat=$p->etat;
@@ -237,7 +237,7 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 	 					$m->where('Tension','EAU')->get();
 	 				}
 		 		}
-		 		else {
+		 		else{
 		 			$m->where('Tension','MT')->get();
 		 		}
 			 	
@@ -472,6 +472,7 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 						}*/
 						$en_cours['Nb_jours']=$facture->Nb_jours;
 						$en_cours['Consommation_mensuelle']=$facture->Consommation_mensuelle;
+						$en_cours['Montant_net']=$facture->Montant_net;
 						//$en_cours['idFacture']=$facture->id;
 						$en_cours['Puisance_souscrite']=$facture->Puisance_souscrite;
 
@@ -851,7 +852,24 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 							'Duree_validite'=>1,
 							'type_alerte'=>10,
 							'flux'=>'elec',
-							'Date'=>date('Y-m-d',$date_encours),
+							'Date'=>date('Y-m-d',$date_encours)
+						);
+						$alerte_temp[]=$alerte;
+					}
+				}
+				
+				//type 11 : Avoir (Montant Net négatif)
+				//Attention les avoirs n'ont pas de n°PL on accede au montant net directement par la facture
+				if (isset($f->Montant_net)){
+					if ($f->Montant_net<0)
+					{
+						$alerte=array(
+							'idFacture'=>$f->id,
+							'Valeur'=>(-1)*$f->Montant_net,
+							'Duree_validite'=>1,
+							'type_alerte'=>11,
+							'flux'=>'elec',
+							'Date'=>date('Y-m-d',$date_encours)
 						);
 						$alerte_temp[]=$alerte;
 					}

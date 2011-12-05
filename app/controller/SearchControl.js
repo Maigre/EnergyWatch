@@ -88,7 +88,9 @@ Ext.define('MainApp.controller.SearchControl', {
 	doselect: function(record) {
 	
 	
-		displaypl(record.getValue(),record.displayTplData[0].tension);	
+		displaypl(record.getValue(),record.displayTplData[0].tension);
+		Ext.getCmp('searchbar').setRawValue('');
+		console.info(Ext.getCmp('searchbar'));
 	
 	}
 	
