@@ -95,7 +95,7 @@ class Bilan extends CI_Controller {
 		$answ['NbAttente'] = $NbAttente.' Factures';
 		$answ['ConsoRejete'] = $ConsoRejete.' CFA';
 		$answ['NbRejete'] = $NbRejete.' Factures';
-		$answ['NbAlerteActive'] = $NbAlerteActive.' Factures';
+		$answ['NbAlerteActive'] = $NbAlerteActive.' Alertes';
 		
 		$answer['data'][]=$answ;
 		
