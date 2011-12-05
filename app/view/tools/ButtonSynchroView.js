@@ -123,12 +123,12 @@ Ext.define('MainApp.view.tools.ButtonSynchroView', {
 		//Ext.panel.iframePanel
 
 		var p = Ext.widget('iframePanel', {
-			width: 800,
-			height: 600,
+			//width: 800,
+			height: 400,
 			layout: 'fit',
 			//title: 'Panneau de synchronisation',
 			renderTo: Ext.getBody(),
-			src: 'http://soundcloud.com/dashboard',
+			src: BASE_URL+'tools' /*,
 			dockedItems: [
 				{
 					xtype: 'toolbar',
@@ -145,14 +145,14 @@ Ext.define('MainApp.view.tools.ButtonSynchroView', {
 			],
 			doSomething: function() {
 				console.log(arguments);
-			}
+			}*/
 		});
 		
 
 		var w = new Ext.Window({
 			id:id,
 			width:810,
-			height:600,
+			height:435,
 			title:"Panneau de synchronisation",
 			items: p
 		});
