@@ -102,6 +102,7 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 		 		if (empty($p->id)){
 		 			//Nouveau PL détecté 
 		 			$p->etat=1;
+		 			//Sinon on conserve l'état (valide, non valide, non valide again)
 		 		}
 		 		//Remplissage des champs du Pl
 		 		$p->No_client=substr($prod[$i][0], 1, -1);
