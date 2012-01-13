@@ -1,6 +1,6 @@
 Ext.define('MainApp.view.panel.PlFactureMTPanel', {
 	extend: 'Ext.panel.Panel',
-	requires:['MainApp.view.tools.ChartLinesMTView','MainApp.view.tools.GridFactureMTView','MainApp.view.tools.GridAlerteView'],
+	requires:['MainApp.view.tools.ChartLinesMTView','MainApp.view.tools.GridFactureMTView','MainApp.view.tools.GridAlerteView','MainApp.view.tools.GridAnomalieView'],
 	alias : 'widget.plfacturemtpanel',
 	id: 'plfacturemtpanel',
 	bodyPadding: 5,
@@ -21,6 +21,10 @@ Ext.define('MainApp.view.panel.PlFactureMTPanel', {
 				xtype: 'gridfacturemt',
 				padding:5/*,
 				flex:2*/
+			},{
+				xtype: 'gridanomalie',
+				padding:5,
+				flex:1
 			},{
 				xtype: 'gridalerte',
 				padding:5,

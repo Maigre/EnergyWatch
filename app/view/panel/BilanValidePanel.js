@@ -12,7 +12,7 @@ Ext.define('MainApp.view.panel.BilanValidePanel', {
 	frame 		 : true,
 	title 		 : 'VALIDE',
 	bodyPadding  : 10,
-	margin       : 50,
+	//margin       : 50,
 	method       : 'post',
 	trackResetOnLoad : 'true',
 	fieldDefaults: {
@@ -27,15 +27,9 @@ Ext.define('MainApp.view.panel.BilanValidePanel', {
 	items 		 : [{
 			fieldLabel: 'A payer',
 			hideLabel : true,
-			name      : 'NbAPayer'
+			name      : 'NbPlValide'
 			//,value     : ''
-		},{
-			fieldLabel: '',
-			//hideLabel : true,
-			name      : 'ConsoAPayer'
-			//,value     : ''
-		}
-	],
+	}],
 	initComponent: function() {
 		this.callParent(arguments);
 	}

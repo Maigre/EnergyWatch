@@ -152,6 +152,24 @@ Ext.define('MainApp.view.panel.MenuMensuelPanel', {
 								if (!bilanattentepanel){
 									var bilanattentepanel = Ext.widget('bilanattentepanel');
 								}
+								
+								var bilananomaliepanel = Ext.getCmp('bilananomaliepanel');
+								if (!bilananomaliepanel){
+									var bilananomaliepanel = Ext.widget('bilananomaliepanel');
+								}
+								
+								var bilanvalidefacturepanel = Ext.getCmp('bilanvalidefacturepanel');
+								if (!bilanvalidefacturepanel){
+									var bilanvalidefacturepanel = Ext.widget('bilanvalidefacturepanel');
+								}
+								
+								var bilannonvalidefacturepanel = Ext.getCmp('bilannonvalidefacturepanel');
+								if (!bilannonvalidefacturepanel){
+									var bilannonvalidefacturepanel = Ext.widget('bilannonvalidefacturepanel');
+								}
+								
+								
+								
 								var bilanalertepanel = Ext.getCmp('bilanalertepanel');
 								if (!bilanalertepanel){
 									var bilanalertepanel = Ext.widget('bilanalertepanel');
@@ -163,6 +181,11 @@ Ext.define('MainApp.view.panel.MenuMensuelPanel', {
 								bilanvalidepanel.getForm().loadRecord(rec);
 								bilanrejetepanel.getForm().loadRecord(rec);
 								bilanattentepanel.getForm().loadRecord(rec);
+								
+								bilanvalidefacturepanel.getForm().loadRecord(rec);
+								bilannonvalidefacturepanel.getForm().loadRecord(rec);
+								bilananomaliepanel.getForm().loadRecord(rec);
+								
 								bilanalertepanel.getForm().loadRecord(rec);
 								
 								bilanattentepanel.down('button').show();

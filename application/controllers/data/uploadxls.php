@@ -616,6 +616,7 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 							'type_alerte'=>$type_alerte,
 							'flux'=>$flux,
 							'Date'=>$date,
+							'Anomalie'=>false
 						);
 						$alerte_temp[]=$alerte;
 					}
@@ -726,6 +727,7 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 							'type_alerte'=>$type_alerte,
 							'flux'=>$flux,
 							'Date'=>$date,
+							'Anomalie'=>false
 						);
 						$alerte_temp[]=$alerte;
 					}
@@ -748,6 +750,7 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 							'type_alerte'=>$type_alerte,
 							'flux'=>$flux,
 							'Date'=>$date,
+							'Anomalie'=>false
 						);
 						$alerte_temp[]=$alerte;
 					}
@@ -781,6 +784,7 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 							'type_alerte'=>$type_alerte,
 							'flux'=>$flux,
 							'Date'=>$date,
+							'Anomalie'=>true
 						);
 						$alerte_temp[]=$alerte;
 			 		}
@@ -804,6 +808,7 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 							'type_alerte'=>$type_alerte,
 							'flux'=>$flux,
 							'Date'=>$date,
+							'Anomalie'=>false
 						);
 						$alerte_temp[]=$alerte;
 					}
@@ -820,7 +825,8 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 								'Duree_validite'=>1,
 								'type_alerte'=>9,
 								'flux'=>'elec',
-								'Date'=>date('Y-m-d',$date_encours)								
+								'Date'=>date('Y-m-d',$date_encours),
+								'Anomalie'=>true								
 							);
 							$alerte_temp[]=$alerte;
 						}
@@ -835,12 +841,12 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 								'Duree_validite'=>1,
 								'type_alerte'=>9,
 								'flux'=>'elec',
-								'Date'=>date('Y-m-d',$date_encours)
+								'Date'=>date('Y-m-d',$date_encours),
+								'Anomalie'=>true
 							);
 							$alerte_temp[]=$alerte;
 						}
 					}
-					
 				}
 				
 				//type 10 : Consommations nulles
@@ -853,7 +859,8 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 							'Duree_validite'=>1,
 							'type_alerte'=>10,
 							'flux'=>'elec',
-							'Date'=>date('Y-m-d',$date_encours)
+							'Date'=>date('Y-m-d',$date_encours),
+							'Anomalie'=>false
 						);
 						$alerte_temp[]=$alerte;
 					}
@@ -870,15 +877,31 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 							'Duree_validite'=>1,
 							'type_alerte'=>11,
 							'flux'=>'elec',
-							'Date'=>date('Y-m-d',$date_encours)
+							'Date'=>date('Y-m-d',$date_encours),
+							'Anomalie'=>false
 						);
 						$alerte_temp[]=$alerte;
 					}
 				}
 				
+				//type 12 : Pl non valide mais refacturé
+				//Attention cette anomalie n'en est une que si la demande de résiliation du PL e été effectuée
+				//Et que la période nécessaire à la résiliation est bien passée
+				if ($p->etat==3){
+					$alerte=array(
+						'idFacture'=>$f->id,
+						'Valeur'=>$f->Montant_net,
+						'Duree_validite'=>1,
+						'type_alerte'=>12,
+						'flux'=>'elec',
+						'Date'=>date('Y-m-d',$date_encours),
+						'Anomalie'=>true
+					);
+					$alerte_temp[]=$alerte;					
+				}
+				
 				//Vérifie que l'alerte n'est pas déjà présente et valide avant de sauvegarder
 				if (is_array($alerte_temp)){
-					
 					foreach($alerte_temp as $AT){
 						$a=new Alerte();
 						if ($table=='conso_bts'){
@@ -904,7 +927,7 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 						}*/
 						//Cas des doubles facturations, pour toutes les factures du PL de cette periode
 						//supprimer les alertes de ce type, avant d'en ajouter une
-						if ($AT['type_alerte']==7){
+						/*if ($AT['type_alerte']==7){
 													 		
 					 		//Get all facture pour ce PL et la periode en cours d'importation
 		 					if ($table=='conso_bts'){
@@ -941,15 +964,17 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 		 						//On aura une seule alerte : 4 alertes pour ce mois.
 		 						$ale->delete_all();
 		 					}			 					
-						}
+						}*/
 						//Sauvegarde l'alerte dans la DB
 						if (empty($a->id)) {						
 							$a=new Alerte();
 							$a->Valeur= $AT['Valeur'];    
 							$a->Flux  = $AT['flux']; 
-							$a->Date  = $AT['Date']; 
-							$a->Etat  = 3;
+							$a->Date  = $AT['Date'];
 							$a->Type  = $AT['type_alerte'];
+							
+							$a->Etat  = 2; //En attente
+							$a->Anomalie  = $AT['Anomalie'];
 						}
 						
 						/*if ($table=='conso_bts'){
@@ -964,10 +989,52 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 			 				$f= new Facturemt();			
 				 		}
 				 		$f->where('id',$AT['idFacture'])->get();*/
-			 			
-						$a->save(array($p,$f,$m));						
+			 			$a->save(array($p,$f,$m));						
 					}
 				}
+				
+				
+				
+				
+				
+				
+				//Determine l'etat de la facture :
+				//  	*Si Pl valide:
+				//		*Si Aucune anomalie => Valide(etat=1)
+				//		*Si au moins 1 anomalie Valide => Non Valide (etat=3)
+				//		*Si anomalie en attente => En attente
+				//		*Si anomalie non valide => Valide
+				$a= new Alerte();
+				if ($table=='conso_bts'){
+	 				$a->where('Anomalie',true);
+	 				if ($tension=='BT'){
+	 					$a->where_related_facturebt('id',$f->id);
+	 				}
+	 				else{
+	 					$a->where_related_factureeau('id',$f->id);
+	 				}
+		 		}
+		 		else{
+	 				$a->where_related_facturemt('id',$f->id);			
+		 		}
+		 		$a->get();
+		 		
+		
+				
+				$etat=1;//Valide
+				foreach($a->all as $anomalie){
+					if($anomalie->Etat==1){ //Valide
+						$etat=3;
+						break;
+					}
+					elseif($anomalie->Etat==2){
+						$etat=2;
+					}
+				}
+				$f->etat=$etat; //Valide
+
+				//Sinon état déterminé précedemment lors de la sauvegarde de la facture au début (rechercher "$f->etat=$p->etat;")
+				$f->save();
 				
 				
 				
@@ -977,7 +1044,6 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 				//calcul de la consommation mensuelle moyenne
 				$conso_totale=0;
 				$nombrejour_total=0;
-				
 				foreach($f->all as $facture){
 					if ($table=='conso_mts'){
 						$facture->Consommation_mensuelle=$facture->Conso_Hors_Pointe+$facture->Conso_Pointe;

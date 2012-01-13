@@ -1,56 +1,98 @@
 Ext.define('MainApp.view.panel.BilanMainPanel', {
 	extend: 'Ext.panel.Panel',
 	requires: [
-        'MainApp.view.panel.BilanValidePanel',
-        'MainApp.view.panel.BilanRejetePanel',
-        'MainApp.view.panel.BilanAttentePanel',
-        'MainApp.view.panel.BilanAlertePanel'
-    ],
-    layout:{
-		type:'vbox',
+		'MainApp.view.panel.BilanValidePanel',
+		'MainApp.view.panel.BilanRejetePanel',
+		'MainApp.view.panel.BilanAttentePanel',
+		'MainApp.view.panel.BilanValidePanel',
+		'MainApp.view.panel.BilanNonValideFacturePanel',
+		'MainApp.view.panel.BilanValideFacturePanel',
+		'MainApp.view.panel.BilanAlertePanel',
+		'MainApp.view.panel.BilanAnomaliePanel'
+	],
+	layout:{
+		type:'hbox',
 		//flex: 0.5,
 		align:'stretch'
 		//pack: 'center'
 	},
-    //width: 300,
-    //padding: 5,
-    opacity:0,
-    bodyStyle: "background-image:url(app/images/"+BCKGRND_IMAGE+".jpg); background-repeat:no-repeat; background-position:center center;-moz-background-size: cover; -webkit-background-size: cover;-o-background-size: cover;background-size: cover;",
-    //height: 300,
-    border:0,
+	//width: 300,
+	//padding: 5,
+	opacity:0,
+	bodyStyle: "background-image:url(app/images/"+BCKGRND_IMAGE+".jpg); background-repeat:no-repeat; background-position:center center;-moz-background-size: cover; -webkit-background-size: cover;-o-background-size: cover;background-size: cover;",
+	//height: 300,
+	border:0,
 	alias : 'widget.bilanmainpanel',
 	id    : 'bilanmainpanel',
 	items :  [{
-		id		: 'bilanmainpanelup',
-		opacity:0,
-		flex:1,
-		xtype	: 'container',
+		xtype	: 'panel',
+		id	: 'BilanPlPanel',
+		title	: 'PL',
+		cls	: 'center-header',
+		//frame	: true,
+		//border	: 0,
+		opacity	: 0,
+		flex	: 1,
 		layout	:{
-			type:'hbox',
-			align:'middle',
-			pack: 'center'
+			type :'vbox',
+			align : 'stretch',
+		    	pack  : 'start'
 		},
+		padding	: 30,
 		items:[{
-			xtype: 'bilanvalidepanel'
+			xtype: 'bilanattentepanel',
+			flex : 2,
+			margin: 10
 		},{
-			xtype: 'bilanrejetepanel'
+			xtype: 'bilanvalidepanel',
+			flex : 1,
+			margin: 10
+		},{
+			xtype: 'bilanrejetepanel',
+			flex : 1,
+			margin: 10
 		}]
 	},{
-		id		: 'bilanmainpaneldown',
-		flex:1,
-		xtype	: 'container',
+		xtype	: 'panel',
+		id	: 'BilanFacturesPanel',
+		title	: 'Factures',
+		flex	: 1,
+		padding	: 30,
 		layout	:{
-			type:'hbox',
-			align:'middle',
-			pack: 'center'
+			type :'vbox',
+			align : 'stretch',
+		    	pack  : 'start'
 		},
-		items:[{
-			xtype: 'bilanattentepanel'
+		items   : [{
+			xtype: 'bilananomaliepanel',
+			flex: 2,
+			margin: 10
 		},{
-			xtype: 'bilanalertepanel'
+			xtype: 'bilanvalidefacturepanel',
+			flex: 1,
+			margin: 10
+		},{
+			xtype: 'bilannonvalidefacturepanel',
+			flex: 1,
+			margin: 10
+		}]
+	},{
+		xtype	: 'panel',
+		id	: 'BilanConsoPanel',
+		title	: 'Consommation',
+		flex	: 1,
+		padding	: 30,
+		layout	:{
+			type :'vbox',
+			align : 'stretch',
+		    	pack  : 'start'
+		},
+		items   : [{
+			xtype: 'bilanalertepanel',
+			flex: 1,
+			margin: 10
 		}]
 	}],
-	
 	initComponent: function() {
 		var me = this;
 		me.callParent(arguments);

@@ -24,7 +24,7 @@ Ext.define('MainApp.view.tools.GridAlerteView', {
 	initComponent: function() {
 		flagtpl= new Ext.XTemplate(
 			'<tpl if="Etat == 3;">',
-			'<img src="app/images/icons/cross.png">',
+			'<img src="app/images/icons/error.png">',
 			'</tpl>',
 			'<tpl if="Etat == 2;">',
 			'<img src="app/images/icons/help.png">',
@@ -68,15 +68,15 @@ Ext.define('MainApp.view.tools.GridAlerteView', {
 		flagcomboboxstore = new Ext.data.Store({
 			fields: [{name: 'Etat'},{name: 'nom_etat'}],
 			data : [
-				{"Etat":"3", "nom_etat":"Alerte"},
-				{"Etat":"2", "nom_etat":"En cours"},
-				{"Etat":"1", "nom_etat":"Resolu"}
+				{"Etat":"3", "nom_etat":"Active"},
+				{"Etat":"2", "nom_etat":"En attente"},
+				{"Etat":"1", "nom_etat":"Desactivee"}
 			]
 		});
 		
-		Ext.define('MainApp.view.tools.flagcombobox', {
+		Ext.define('MainApp.view.tools.flagcombobox_alerte', {
 			extend: 'Ext.form.ComboBox',
-			alias: 'widget.flagcombobox',
+			alias: 'widget.flagcombobox_alerte',
 			//fieldLabel: 'nometat',
 			store: flagcomboboxstore,          //[['1'],['2'],['3']],
 			queryMode: 'local',
@@ -84,14 +84,14 @@ Ext.define('MainApp.view.tools.GridAlerteView', {
 			valueField: 'Etat'
 			//,tpl: flagtpl
 		});
-		/*flagcombobox= new Ext.form.ComboBox({
-			alias: 'widget.flagcombobox',
+		flagcombobox_alerte= new Ext.form.ComboBox({
+			alias: 'widget.flagcombobox_alerte',
 			fieldLabel: 'Etat',
 			store: flagcomboboxstore,          //[['1'],['2'],['3']],
 			queryMode: 'local',
 			displayField: 'Etat',
 			valueField: 'Etat'
-		});*/
+		});
 		
 		this.columns = [
 			{header: 'N&deg; Facture', dataIndex: 'No_de_facture', flex:1},
@@ -101,7 +101,7 @@ Ext.define('MainApp.view.tools.GridAlerteView', {
 			//{header: 'Hausse', dataIndex: 'Valeur', xtype: 'templatecolumn', tpl: valeur_tpl, flex:1},
 			{header: 'Etat', dataIndex: 'Etat', xtype: 'templatecolumn', tpl: flagtpl , align:'center', width:40,
 				editor: {
-					xtype: 'flagcombobox',
+					xtype: 'flagcombobox_alerte',
 					//triggerAction: 'all',
 					selectOnTab: true//,
 					//lazyRender: true,

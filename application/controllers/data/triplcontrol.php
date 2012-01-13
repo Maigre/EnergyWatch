@@ -56,7 +56,7 @@ class Triplcontrol extends CI_Controller {
 		
 		
 		//DATAMAPPER CONSTRUCTING
-		//Premiere fois pour renvoyer le nombre total de lignes de l'infinite scrolling grid
+		//Premiere fois pour renvoyer le nombre total de lignes pour le grid paging
 		if ($BT_MT_EAU=='MT'){
 			$this->load->model('Facturemt','run_facture');
 		}
@@ -67,10 +67,29 @@ class Triplcontrol extends CI_Controller {
 			$this->load->model('Factureeau','run_facture');
 		}		
 		$f = $this->run_facture;
-		$f->where('etat', $etat);
+		//$f->where('etat', $etat);
 		$f->where_related_menumensuel('Tension',$BT_MT_EAU);
-		$f->where_related_menumensuel('periode',$PERIODE_MENSUELLE);
-		$total_f=$f->count();
+		$f->where_related_menumensuel('periode',$PERIODE_MENSUELLE)->get();
+		$total_p=0;
+		foreach($f->all as $facture){
+			
+			$this->load->model('Pl','run_pl');
+			$p = $this->run_pl;
+			$p->where('etat', $etat);
+			if ($BT_MT_EAU=='MT'){
+				$p->where_related_facturemt('id', $facture->id);
+			}
+			elseif ($BT_MT_EAU=='BT'){
+				$p->where_related_facturebt('id', $facture->id);
+			}
+			else{
+				$p->where_related_factureeau('id', $facture->id);
+			}		 
+			$p->get();
+			//echo count($p->all);
+			$total_p=$total_p + count($p->all);
+		}
+		
 		
 		//AGAIN WITH FILTERS
 		//renvoie la portion du tableau définie par les parametre du post (start et limit)
@@ -85,14 +104,14 @@ class Triplcontrol extends CI_Controller {
 			$this->load->model('Factureeau','run_facture2');
 		}
 		$f = $this->run_facture2;
-		$f->where('etat', $etat);
+		//$f->where('etat', $etat);
 		$f->where_related_menumensuel('Tension',$BT_MT_EAU);
 		$f->where_related_menumensuel('periode',$PERIODE_MENSUELLE);
 		
 		if ($sort!='lastpost') $f->order_by($sort, $dir); 
 		$f->limit($limit,$start);
 		$f->get();
-		///echo count($f->all);
+		
 		if (count($f->all)<($start+$limit)) $start=count($f->all)-$limit;
 		if ($start<0){
 			$start=0;
@@ -102,10 +121,10 @@ class Triplcontrol extends CI_Controller {
 		
 		//initialize answer array TODO(should be an array design to be JSON encoded)
 		$answer = array(
-					'size' 	=> 0,
-					'msg'	=> '',
-					'success'=>true
-				); 
+			'size' 	=> 0,
+			'msg'	=> '',
+			'success'=>true
+		); 
 		//Populate the data
 		$answ = null;
 		
@@ -113,6 +132,7 @@ class Triplcontrol extends CI_Controller {
 		foreach($f->all as $facture){
 			$this->load->model('Pl','run_pl');
 			$p = $this->run_pl;
+			$p->where('etat', $etat);
 			if ($BT_MT_EAU=='MT'){
 				$p->where_related_facturemt('id', $facture->id);
 			}
@@ -123,15 +143,19 @@ class Triplcontrol extends CI_Controller {
 				$p->where_related_factureeau('id', $facture->id);
 			}		 
 			$p->get();
-			foreach($this->fieldPlArray as $field){
-				$answ[$field]=$p->$field;
-			}
-			foreach($this->fieldFactureArray as $field){
-				$answ[$field]=$facture->$field;
-			}
-			$answer['data'][] = $answ;
+			
+			if (count($p->all)>0){
+				foreach($this->fieldPlArray as $field){
+					$answ[$field]=$p->$field;
+				}
+				foreach($this->fieldFactureArray as $field){
+					$answ[$field]=$facture->$field;
+				}
+				$answer['data'][] = $answ;
+			}			
+			
 		}
-		if (isset($answer['data']))	$answer['size'] = $total_f;
+		if (isset($answer['data'])) $answer['size'] = $total_p;
 		
 		if ($answer['size'] == 0){
 			$answer['msg'] = 'aucun resultat...';
@@ -161,7 +185,7 @@ class Triplcontrol extends CI_Controller {
 		$BT_MT_EAU=$this->input->post('BT_MT_EAU');
 		
 		//modify facture's etat
-		if ($BT_MT_EAU=='MT'){
+		/*if ($BT_MT_EAU=='MT'){
 			$this->load->model('Facturemt','run_facture');
 		}
 		elseif ($BT_MT_EAU=='BT'){
@@ -174,7 +198,7 @@ class Triplcontrol extends CI_Controller {
 		$f->where('id', $idfacture);
 		//$f->where_related_pl('Point_de_livraison', $data['Point_de_livraison']);
 		$f->get();		
-		$f->etat=$etat;
+		$f->etat=$etat;*/
 		
 		
 		//modify pl's etat
@@ -198,8 +222,91 @@ class Triplcontrol extends CI_Controller {
 		if ($etat==4) $p->etat=3;
 		
 		//save updated entry into database
-		$f->save();
+		//$f->save();
 		$p->save();
+		
+		//Update l'état des factures de ce PL :
+		//	Si PL valide : 
+		//		*Si au moins une anomalie active: facture non valide
+		//		*Sinon si au moins une anomalie en attente : facture en attente
+		//		*Sinon (pas d'anomalie ou toute désactivée) : facture valide
+		//	Si PL non valide : 
+		//		*Rajouter alerte type PL non valide (etat : en attente)
+		//		*Si au moins une anomalie active: facture non valide
+		//		*Sinon (il y a au moins une anomalie en attente car on vient de la créée) : facture en attente
+		if ($BT_MT_EAU=='MT'){
+			$f= new Facturemt();
+		}
+		elseif ($BT_MT_EAU=='BT'){
+			$f= new Facturebt();
+		}
+		else{
+			$f= new Factureeau();
+		}
+		$f->where_related_pl('id', $p->id)->get();
+		
+		foreach($f->all as $facture){
+			//get the related periodemensuelle
+			$m = new Menumensuel();
+			if ($BT_MT_EAU=='MT'){
+				$m->where_related_facturemt('id',$facture->id);
+			}
+			elseif ($BT_MT_EAU=='BT'){
+				$m->where_related_facturebt('id',$facture->id);
+			}
+			else{
+				$m->where_related_factureeau('id',$facture->id);
+			}
+			$m->get();
+			
+			$a=new Alerte();
+			if ($BT_MT_EAU=='MT'){
+				$a->where_related_facturemt('id',$facture->id);
+			}
+			elseif ($BT_MT_EAU=='BT'){
+				$a->where_related_facturebt('id',$facture->id);
+			}
+			else{
+				$a->where_related_factureeau('id',$facture->id);
+			}
+			$a->where('Anomalie', true)->get();
+			
+			$etat=1;
+			foreach($a->all as $anomalie){
+				if($anomalie->etat==3){//anomalie active
+					$etat=3;
+					break;
+				}
+				elseif($anomalie->etat==2){//anomalie en attente
+					$etat=2;
+				}				
+			}
+			if($p->etat==2){ //PL valide
+				$f->etat=$etat;		
+			}
+			elseif($p->etat==3){ //PL non valide
+				//Ajout d'une nouvelle alerte PL non valide
+				echo 'ok';
+				$a=new Alerte();
+				$a->Valeur 	= $f->Montant_net;
+				//$a->Duree_validite = 1;
+				$a->Type	= 12;
+				$a->Flux	= 'elec';
+				$a->Date	= $f->Date_index;
+				$a->Anomalie	= true;
+				$a->Etat	= 2; //En attente
+				$a->save(array($p,$facture,$m));
+				
+				if($etat==3){
+					$f->etat=3;
+				}
+				else{
+					$f->etat=2;
+				}				
+			}
+			$f->save();
+			
+		}
 		
 		//RETURN JSON !
 		$answer['success'] = true;

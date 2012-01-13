@@ -1,15 +1,16 @@
 Ext.define('MainApp.controller.ButtonAlerteControl', {
-    extend: 'Ext.app.Controller',
+	extend: 'Ext.app.Controller',
 	views: ['MainApp.view.tools.ButtonAlerteView'],
 
-    init: function() {
-        this.control({
-            'buttonalerte': {
-                click: this.openalerte
-            }
-        });
-    },
-    openalerte: function() {
+	init: function() {
+		this.control({
+			'buttonalerte': {
+				click: this.openalerte
+			}
+		});
+	},
+	
+	openalerte: function() {
 		var alerteallstore = this.getStore('AlerteAllStore');
 		
 		alerteallstore.proxy.url= BASE_URL+'data/alertecontrol/loadall/'+BT_MT_EAU+'/'+PERIODE_MENSUELLE; 
@@ -36,6 +37,5 @@ Ext.define('MainApp.controller.ButtonAlerteControl', {
 		Ext.getCmp('centerregion').removeAll(false); //clean the center region
 		
 		Ext.getCmp('centerregion').add(alerteallpanel);
-		
 	}   
 });

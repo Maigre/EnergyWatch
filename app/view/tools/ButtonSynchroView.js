@@ -128,7 +128,7 @@ Ext.define('MainApp.view.tools.ButtonSynchroView', {
 			layout: 'fit',
 			//title: 'Panneau de synchronisation',
 			renderTo: Ext.getBody(),
-			src: BASE_URL+'tools' /*,
+			src: BASE_URL+'tools' ,
 			dockedItems: [
 				{
 					xtype: 'toolbar',
@@ -138,14 +138,14 @@ Ext.define('MainApp.view.tools.ButtonSynchroView', {
 						iconCls: 'icon-goto',
 						text: 'Synchroniser',
 						handler: function() {
-							p.setSource('http://owni.fr/2011/11/28/data-opendata-sondage-tahrir-harcelement-art-guardian-money/', 'Chargement en cours')
+							p.setSource(BASE_URL+'synchro/synch', 'Chargement en cours')
 						}
 					}]
 				}
 			],
 			doSomething: function() {
 				console.log(arguments);
-			}*/
+			}
 		});
 		
 

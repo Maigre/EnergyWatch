@@ -32,9 +32,9 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 				}
 			},
 		    {text: "Num&eacute;ro P.L", width: 110, sortable: false, dataIndex: 'Point_de_livraison'},
-		    {text: "Num&eacute;ro Facture", width: 100, sortable: false, dataIndex: 'No_de_facture'},
+		    //{text: "Num&eacute;ro Facture", width: 100, sortable: false, dataIndex: 'No_de_facture'},
 		    //{text: "", width: 70, sortable: true, dataIndex: 'date_validation', hidden: true, Value: 10},
-		    {text: "Montant net", width: 70, sortable: false, dataIndex: 'Montant_net'}
+		    //{text: "Montant net", width: 70, sortable: false, dataIndex: 'Montant_net'}
 		];
 	//****  ACTIONS 	
 		//Actions du panel NouveauPl
@@ -804,9 +804,9 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 						return value;					
 					}
 				},
-				{text: "Num&eacute;ro P.L", width: 70, sortable: false, dataIndex: 'Point_de_livraison'},
-				{text: "Num&eacute;ro Facture", width: 70, sortable: false, dataIndex: 'No_de_facture'},
-				{text: "Montant net", width: 70, sortable: false, dataIndex: 'Montant_net'}//,
+				{text: "Num&eacute;ro P.L", width: 110, sortable: false, dataIndex: 'Point_de_livraison'},
+				//{text: "Num&eacute;ro Facture", width: 70, sortable: false, dataIndex: 'No_de_facture'},
+				//{text: "Montant net", width: 70, sortable: false, dataIndex: 'Montant_net'}//,
 				//{text: "Date r&eacute;sil.", width: 80, sortable: false, dataIndex: 'date_validation', xtype: 'datecolumn',   format:'d-m-Y'}
 			],
 			/*tools:[{

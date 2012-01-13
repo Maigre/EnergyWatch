@@ -30,3 +30,7 @@ hr {
 .emptyText {text-align: center;}
 
 .red div {color: red;}
+
+.center-header .x-panel-header {
+        text-align: center !important;
+}

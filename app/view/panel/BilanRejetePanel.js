@@ -1,7 +1,7 @@
 Ext.define('MainApp.view.panel.BilanRejetePanel', {
 	extend		 : 'Ext.form.Panel',
 	alias 		 : 'widget.bilanrejetepanel',
-	id           : 'bilanrejetepanel',
+	id           	 : 'bilanrejetepanel',
 	frame 		 : true,
 	iconCls		 : 'no',
 	height		 : 100,
@@ -11,13 +11,20 @@ Ext.define('MainApp.view.panel.BilanRejetePanel', {
 	url   		 : BASE_URL+'data/bilan/save',
 	frame 		 : true,
 	title 		 : 'REJETE',
-	bodyPadding  : 10,
-	margin       : 50,
+	bodyPadding  	 : 10,
+	//margin       : 50,
+	
+	//bodyStyle:'margin:5px auto 0 auto',
+	/*layout	:{
+		type :'vbox',
+		align : 'center'//,
+	    	//pack  : 'center'
+	},*/
 	method       : 'post',
 	trackResetOnLoad : 'true',
 	fieldDefaults: {
-		msgTarget: 'side',
-		labelWidth: 200,
+		msgTarget : 'side',
+		//labelWidth: 200,
 		allowBlank:false
 	},
 	defaultType  : 'displayfield',
@@ -25,17 +32,12 @@ Ext.define('MainApp.view.panel.BilanRejetePanel', {
 		anchor: '100%'
 	},
 	items 		 : [{
-			fieldLabel: 'A payer',
-			hideLabel : true,
-			name      : 'NbRejete'
-			//,value     : ''
-		},{
-			fieldLabel: '',
-			hideLabel : true,
-			name      : 'ConsoRejete'
-			//,value     : ''
-		}
-	],
+		fieldLabel: 'Pl Rejetes',
+		hideLabel : true,
+		name      : 'NbPlRejete',
+		//flex:1
+		//,value     : ''
+	}],
 	initComponent: function() {
 		this.callParent(arguments);
 	}

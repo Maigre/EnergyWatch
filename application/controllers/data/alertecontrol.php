@@ -12,6 +12,7 @@ class Alertecontrol extends CI_Controller {
 		//DATAMAPPER CONSTRUCTING
 		$idPl = $this->input->post('idPl');
 		$only_active = $this->input->post('only_active');
+		$No_de_facture = $this->input->post('No_de_facture');
 		$this->load->model('Pl','run_pl');
 		$p = $this->run_pl;
 		$p->where('id', $idPl)->get();
@@ -42,6 +43,7 @@ class Alertecontrol extends CI_Controller {
 		
 		foreach($f->all as $facture){
 			$a=new Alerte();
+			$a->where('Anomalie',false);
 			if($p->Tension=='BT'){
 				if (substr($p->No_compteur,0,1)=='E'){
 	 				//BT
@@ -55,7 +57,6 @@ class Alertecontrol extends CI_Controller {
 					if ($only_active) $a->where('Etat', 3);
 					$a->get();
 				}
-				
 			}
 			else{
 				$a->where_related_facturemt('id',$facture->id);
@@ -63,32 +64,41 @@ class Alertecontrol extends CI_Controller {
 				$a->get();
 			}
 			foreach($a->all as $alerte){
-				foreach($fieldArray as $field){
-					$answ[$field]=$alerte->$field;
-				}
-				//get related facture
-				//BT
-				if($p->Tension=='BT'){
-					if (substr($p->No_compteur,0,1)=='E'){
-	 					//BT
-						$this->load->model('Facturebt','run_f');
+				$type_alerte_conso=array(1, 4, 6, 8, 10, 11);
+				if ($alerte->Anomalie==false){	
+					foreach($fieldArray as $field){
+						$answ[$field]=$alerte->$field;
+					}
+					//get related facture
+					//BT
+					if($p->Tension=='BT'){
+						if (substr($p->No_compteur,0,1)=='E'){
+		 					//BT
+							$this->load->model('Facturebt','run_f');
+						}
+						else{
+							//EAU
+							$this->load->model('Factureeau','run_f');
+						}
+						$f = $this->run_f;
+						$f->where_related_alerte('id', $alerte->id)->get();
 					}
 					else{
-						//EAU
-						$this->load->model('Factureeau','run_f');
+						//MT
+						$this->load->model('Facturemt','run_f');
+						$f = $this->run_f;
+						$f->where_related_alerte('id', $alerte->id)->get();
 					}
-					$f = $this->run_f;
-					$f->where_related_alerte('id', $alerte->id)->get();
+					$answ['No_de_facture']=$f->No_de_facture;
+					if ($No_de_facture!=0){
+						if($No_de_facture==$f->No_de_facture){
+							$answer['data'][] = $answ;
+						}
+					}
+					else{
+						$answer['data'][] = $answ;
+					}					
 				}
-				else{
-					//MT
-					$this->load->model('Facturemt','run_f');
-					$f = $this->run_f;
-					$f->where_related_alerte('id', $alerte->id)->get();
-				}
-				$answ['No_de_facture']=$f->No_de_facture;
-			
-				$answer['data'][] = $answ;
 			}	
 		}
 		if (isset($answer['data']))	$answer['size'] = count($answer['data']);

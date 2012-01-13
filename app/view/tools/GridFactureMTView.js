@@ -11,6 +11,18 @@ Ext.define('MainApp.view.tools.GridFactureMTView', {
 	frame	: true,
 		
 	initComponent: function() { 
+		flagtpl= new Ext.XTemplate(
+			'<tpl if="etat == 3;">',
+			'<img src="app/images/icons/cross.png">',
+			'</tpl>',
+			'<tpl if="etat == 2;">',
+			'<img src="app/images/icons/help.png">',
+			'</tpl>',
+			'<tpl if="etat == 1;">',
+			'<img src="app/images/icons/accept.png">',
+			'</tpl>'
+		);
+		
 		this.columns = [
 			{header: 'N&deg; facture', dataIndex: 'No_de_facture', flex:9}, 
 			{header: 'Tarif', dataIndex: 'Tarif',  flex:1, hidden: true}, 
@@ -54,7 +66,8 @@ Ext.define('MainApp.view.tools.GridFactureMTView', {
 			{header: 'Redev. HT', dataIndex: 'MT_REDEVANCE_HT',  flex:8, hidden: true}, 
 			{header: 'Montant net', dataIndex: 'Montant_net',  flex:8}, 
 			{header: 'Date index', dataIndex: 'Date_index', xtype: 'datecolumn',   format:'d-m-Y', flex:7}, 
-			{header: 'Nb jours', dataIndex: 'Nb_jours',  flex:6}
+			{header: 'Nb jours', dataIndex: 'Nb_jours',  flex:6},
+			{header: 'Etat', dataIndex: 'etat', xtype: 'templatecolumn', tpl: flagtpl, align:'center', width:40,sortable: false}
 		];
 		this.callParent(arguments);
 

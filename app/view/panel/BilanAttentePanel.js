@@ -1,7 +1,7 @@
 Ext.define('MainApp.view.panel.BilanAttentePanel', {
 	extend		 : 'Ext.form.Panel',
 	alias 		 : 'widget.bilanattentepanel',
-	id           : 'bilanattentepanel',
+	id           	 : 'bilanattentepanel',
 	frame 		 : true,
 	iconCls		 : 'help',
 	height		 : 150,
@@ -12,7 +12,7 @@ Ext.define('MainApp.view.panel.BilanAttentePanel', {
 	frame 		 : true,
 	title 		 : 'EN ATTENTE',
 	bodyPadding  : 10,
-	margin       : 50,
+	//margin       : 50,
 	method       : 'post',
 	trackResetOnLoad : 'true',
 	fieldDefaults: {
@@ -27,13 +27,7 @@ Ext.define('MainApp.view.panel.BilanAttentePanel', {
 	items 		 : [{
 			fieldLabel: 'A payer',
 			hideLabel : true,
-			name      : 'NbAttente'
-			//,value     : ''
-		},{
-			fieldLabel: '',
-			hideLabel : true,
-			name      : 'ConsoAttente',
-			renderer  : Ext.util.Format.numberRenderer('0,000.00')
+			name      : 'NbPlNouveau'
 			//,value     : ''
 		},{
 			xtype	  : 'buttonvalidation'
