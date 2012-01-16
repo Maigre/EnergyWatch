@@ -16,7 +16,7 @@ displaypl = function(idPl,tension,facture){
 					var plpanel = Ext.widget('plpanel');
 				}	
 				Ext.getCmp('westregion').removeAll(false);
-				Ext.getCmp('westregion').setWidth(240);
+				Ext.getCmp('westregion').setWidth(220);
 				Ext.getCmp('westregion').add(plpanel);
 				var rec= database.getAt(0);
 				plpanel.getForm().loadRecord(rec);

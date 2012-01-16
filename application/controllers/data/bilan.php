@@ -54,6 +54,8 @@ class Bilan extends CI_Controller {
 		
 		$NbAnomalieActive=0;
 		$NbAlerteActive=0;
+		$NbAlerteAttente=0;
+		
 		foreach($f->all as $facture){
 			//Get the related PL
 			$p=new Pl();
@@ -115,7 +117,7 @@ class Bilan extends CI_Controller {
 		$ConsoAttente = number_format ($ConsoAttente,0 ,'.' ,' ');
 		$ConsoRejete = number_format ($ConsoRejete,0 ,'.' ,' ');
 		
-		//Comptage des alertesactives
+		//Comptage des alertes actives
 		$a=new Alerte();
 		$a->where('etat',3);
 		$a->where('Anomalie',false);
@@ -127,6 +129,21 @@ class Bilan extends CI_Controller {
 
 		foreach($a->all as $alerte){
 			$NbAlerteActive++;			
+		}
+		
+		//Comptage des alertes en attente
+		$a=new Alerte();
+		$a->where('etat',2);
+		$a->where('Anomalie',false);
+		$a->where_related_menumensuel('Tension',$BT_MT_EAU);
+		if ($periode_mensuelle!='bilan'){
+			$a->where_related_menumensuel('periode',$periode_mensuelle);
+		}
+		
+		$a->get();
+
+		foreach($a->all as $alerte){
+			$NbAlerteAttente++;			
 		}
 		
 		//Comptage des anomalies en attente
@@ -156,6 +173,7 @@ class Bilan extends CI_Controller {
 		$answ['NbRejete'] = $NbRejete.' Factures';
 		
 		$answ['NbAlerteActive'] = $NbAlerteActive.' Alertes Actives';
+		$answ['NbAlerteAttente'] = $NbAlerteAttente.' Alertes En Attente';
 		$answ['NbAnomalieActive'] = $NbAnomalieActive.' Anomalies En Attente';
 		
 		$answer['data'][]=$answ;

@@ -4,7 +4,7 @@ Ext.define('MainApp.view.panel.BilanAlertePanel', {
 	id           : 'bilanalertepanel',
 	frame 		 : true,
 	iconCls		 : 'alert',
-	height		 : 150,
+	height		 : 200,
 	width 		 : 140,
 	x     		 : 0,
 	y     		 : 0,
@@ -28,6 +28,11 @@ Ext.define('MainApp.view.panel.BilanAlertePanel', {
 			fieldLabel: '',
 			hideLabel : true,
 			name      : 'NbAlerteActive'
+			//,value     : ''
+		},{
+			fieldLabel: '',
+			hideLabel : true,
+			name      : 'NbAlerteAttente'
 			//,value     : ''
 		},{
 			xtype	  : 'buttonalerte'

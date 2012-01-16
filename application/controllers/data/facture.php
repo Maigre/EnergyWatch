@@ -88,13 +88,15 @@ class Facture extends CI_Controller {
 				$var_day = $date_array[2]; //year segment
 				$date = $var_day.'-'.$var_month.'-'.$var_year;
 				$facture->Date_index=$date;*/
-					
+				
 				foreach($fieldArray as $field){
 					if (is_numeric($facture->$field)){
 						$facture->$field= (int) $facture->$field; 
 					}
 					$answ[$field]=$facture->$field;
 				}
+				//Somme Hors Pointe et Pointe
+				$answ['Conso_Active']=$facture->Conso_Hors_Pointe + $facture->Conso_Pointe;
 				$answer['data'][] = $answ;
 			}
 			$answer['size'] = count($answer['data']);

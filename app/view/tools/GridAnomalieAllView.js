@@ -95,7 +95,7 @@ Ext.define('MainApp.view.tools.GridAnomalieAllView', {
 			'<tpl if="Type ==\'Plusieurs factures en un mois pour ce P.L\';">',
 				'{Valeur}',
 			'</tpl>',
-			'<tpl if="Type ==\'Consommation Energie R&eacute;active\';">',
+			'<tpl if="Type ==\'Mauvais Cos Phi\';">',
 				'{Valeur} CFA',
 			'</tpl>',
 			'<tpl if="Type ==\'Incoh&eacute\;rence index\';">',

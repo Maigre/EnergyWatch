@@ -214,7 +214,7 @@ class Anomaliecontrol extends CI_Controller {
 				1 => 'Hausse des Consommations',
 				4 => 'Changement de Puissance souscrite',
 				7 => 'Plusieurs factures en un mois pour ce P.L',
-				8 => 'Consommation Energie R&eacute;active',
+				8 => 'Mauvais Cos Phi',
 				9 => 'Incoh&eacute;rence index',
 				10 => 'Consommation nulle',
 				11 => 'Avoir',

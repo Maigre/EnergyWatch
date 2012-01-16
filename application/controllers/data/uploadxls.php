@@ -479,9 +479,11 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 
 						if ($table=='conso_mts'){
 							$en_cours['Conso_PA']=$facture->Conso_PA;
-							$en_cours['Conso_Energie_Reactive']=$facture->Conso_Energie_Reactive;
+							$en_cours['Montant_Net_Cosinus_PHI']=$facture->Montant_Net_Cosinus_PHI;
 							$en_cours['Ancien_Index_Pointe']=$facture->Ancien_Index_Pointe;
 							$en_cours['Ancien_Index_Hors_Pointe']=$facture->Ancien_Index_Hors_Pointe;
+							$en_cours['Ancien_Index_Reactif']=$facture->Ancien_Index_Reactif;
+							
 						}
 						else{
 							$en_cours['Ancien_index']=$facture->Ancien_index;						
@@ -514,6 +516,7 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 							$mois_precedent['Conso_PA']=$facture->Conso_PA;
 							$mois_precedent['Nouvel_Index_Hors_Pointe']=$facture->Nouvel_Index_Hors_Pointe;
 							$mois_precedent['Nouvel_Index_Pointe']=$facture->Nouvel_Index_Pointe;
+							$mois_precedent['Nouvel_Index_Reactif']=$facture->Nouvel_Index_Reactif;
 						}
 						else{
 							$mois_precedent['Nouvel_index']=$facture->Nouvel_index;
@@ -791,10 +794,10 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 				
 				
 				//type 8 : Facturation d'Energie reactive
-				if (isset($en_cours['Conso_Energie_Reactive'])){
-					if ($en_cours['Conso_Energie_Reactive']> 0){
+				if (isset($en_cours['Montant_Net_Cosinus_PHI'])){
+					if ($en_cours['Montant_Net_Cosinus_PHI']> 0){
 						$idFacture=$f->id;
-						$valeur = $en_cours['Conso_Energie_Reactive'];
+						$valeur = $en_cours['Montant_Net_Cosinus_PHI'];
 						//$Alerte='Au mois de '.$mois.' la puissance appelée a dépassé de '.$hausse.'% la puissance souscrite.';
 						$Duree_validite = 1;
 						$type_alerte=8;
@@ -817,7 +820,7 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 				//type 9 : Incohérence d'index
 				if ($table=='conso_mts'){
 					if ((isset($mois_precedent['Nouvel_Index_Pointe'])) and (isset($mois_precedent['Nouvel_Index_Hors_Pointe']))){
-						if (($en_cours['Ancien_Index_Pointe']!=$mois_precedent['Nouvel_Index_Pointe']) or ($en_cours['Ancien_Index_Hors_Pointe']!=$mois_precedent['Nouvel_Index_Hors_Pointe'])){
+						if (($en_cours['Ancien_Index_Pointe']!=$mois_precedent['Nouvel_Index_Pointe']) or ($en_cours['Ancien_Index_Hors_Pointe']!=$mois_precedent['Nouvel_Index_Hors_Pointe']) or ($en_cours['Ancien_Index_Reactif']!=$mois_precedent['Nouvel_Index_Reactif'])){
 							//echo 'AIP'.$en_cours['Ancien_Index_Pointe'].'NIP'.$mois_precedent['Nouvel_Index_Pointe'].'AIHP'.$en_cours['Ancien_Index_Hors_Pointe'].'NIHP'.$mois_precedent['Nouvel_Index_Hors_Pointe'];
 							$alerte=array(
 								'idFacture'=>$f->id,

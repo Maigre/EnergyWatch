@@ -195,16 +195,18 @@ class Alertecontrol extends CI_Controller {
 			$a->where_related_menumensuel('periode',$PERIODE_MENSUELLE);
 			$a->order_by('Valeur','ASC');
 			$a->order_by('Type','ASC');
+			$a->where('Anomalie',false);
 			$a->get();
 			//Remplace le type numérique par le texte correspondant
 			$tableau_type=array (
 				1 => 'Hausse des Consommations',
 				4 => 'Changement de Puissance souscrite',
 				7 => 'Plusieurs factures en un mois pour ce P.L',
-				8 => 'Consommation Energie R&eacute;active',
+				8 => 'Mauvais Cos Phi',
 				9 => 'Incoh&eacute;rence index',
 				10 => 'Consommation nulle',
-				11 => 'Avoir'				
+				11 => 'Avoir',
+				12 => 'PL rejet&eacute'			
 			);
 			foreach ($a->all as $alerte){
 				if($alerte->Type!=6){
@@ -302,6 +304,7 @@ class Alertecontrol extends CI_Controller {
 		else{
 			$a->where_related_menumensuel('Tension',$BT_MT_EAU);
 			$a->where_related_menumensuel('periode',$PERIODE_MENSUELLE);
+			$a->where('Anomalie',false);
 			$a->get();
 			if (count($a->all)<($start+$limit)) $start=count($a->all)-$limit;
 			if ($start<0){
@@ -442,6 +445,7 @@ class Alertecontrol extends CI_Controller {
 		$a->order_by('Type','asc');
 		$a->order_by('Valeur','asc');
 		$a->order_by('Type','asc');
+		$a->where('Anomalie',false);
 		$a->get();
 		$answer=array();
 		$compteur=1;
@@ -477,7 +481,8 @@ class Alertecontrol extends CI_Controller {
 			
 			$a->where_related_menumensuel('Tension',$BT_MT_EAU);
 			$a->where_related_menumensuel('periode',$PERIODE_MENSUELLE);
-			$a->order_by('Valeur','asc');
+			$a->where('Anomalie',false);
+			$a->order_by('Valeur','asc');			
 			$a->get();
 			
 			$tableau_al=array();

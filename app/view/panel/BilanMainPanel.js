@@ -65,15 +65,15 @@ Ext.define('MainApp.view.panel.BilanMainPanel', {
 		},
 		items   : [{
 			xtype: 'bilananomaliepanel',
-			flex: 45,
+			flex: 5,
 			margin: 10
 		},{
 			xtype: 'bilanvalidefacturepanel',
-			flex: 30,
+			flex: 3,
 			margin: 10
 		},{
 			xtype: 'bilannonvalidefacturepanel',
-			flex: 50,
+			flex: 3,
 			margin: 10
 		}]
 	},{
@@ -90,7 +90,7 @@ Ext.define('MainApp.view.panel.BilanMainPanel', {
 		},
 		items   : [{
 			xtype: 'bilanalertepanel',
-			height: 130,
+			height: 180,
 			margin: 10
 		}]
 	}],
