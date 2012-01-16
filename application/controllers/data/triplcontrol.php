@@ -16,14 +16,6 @@ class Triplcontrol extends CI_Controller {
 		$start = $this->input->post('start');
 		$limit = $this->input->post('limit');
 		$sort = $this->input->post('sort');
-		if ($this->input->post('dir')=='ASC'){
-			$dir='asc';
-		}
-		elseif($this->input->post('dir')=='DESC'){
-			$dir='desc';
-		}
-		
-		
 		
 		if ($this->input->post('dir')=='ASC'){
 			$dir='asc';
@@ -72,7 +64,6 @@ class Triplcontrol extends CI_Controller {
 		$f->where_related_menumensuel('periode',$PERIODE_MENSUELLE)->get();
 		$total_p=0;
 		foreach($f->all as $facture){
-			
 			$this->load->model('Pl','run_pl');
 			$p = $this->run_pl;
 			$p->where('etat', $etat);
@@ -109,14 +100,14 @@ class Triplcontrol extends CI_Controller {
 		$f->where_related_menumensuel('periode',$PERIODE_MENSUELLE);
 		
 		if ($sort!='lastpost') $f->order_by($sort, $dir); 
-		$f->limit($limit,$start);
+		//$f->limit($limit,$start);
 		$f->get();
 		
-		if (count($f->all)<($start+$limit)) $start=count($f->all)-$limit;
+		/*if (count($f->all)<($start+$limit)) $start=count($f->all)-$limit;
 		if ($start<0){
 			$start=0;
 			$limit=count($f->all);
-		}
+		}*/
 
 		
 		//initialize answer array TODO(should be an array design to be JSON encoded)
@@ -128,7 +119,7 @@ class Triplcontrol extends CI_Controller {
 		//Populate the data
 		$answ = null;
 		
-		
+		$compteur=0;
 		foreach($f->all as $facture){
 			$this->load->model('Pl','run_pl');
 			$p = $this->run_pl;
@@ -145,17 +136,20 @@ class Triplcontrol extends CI_Controller {
 			$p->get();
 			
 			if (count($p->all)>0){
-				foreach($this->fieldPlArray as $field){
-					$answ[$field]=$p->$field;
+				if(($compteur>=$start) and ($compteur<($start+$limit))){
+					foreach($this->fieldPlArray as $field){
+						$answ[$field]=$p->$field;
+					}
+					foreach($this->fieldFactureArray as $field){
+						$answ[$field]=$facture->$field;
+					}
+					$answer['data'][] = $answ;	
 				}
-				foreach($this->fieldFactureArray as $field){
-					$answ[$field]=$facture->$field;
-				}
-				$answer['data'][] = $answ;
+				$compteur++;				
 			}			
 			
 		}
-		if (isset($answer['data'])) $answer['size'] = $total_p;
+		/*if (isset($answer['data']))*/ $answer['size'] = $total_p;
 		
 		if ($answer['size'] == 0){
 			$answer['msg'] = 'aucun resultat...';

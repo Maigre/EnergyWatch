@@ -57,7 +57,7 @@ Ext.define('MainApp.view.panel.BilanMainPanel', {
 		id	: 'BilanFacturesPanel',
 		title	: 'Factures',
 		flex	: 1,
-		padding	: 30,
+		padding	: 20,
 		layout	:{
 			type :'vbox',
 			align : 'stretch',
@@ -65,15 +65,15 @@ Ext.define('MainApp.view.panel.BilanMainPanel', {
 		},
 		items   : [{
 			xtype: 'bilananomaliepanel',
-			flex: 2,
+			flex: 45,
 			margin: 10
 		},{
 			xtype: 'bilanvalidefacturepanel',
-			flex: 1,
+			flex: 30,
 			margin: 10
 		},{
 			xtype: 'bilannonvalidefacturepanel',
-			flex: 1,
+			flex: 50,
 			margin: 10
 		}]
 	},{
@@ -82,14 +82,15 @@ Ext.define('MainApp.view.panel.BilanMainPanel', {
 		title	: 'Consommation',
 		flex	: 1,
 		padding	: 30,
+		height  : 180,
 		layout	:{
 			type :'vbox',
 			align : 'stretch',
-		    	pack  : 'start'
+		    	pack  : 'center'
 		},
 		items   : [{
 			xtype: 'bilanalertepanel',
-			flex: 1,
+			height: 130,
 			margin: 10
 		}]
 	}],

@@ -12,6 +12,7 @@ class Anomaliecontrol extends CI_Controller {
 		//DATAMAPPER CONSTRUCTING
 		$idPl = $this->input->post('idPl');
 		$only_active = $this->input->post('only_active');
+		$only_attente = $this->input->post('only_attente');
 		$No_de_facture = $this->input->post('No_de_facture');
 		
 		$this->load->model('Pl','run_pl');
@@ -48,23 +49,21 @@ class Anomaliecontrol extends CI_Controller {
 			if($p->Tension=='BT'){
 				if (substr($p->No_compteur,0,1)=='E'){
 	 				//BT
-					$a->where_related_facturebt('id',$facture->id);
-					if ($only_active) $a->where('Etat', 3);
-					$a->get();
+					$a->where_related_facturebt('id',$facture->id);	
 				}
 				else{
 					//EAU
 					$a->where_related_factureeau('id',$facture->id);
-					if ($only_active) $a->where('Etat', 3);
-					$a->get();
 				}
-				
 			}
 			else{
 				$a->where_related_facturemt('id',$facture->id);
-				if ($only_active) $a->where('Etat', 3);
-				$a->get();
 			}
+			
+			if ($only_active) $a->where('Etat', 3);
+			elseif ($only_attente) $a->where('Etat', 2);
+			$a->get();
+			
 			foreach($a->all as $alerte){
 				$type_alerte_conso=array(1, 4, 6, 8, 10, 11);
 				if (!in_array($alerte->Type,$type_alerte_conso)){
@@ -115,6 +114,9 @@ class Anomaliecontrol extends CI_Controller {
 	
 	public function loadall($BT_MT_EAU,$PERIODE_MENSUELLE)
 	{
+		$only_active = $this->input->post('only_active');
+		$only_attente = $this->input->post('only_attente');
+		
 		//$BT_MT_EAU=$this->input->post('BT_MT_EAU');
 		//formatte la date
 		if (!is_null($this->input->post('PERIODE_MENSUELLE'))){
@@ -199,6 +201,9 @@ class Anomaliecontrol extends CI_Controller {
 			}
 			//if ($sort!='lastpost' and isset($dir)) $a->order_by($sort, $dir);
 			//$a->limit($limit,$start);
+			if ($only_active) $a->where('Etat', 3);
+			elseif ($only_attente) $a->where('Etat', 2);
+			
 			$a->where_related_menumensuel('Tension',$BT_MT_EAU);
 			$a->where_related_menumensuel('periode',$PERIODE_MENSUELLE);
 			$a->order_by('Valeur','ASC');

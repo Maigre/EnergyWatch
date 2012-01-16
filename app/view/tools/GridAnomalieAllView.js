@@ -28,6 +28,40 @@ Ext.define('MainApp.view.tools.GridAnomalieAllView', {
 	frame	: true,
 	margin	: '5',
 	flex	:1,
+	tools:[{
+		type:'close',
+		tooltip: 'Anomalies Actives',
+		handler: function(event, toolEl, panel){
+			anomalieallstore=Ext.getStore('AnomalieAllStore');
+			anomalieallstore.proxy.url= BASE_URL+'data/anomaliecontrol/loadall/'+BT_MT_EAU+'/'+PERIODE_MENSUELLE;
+			anomalieallstore.load({
+				params: {
+					only_active	: true
+				}
+			});		
+		}
+	},{
+		type:'help',
+		tooltip: 'Anomalies en attente',
+		handler: function(event, toolEl, panel){
+			anomalieallstore=Ext.getStore('AnomalieAllStore');
+			anomalieallstore.proxy.url= BASE_URL+'data/anomaliecontrol/loadall/'+BT_MT_EAU+'/'+PERIODE_MENSUELLE;
+			anomalieallstore.load({
+				params: {
+					only_attente	: true
+				}
+			});		
+		}
+	},{
+		type:'refresh',
+		tooltip: 'Toutes',
+		handler: function(event, toolEl, panel){
+			anomalieallstore=Ext.getStore('AnomalieAllStore');
+			anomalieallstore.proxy.url= BASE_URL+'data/anomaliecontrol/loadall/'+BT_MT_EAU+'/'+PERIODE_MENSUELLE;
+			anomalieallstore.load({
+			});		
+		}
+	}],
 			
 	initComponent: function() {
 		
@@ -144,7 +178,7 @@ Ext.define('MainApp.view.tools.GridAnomalieAllView', {
 					
 				}*/	
 			},
-			{header: 'Etat', dataIndex: 'Etat', xtype: 'templatecolumn', tpl: flagtpl, align:'center', width:40,sortable: false}
+			{header: 'Etat', dataIndex: 'Etat', xtype: 'templatecolumn', tpl: flagtpl, align:'center', width:40,sortable: true}
 		];
 		
 		this.on('render',function() {
