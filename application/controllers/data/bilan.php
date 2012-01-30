@@ -84,12 +84,12 @@ class Bilan extends CI_Controller {
 			
 			
 			if ($facture->etat==1){
-				$NbAttente++;
-				$ConsoAttente=$ConsoAttente+$facture->Montant_net;
+				$ConsoAPayer=$ConsoAPayer+$facture->Montant_net;
+				$NbAPayer++;				
 			}
 			elseif($facture->etat==2){
-				$ConsoAPayer=$ConsoAPayer+$facture->Montant_net;
-				$NbAPayer++;
+				$NbAttente++;
+				$ConsoAttente=$ConsoAttente+$facture->Montant_net;
 			}
 			elseif($facture->etat==3){
 				$ConsoRejete=$ConsoRejete+$facture->Montant_net;

@@ -63,6 +63,7 @@ class Triplcontrol extends CI_Controller {
 		$f->where_related_menumensuel('Tension',$BT_MT_EAU);
 		$f->where_related_menumensuel('periode',$PERIODE_MENSUELLE)->get();
 		$total_p=0;
+		$pl_array=array();
 		foreach($f->all as $facture){
 			$this->load->model('Pl','run_pl');
 			$p = $this->run_pl;
@@ -77,8 +78,10 @@ class Triplcontrol extends CI_Controller {
 				$p->where_related_factureeau('id', $facture->id);
 			}		 
 			$p->get();
-			//echo count($p->all);
-			$total_p=$total_p + count($p->all);
+			if (!in_array($p->id,$pl_array)){ //pour eviter les doublons
+				$pl_array[]=$p->id;
+				$total_p=$total_p + count($p->all);
+			}
 		}
 		
 		
@@ -120,6 +123,7 @@ class Triplcontrol extends CI_Controller {
 		$answ = null;
 		
 		$compteur=0;
+		$pl_array=array();
 		foreach($f->all as $facture){
 			$this->load->model('Pl','run_pl');
 			$p = $this->run_pl;
@@ -136,16 +140,20 @@ class Triplcontrol extends CI_Controller {
 			$p->get();
 			
 			if (count($p->all)>0){
-				if(($compteur>=$start) and ($compteur<($start+$limit))){
-					foreach($this->fieldPlArray as $field){
-						$answ[$field]=$p->$field;
+				if (!in_array($p->id,$pl_array)){ //pour eviter les doublons
+					$pl_array[]=$p->id;
+					if(($compteur>=$start) and ($compteur<($start+$limit))){
+						foreach($this->fieldPlArray as $field){
+							$answ[$field]=$p->$field;
+						}
+						foreach($this->fieldFactureArray as $field){
+							$answ[$field]=$facture->$field;
+						}
+						$answer['data'][] = $answ;	
 					}
-					foreach($this->fieldFactureArray as $field){
-						$answ[$field]=$facture->$field;
-					}
-					$answer['data'][] = $answ;	
+					$compteur++;
 				}
-				$compteur++;				
+								
 			}			
 			
 		}
@@ -219,6 +227,7 @@ class Triplcontrol extends CI_Controller {
 		//$f->save();
 		$p->save();
 		
+		
 		//Update l'état des factures de ce PL :
 		//	Si PL valide : 
 		//		*Si au moins une anomalie active: facture non valide
@@ -227,7 +236,12 @@ class Triplcontrol extends CI_Controller {
 		//	Si PL non valide : 
 		//		*Rajouter alerte type PL non valide (etat : en attente)
 		//		*Si au moins une anomalie active: facture non valide
-		//		*Sinon (il y a au moins une anomalie en attente car on vient de la créée) : facture en attente
+		//		*Sinon (il y a au moins une anomalie en attente car on vient de la créer) : facture en attente
+		//	Si Pl en attente : 
+		//		*Supression des anomalies "Pl rejeté" sur toutes les factures du PL
+		$menu_mensuel=new Menumensuel();
+		$menu_mensuel->get();
+		
 		if ($BT_MT_EAU=='MT'){
 			$f= new Facturemt();
 		}
@@ -267,39 +281,46 @@ class Triplcontrol extends CI_Controller {
 			
 			$etat=1;
 			foreach($a->all as $anomalie){
-				if($anomalie->etat==3){//anomalie active
+				if($anomalie->Etat==3){//anomalie active
 					$etat=3;
 					break;
 				}
-				elseif($anomalie->etat==2){//anomalie en attente
+				elseif($anomalie->Etat==2){//anomalie en attente
 					$etat=2;
 				}				
 			}
 			if($p->etat==2){ //PL valide
-				$f->etat=$etat;		
+				$facture->etat=$etat;		
 			}
 			elseif($p->etat==3){ //PL non valide
 				//Ajout d'une nouvelle alerte PL non valide
-				echo 'ok';
+				//echo 'ok';
 				$a=new Alerte();
-				$a->Valeur 	= $f->Montant_net;
+				$a->Valeur 	= $facture->Montant_net;
 				//$a->Duree_validite = 1;
 				$a->Type	= 12;
 				$a->Flux	= 'elec';
-				$a->Date	= $f->Date_index;
+				$a->Date	= $facture->Date_index;
 				$a->Anomalie	= true;
 				$a->Etat	= 2; //En attente
-				$a->save(array($p,$facture,$m));
+				$a->save(array($p,$f->all,$m));
 				
 				if($etat==3){
-					$f->etat=3;
+					$facture->etat=3;
 				}
 				else{
-					$f->etat=2;
+					$facture->etat=2;
 				}				
 			}
-			$f->save();
-			
+			elseif($p->etat==1){ //PL en attente
+				//Suppression des anomalies de type 'PL rejeté' sur toutes les factures du PL
+				$a=new Alerte();
+				$a->where_related_pl('id',$p->id);
+				$a->where('Type',12)->get();
+				$a->delete(array($p,$menu_mensuel->all,$f->all));
+				$a->delete();
+			}
+			$facture->save();			
 		}
 		
 		//RETURN JSON !

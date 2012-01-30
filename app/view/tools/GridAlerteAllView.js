@@ -123,6 +123,9 @@ Ext.define('MainApp.view.tools.GridAlerteAllView', {
 			'</tpl>',
 			'<tpl if="Type ==\'Avoir\';">',
 				'{Valeur} CFA',
+			'</tpl>',
+			'<tpl if="Type ==\'PL rejet&eacute;\';">',
+				'{Valeur} CFA',
 			'</tpl>'
 		);
 		

@@ -215,7 +215,7 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 			 		$f->Nb_jours=substr($prod[$i][25], 1, -1);
 		 		}
 		 		
-		 		if (empty($f->etat)){
+		 		/*if (empty($f->etat)){
 		 			//ETAT de la facture nouveau, valide, non valide, non valide mais refacturé
 		 			if($p->etat==3){
 			 			//Pl non valide mais refacturé. Facture en attente de confirmation 
@@ -224,7 +224,7 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 			 		else{
 			 			$f->etat=$p->etat;
 			 		}
-		 		}
+		 		}*/
 		 	
 		 	//creation de l'objet menumensuel
 			 	$m= new Menumensuel();
@@ -890,7 +890,7 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 				//type 12 : Pl non valide mais refacturé
 				//Attention cette anomalie n'en est une que si la demande de résiliation du PL e été effectuée
 				//Et que la période nécessaire à la résiliation est bien passée
-				if ($p->etat==3){
+				if ($p->etat==3){ //PL rejeté
 					$alerte=array(
 						'idFacture'=>$f->id,
 						'Valeur'=>$f->Montant_net,
@@ -1002,14 +1002,13 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 				
 				
 				//Determine l'etat de la facture :
-				//  	*Si Pl valide:
 				//		*Si Aucune anomalie => Valide(etat=1)
 				//		*Si au moins 1 anomalie Valide => Non Valide (etat=3)
 				//		*Si anomalie en attente => En attente
 				//		*Si anomalie non valide => Valide
 				$a= new Alerte();
+				$a->where('Anomalie',true);				
 				if ($table=='conso_bts'){
-	 				$a->where('Anomalie',true);
 	 				if ($tension=='BT'){
 	 					$a->where_related_facturebt('id',$f->id);
 	 				}
@@ -1024,18 +1023,19 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 		 		
 		
 				
-				$etat=1;//Valide
+				$etat=1;//Valide Si aucune anomalie ou toutes désactivées(etat=3)
 				foreach($a->all as $anomalie){
-					if($anomalie->Etat==1){ //Valide
-						$etat=3;
+					if($anomalie->Etat==1){ //Active
+						$etat=3;//facture non valide
 						break;
 					}
 					elseif($anomalie->Etat==2){
-						$etat=2;
+						$etat=2; //En attente
 					}
 				}
-				$f->etat=$etat; //Valide
-
+				$f->etat=$etat;
+				
+				
 				//Sinon état déterminé précedemment lors de la sauvegarde de la facture au début (rechercher "$f->etat=$p->etat;")
 				$f->save();
 				
