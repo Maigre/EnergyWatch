@@ -16,7 +16,7 @@ Ext.define('MainApp.view.tools.GridAnomalieView', {
 				params: {
 					BT_MT_EAU 	: BT_MT_EAU,
 					idPl		: Ext.getStore('PlStore').data.items[0].data.id,
-					only_active	: true
+					only_active	: false
 				}
 			});		
 		}
@@ -64,6 +64,9 @@ Ext.define('MainApp.view.tools.GridAnomalieView', {
 			'</tpl>',
 			'<tpl if="Type == 12;">',
 				'PL rejet&eacute;',
+			'</tpl>',
+			'<tpl if="Type == 13;">',
+				'Autre',
 			'</tpl>'
 		);
 		

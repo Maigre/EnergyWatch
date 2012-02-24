@@ -134,12 +134,12 @@ Ext.define('MainApp.view.tools.GridAnomalieAllView', {
 		});
 		
 		this.columns = [
-			{header: 'Nom PL', dataIndex: 'Nom_prenom', flex:3, sortable: false},
+			{header: 'Nom PL', dataIndex: 'Nom_prenom', flex:2, sortable: false},
 			{header: 'N&deg; PL', dataIndex: 'Point_de_livraison', flex:1, sortable: false},
 			{header: 'N&deg; Facture', dataIndex: 'No_de_facture', flex:1, sortable: false},
 			{header: 'Date', dataIndex: 'Date', xtype:'datecolumn', format:'d-m-Y', width:80, sortable: false}, 
 			{header: 'Alerte', dataIndex: 'Type'/*, xtype: 'templatecolumn', tpl: type_tpl*/, flex:2, sortable: false},
-			{header: 'Valeur', dataIndex: 'Valeur', align: 'center', xtype: 'templatecolumn', tpl: valeur_tpl, width:140, sortable: false,
+			{header: 'Commentaire', dataIndex: 'Commentaire', align: 'center', /*xtype: 'templatecolumn', tpl: valeur_tpl,*/ flex:3, sortable: false,
 				/*summaryType: 'sum',
 				summaryRenderer: function(value, summaryData, dataIndex) {*/
 					/*this.summaryData['Changement de Puissance souscrite'].Valeur=0;

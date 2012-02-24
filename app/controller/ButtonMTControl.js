@@ -118,7 +118,7 @@ westregion_appear= function(){
 	Ext.getCmp('westregion').animate({
 		duration: 1000,
 		to: {
-			width: 140
+			width: 150
 		}
 	});
 	return true;

@@ -1,6 +1,7 @@
 Ext.define('MainApp.view.tools.GridFactureMTView', {
 	extend	: 'Ext.grid.Panel',
 	alias 	: 'widget.gridfacturemt',
+	id	: 'gridfacturemt',
 	title	: 'Factures SEEG',
 	store	: 'FactureMTStore',
 	resizable : true,
@@ -22,6 +23,8 @@ Ext.define('MainApp.view.tools.GridFactureMTView', {
 			'<img src="app/images/icons/accept.png">',
 			'</tpl>'
 		);
+		
+		
 		
 		this.columns = [
 			{header: 'N&deg; facture', dataIndex: 'No_de_facture', flex:9}, 
@@ -70,6 +73,68 @@ Ext.define('MainApp.view.tools.GridFactureMTView', {
 			{header: 'Nb jours', dataIndex: 'Nb_jours',  flex:5},
 			{header: 'Etat', dataIndex: 'etat', xtype: 'templatecolumn', tpl: flagtpl, align:'center', width:40,sortable: false}
 		];
+		
+		var nouvelleAnomalie = Ext.create('Ext.Action', {
+			iconCls	: 'help',
+			text: 'Cr&eacute;er une anomalie',
+			disabled: true,
+			handler: function(widget, event) {
+				selecteditem = Ext.getCmp('gridfacturemt').getSelectionModel().getSelection();
+				idfacture=selecteditem[0].get('id');
+				No_de_facture = selecteditem[0].get('No_de_facture');
+				Ext.Ajax.request({
+					url: BASE_URL+'data/anomaliecontrol/nouvelleAnomalie',
+					params: {
+						idfacture: idfacture,
+						BT_MT_EAU: BT_MT_EAU,
+						PERIODE_MENSUELLE: PERIODE_MENSUELLE
+					},
+					success: function(response){
+						
+						console.info('ok');
+						
+						idPl=Ext.getStore('PlStore').getAt(0).data.id;
+		
+						var anomalieStore = Ext.getStore('AnomalieStore');
+						anomalieStore.load({
+							params: {
+								idPl: idPl,
+								BT_MT_EAU: BT_MT_EAU,
+								No_de_facture: No_de_facture
+							}
+						});
+						
+						var facturestore = Ext.getStore('FactureMTStore');
+							
+		
+						facturestore.load({
+							params: {idPl: idPl}
+						});
+
+						//displaypl(idpl,BT_MT_EAU); //définie dans SearchControl.js
+					}
+				});
+			}
+		});
+		
+		this.getSelectionModel().on({
+			selectionchange: function(sm, selections) {
+			    if (selections.length) {
+				nouvelleAnomalie.enable();
+			    } else {
+				nouvelleAnomalie.disable();
+			    }
+			}
+		});
+		
+		this.dockedItems = [{
+				xtype: 'toolbar',
+				items: [
+					nouvelleAnomalie
+				]
+		}];
+		
+		
 		this.callParent(arguments);
 
 	}

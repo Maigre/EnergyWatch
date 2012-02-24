@@ -13,7 +13,68 @@ class Facture extends CI_Controller {
 	{
 
 	}
+	
+	public function loadnonvalide($BT_MT_EAU,$PERIODE_MENSUELLE){
+		
+		$BT_MT_EAU== $this->input->post('BT_MT_EAU');
+		$PERIODE_MENSUELLE== $this->input->post('PERIODE_MENSUELLE');
+		
+		if ($PERIODE_MENSUELLE!='Bilan'){
+			//echo $this->input->post('PERIODE_MENSUELLE');die();
+			$array_periode=explode(' ',$PERIODE_MENSUELLE);	
+			$tableau_mois=array('Janvier'=>'01','Février'=>'02','Mars'=>'03','Avril'=>'04','Mai'=>'05','Juin'=>'06','Juillet'=>'07','Août'=>'08','Septembre'=>'09','Octobre'=>'10','Novembre'=>'11','Décembre'=>'12');
+			$array_periode[0]=urldecode($array_periode[0]);
+			$mois= $tableau_mois[$array_periode[0]];
+			$PERIODE_MENSUELLE=$array_periode[1].'-'.$mois.'-01';		
+		}
+		
+		
+		if ($BT_MT_EAU=='MT'){
+			$f= new Facturemt();
+		}
+		elseif($BT_MT_EAU=='BT'){
+			$f= new Facturebt();
+		}
+		else{
+			$f= new Factureeau();
+		}
+		$f->where('etat',3);
+		
+		if ($PERIODE_MENSUELLE!='Bilan'){
+			$f->where_related_menumensuel('periode',$PERIODE_MENSUELLE);
+		}
+		foreach($f->get()->all as $facture){  //->order_by("Date_index", "asc")
 
+			$p=new Pl();
+			if ($BT_MT_EAU=='MT'){
+				$p->where_related_facturemt('id',$facture->id)->get();
+			}
+			elseif($BT_MT_EAU=='BT'){
+				$p->where_related_facturebt('id',$facture->id)->get();
+			}
+			else{
+				$p->where_related_factureeau('id',$facture->id)->get();
+			}
+			$fieldFactureArray=array('id', 'No_de_facture', 'Code_tarif', 'Puisance_souscrite', 'Ancien_index', 'Nouvel_index', 'Consommation_mensuelle', 'Redevance', 'Contribution_Speciale', 'Montant_PF', 'Montant_HT', 'Montant_tva', 'Montant_net', 'Date_index', 'Nb_jours', 'etat'); 
+			foreach($fieldFactureArray as $field){
+				if (is_numeric($facture->$field)){
+					$facture->$field= (int) $facture->$field; 
+				}
+				$answ[$field]=$facture->$field;
+			}
+			$fieldPlArray=array('Point_de_livraison','Nom_prenom'); 
+			foreach($fieldPlArray as $field){
+				if (is_numeric($pl->$field)){
+					$pl->$field= (int) $pl->$field; 
+				}
+				$answ[$field]=$pl->$field;
+			}
+			$answer['data'][] = $answ;
+		}
+		echo json_encode($answer);
+		die();		
+	}
+	
 	public function load()
 	{
 

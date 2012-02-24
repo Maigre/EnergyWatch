@@ -56,11 +56,11 @@ Ext.define('MainApp.controller.ViewportControl', {
 											else{
 												progressbar.updateProgress(obj.progress);
 												progress=obj.progress*100;
-												progressbar.updateText('Traitement des factures termin&eacute');
-												Ext.getCmp('historiqueupload').store.load();
-												Ext.getCmp('historiqueupload').doLayout();
+												progressbar.updateText('Traitement des factures termin&eacute');												
 												Ext.getCmp('southregion').removeAll();
 												Ext.getCmp('southregion').height = 30;
+												Ext.getCmp('historiqueupload').store.load();
+												Ext.getCmp('historiqueupload').doLayout();
 												Ext.Msg.alert('Success', 'Le fichier a &eacute;t&eacute; import&eacute; avec succ&egrave;s. '+ obj.lignes+' requ&ecirc;tes ont &eacute;t&eacute; effectu&eacute;es.');						
 												UPLOAD_RUNNING= false;
 												Ext.getCmp('buttonimporter').enable();

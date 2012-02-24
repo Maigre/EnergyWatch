@@ -35,7 +35,7 @@ Ext.define('MainApp.view.panel.BilanNonValideFacturePanel', {
 			name      : 'ConsoRejete'
 			//,value     : ''
 		}/*,{
-			xtype	  : 'buttonnonvalidefacture'
+			xtype	  : 'buttonfacturenonvalide'
 		}*/
 	],
 	initComponent: function() {

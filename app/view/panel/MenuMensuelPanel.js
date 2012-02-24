@@ -2,6 +2,7 @@ Ext.define('MainApp.view.panel.MenuMensuelPanel', {
 	extend: 'Ext.panel.Panel',
 	alias : 'widget.menumensuelpanel',
 	id    : 'menumensuelpanel',
+	autoScroll: true,
   	//requires:['MainApp.view.tools.GridAlerteAllView'],
 	//bodyPadding: 5,
 	//collapsible: true,

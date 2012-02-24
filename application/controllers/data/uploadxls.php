@@ -481,6 +481,7 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 							$en_cours['Conso_PA']=$facture->Conso_PA;
 							$en_cours['Montant_Net_Cosinus_PHI']=$facture->Montant_Net_Cosinus_PHI;
 							$en_cours['Ancien_Index_Pointe']=$facture->Ancien_Index_Pointe;
+							$en_cours['Nouvel_Index_Pointe']=$facture->Nouvel_Index_Pointe;
 							$en_cours['Ancien_Index_Hors_Pointe']=$facture->Ancien_Index_Hors_Pointe;
 							$en_cours['Ancien_Index_Reactif']=$facture->Ancien_Index_Reactif;
 							
@@ -822,6 +823,27 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 					if ((isset($mois_precedent['Nouvel_Index_Pointe'])) and (isset($mois_precedent['Nouvel_Index_Hors_Pointe']))){
 						if (($en_cours['Ancien_Index_Pointe']!=$mois_precedent['Nouvel_Index_Pointe']) or ($en_cours['Ancien_Index_Hors_Pointe']!=$mois_precedent['Nouvel_Index_Hors_Pointe']) or ($en_cours['Ancien_Index_Reactif']!=$mois_precedent['Nouvel_Index_Reactif'])){
 							//echo 'AIP'.$en_cours['Ancien_Index_Pointe'].'NIP'.$mois_precedent['Nouvel_Index_Pointe'].'AIHP'.$en_cours['Ancien_Index_Hors_Pointe'].'NIHP'.$mois_precedent['Nouvel_Index_Hors_Pointe'];
+							if ($en_cours['Ancien_Index_Pointe']>$en_cours['Nouvel_Index_Pointe']){
+								echo 'ancien:'.$en_cours['Ancien_Index_Pointe'];
+								echo 'nouvel:'.$en_cours['Nouvel_Index_Pointe'];
+							}
+							$alerte=array(
+								'idFacture'=>$f->id,
+								'Valeur'=> '',
+								'Duree_validite'=>1,
+								'type_alerte'=>9,
+								'flux'=>'elec',
+								'Date'=>date('Y-m-d',$date_encours),
+								'Anomalie'=>true								
+							);
+							$alerte_temp[]=$alerte;
+						}
+					}
+					if((isset($en_cours['Ancien_Index_Pointe'])) and (isset($en_cours['Nouvel_Index_Pointe']))){
+						
+						if ($en_cours['Ancien_Index_Pointe']>$en_cours['Nouvel_Index_Pointe']){
+							//echo 'ancien:'.$en_cours['Ancien_Index_Pointe'];
+							//echo 'nouvel:'.$en_cours['Nouvel_Index_Pointe'];
 							$alerte=array(
 								'idFacture'=>$f->id,
 								'Valeur'=> '',
@@ -902,6 +924,8 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 					);
 					$alerte_temp[]=$alerte;					
 				}
+				
+				//Type 13: 'Autre' : utilisé lors d'une création manuelle d'une anomalie
 				
 				//Vérifie que l'alerte n'est pas déjà présente et valide avant de sauvegarder
 				if (is_array($alerte_temp)){
