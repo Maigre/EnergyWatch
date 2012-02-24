@@ -156,10 +156,13 @@ Ext.define('MainApp.view.tools.GridAnomalieView', {
 					var plfacturepanel = Ext.widget('plfacturemtpanel');
 				}
 			}
-		
-			facturestore.load({
+			
+			setTimeout(function() {
+				facturestore.load({
 				params: {idPl: idPl}
 			});
+			},1250);
+			
 			//var rec= database.getAt(0);
 			//plpanel.getForm().loadRecord(rec);
 		});
