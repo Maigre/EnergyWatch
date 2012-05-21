@@ -1,72 +1,20 @@
-var groupingFeature = Ext.create('Ext.grid.feature.Grouping',{
-	groupHeaderTpl: '{name} ({rows.length} Alerte{[values.rows.length > 1 ? "s" : ""]})',
-	enableGroupingMenu : true,
-	groupByText : 'Grouper par ce champ',
-	showGroupsText : 'Afficher en groupes',
-	startCollapsed : true
-});
 
-/*var actionTrier = Ext.create('Ext.Action', {
-	iconCls	: 'yes',
-	text: 'Trier par alerte',
-	disabled: false,
-	handler: function(widget, event) {
-		
-		store  = Ext.getStore('AlerteAllStore');
-		store.group
-		
-		selecteditems = Ext.getCmp('nouveauPlGrid').getSelectionModel().getSelection();
-		nouveaustore  = Ext.getStore('TriPlNouveauStore');
-		validestore   = Ext.getStore('TriPlValideStore');
-		Ext.each(selecteditems, function(op) {
-			nouveaustore.remove(op);
-			Ext.getStore('TriPlValideStore').add(op);
-			Ext.Ajax.request({
-				url: BASE_URL+'data/triplcontrol/save/valide',
-				method : 'POST',
-				params : {
-					idfacture: op.get('id'),
-					BT_MT_EAU: BT_MT_EAU//,
-					//date_validation: op.get('date_validation')
-				},
-				success: function(){
-					//Test si dernier item sauvegardé et reload le grid via son store
-					if (op==selecteditems[selecteditems.length-1]){
-						nouveaustore.loadPage(1);
-						validestore.loadPage(1);
-					}
-				}
-			});
-		})
-
-		Ext.getCmp('nouveauPlGrid').getView().focusRow(0);
-		
-		var gridEl = Ext.getCmp('nouveauPlGrid').getEl();
-		//console.info(rowEl);
-		//rowEl.scrollIntoView(gridEl,false);
-		
-	}
-});*/
-
-
-
-
-Ext.define('MainApp.view.tools.GridAlerteAllView', {
+Ext.define('MainApp.view.tools.GridAnomalieAllView', {
 	extend	: 'Ext.grid.Panel',
-	alias 	: 'widget.gridalerteall',
-	id 	: 'gridalerteall',
-	title	: 'Alertes',
-	store	: 'AlerteAllStore',
+	alias 	: 'widget.gridanomalieall',
+	id 	: 'gridanomalieall',
+	title	: 'Anomalies Facture',
+	store	: 'AnomalieAllStore',
 	//features: [groupingFeature],
-	features: [{
+	/*features: [{
             id: 'group',
             ftype: 'groupingsummary',
             groupHeaderTpl: '{name} ({rows.length} Alerte{[values.rows.length > 1 ? "s" : ""]})',
             hideGroupedHeader: true,
             enableGroupingMenu: false,
             startCollapsed : true
-        }],
-	sortableColumns: false,
+        }],*/
+	//sortableColumns: false,
 	/*dockedItems: [{
 	    xtype: 'toolbar',
 	    items: [
@@ -80,8 +28,43 @@ Ext.define('MainApp.view.tools.GridAlerteAllView', {
 	frame	: true,
 	margin	: '5',
 	flex	:1,
+	tools:[{
+		type:'close',
+		tooltip: 'Anomalies Actives',
+		handler: function(event, toolEl, panel){
+			anomalieallstore=Ext.getStore('AnomalieAllStore');
+			anomalieallstore.proxy.url= BASE_URL+'data/anomaliecontrol/loadall/'+BT_MT_EAU+'/'+PERIODE_MENSUELLE;
+			anomalieallstore.load({
+				params: {
+					only_active	: true
+				}
+			});		
+		}
+	},{
+		type:'help',
+		tooltip: 'Anomalies en attente',
+		handler: function(event, toolEl, panel){
+			anomalieallstore=Ext.getStore('AnomalieAllStore');
+			anomalieallstore.proxy.url= BASE_URL+'data/anomaliecontrol/loadall/'+BT_MT_EAU+'/'+PERIODE_MENSUELLE;
+			anomalieallstore.load({
+				params: {
+					only_attente	: true
+				}
+			});		
+		}
+	},{
+		type:'refresh',
+		tooltip: 'Toutes',
+		handler: function(event, toolEl, panel){
+			anomalieallstore=Ext.getStore('AnomalieAllStore');
+			anomalieallstore.proxy.url= BASE_URL+'data/anomaliecontrol/loadall/'+BT_MT_EAU+'/'+PERIODE_MENSUELLE;
+			anomalieallstore.load({
+			});		
+		}
+	}],
 			
 	initComponent: function() {
+		
 		flagtpl= new Ext.XTemplate(
 			'<tpl if="Etat == 3;">',
 			'<img src="app/images/icons/cross.png">',
@@ -112,7 +95,7 @@ Ext.define('MainApp.view.tools.GridAlerteAllView', {
 			'<tpl if="Type ==\'Plusieurs factures en un mois pour ce P.L\';">',
 				'{Valeur}',
 			'</tpl>',
-			'<tpl if="Type ==\'Consommation Energie R&eacute;active\';">',
+			'<tpl if="Type ==\'Mauvais Cos Phi\';">',
 				'{Valeur} CFA',
 			'</tpl>',
 			'<tpl if="Type ==\'Incoh&eacute\;rence index\';">',
@@ -122,9 +105,6 @@ Ext.define('MainApp.view.tools.GridAlerteAllView', {
 				'',
 			'</tpl>',
 			'<tpl if="Type ==\'Avoir\';">',
-				'{Valeur} CFA',
-			'</tpl>',
-			'<tpl if="Type ==\'PL rejet&eacute;\';">',
 				'{Valeur} CFA',
 			'</tpl>'
 		);
@@ -154,14 +134,14 @@ Ext.define('MainApp.view.tools.GridAlerteAllView', {
 		});
 		
 		this.columns = [
-			{header: 'Nom PL', dataIndex: 'Nom_prenom', flex:3, sortable: false},
+			{header: 'Nom PL', dataIndex: 'Nom_prenom', flex:2, sortable: false},
 			{header: 'N&deg; PL', dataIndex: 'Point_de_livraison', flex:1, sortable: false},
 			{header: 'N&deg; Facture', dataIndex: 'No_de_facture', flex:1, sortable: false},
 			{header: 'Date', dataIndex: 'Date', xtype:'datecolumn', format:'d-m-Y', width:80, sortable: false}, 
 			{header: 'Alerte', dataIndex: 'Type'/*, xtype: 'templatecolumn', tpl: type_tpl*/, flex:2, sortable: false},
-			{header: 'Valeur', dataIndex: 'Valeur', align: 'center', xtype: 'templatecolumn', tpl: valeur_tpl, width:140, sortable: false,
-				summaryType: 'sum',
-				summaryRenderer: function(value, summaryData, dataIndex) {
+			{header: 'Commentaire', dataIndex: 'Commentaire', align: 'center', /*xtype: 'templatecolumn', tpl: valeur_tpl,*/ flex:3, sortable: false,
+				/*summaryType: 'sum',
+				summaryRenderer: function(value, summaryData, dataIndex) {*/
 					/*this.summaryData['Changement de Puissance souscrite'].Valeur=0;
 					
 					this.summaryData['D&eacute\;ficit de puissance'].Valeur=0;
@@ -169,6 +149,7 @@ Ext.define('MainApp.view.tools.GridAlerteAllView', {
 					
 					this.summaryData['Hausse des Consommations'].Valeur=0;*/
 					//this.summaryData['Plusieurs factures en un mois pour ce P.L'].Valeur=0;
+					/*
 					if (this.summaryData['Changement de Puissance souscrite']){
 						this.summaryData['Changement de Puissance souscrite'].Valeur=0;
 					}
@@ -195,25 +176,10 @@ Ext.define('MainApp.view.tools.GridAlerteAllView', {
 						return value + ' CFA';
 					}
 					
-				}	
+				}*/	
 			},
-			{header: 'Etat', dataIndex: 'Etat', /*xtype: 'templatecolumn', tpl: flagtpl ,*/ align:'center', width:40,sortable: false}
+			{header: 'Etat', dataIndex: 'Etat', xtype: 'templatecolumn', tpl: flagtpl, align:'center', width:40,sortable: true}
 		];
-		
-		
-		alertgridcontextmenu = new Ext.menu.Menu({
-			  width: 160,
-			  items: [{
-					text: 'Changer le fond d\'&eacutecran',
-					iconCls: 'edit',
-					width : 160,
-					
-					handler: function(){
-						console.info('ok');
-						
-					}
-			  }]
-		});
 		
 		this.on('render',function() {
 			this.getEl().on('contextmenu', function(e) {

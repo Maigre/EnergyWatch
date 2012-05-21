@@ -50,6 +50,19 @@ $db['default']['cachedir'] = "";
 $db['default']['char_set'] = "utf8";
 $db['default']['dbcollat'] = "utf8_general_ci";
 
+$db['tomerge']['hostname'] = MYSQL_HOST;
+$db['tomerge']['username'] = MYSQL_USER;
+$db['tomerge']['password'] = MYSQL_PASS;
+$db['tomerge']['database'] = "EnergyWatch_tomerge";
+$db['tomerge']['dbdriver'] = "mysql";
+$db['tomerge']['dbprefix'] = "";
+$db['tomerge']['pconnect'] = TRUE;
+$db['tomerge']['db_debug'] = TRUE;
+$db['tomerge']['cache_on'] = FALSE;
+$db['tomerge']['cachedir'] = "";
+$db['tomerge']['char_set'] = "utf8";
+$db['tomerge']['dbcollat'] = "utf8_general_ci";
+
 
 /* End of file database.php */
 /* Location: ./system/application/config/database.php */

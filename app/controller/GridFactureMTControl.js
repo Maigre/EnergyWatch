@@ -1,10 +1,10 @@
-Ext.define('MainApp.controller.GridFactureControl', {
+Ext.define('MainApp.controller.GridFactureMTControl', {
 	extend: 'Ext.app.Controller',
-	views: ['MainApp.view.tools.GridFactureView'],
+	views: ['MainApp.view.tools.GridFactureMTView'],
 
 	init: function() {
 		this.control({
-		    'gridfacture' : {
+		    'gridfacturemt' : {
 		    	itemclick: this.loadalertes
 		    }
 		});

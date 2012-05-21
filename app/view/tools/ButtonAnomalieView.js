@@ -1,14 +1,14 @@
-//Controlled by UploadControl.js
 
-Ext.define('MainApp.view.tools.ButtonAlerteView', {
+
+Ext.define('MainApp.view.tools.ButtonAnomalieView', {
 	extend	: 'Ext.button.Button',
-	alias 	: 'widget.buttonalerte',
+	alias 	: 'widget.buttonanomalie',
 	icon	: 'app/images/icons/warning.png',
 	//tooltip : 'Alertes',
 	scale	: 'large',
 	height	: 60,
 	width	: 150,
-	text	: 'Gestion des Alertes',
+	text	: 'Gestion des Anomalies',
 	iconAlign: 'top',
 	border	: 0,
 	

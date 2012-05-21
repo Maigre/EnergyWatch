@@ -1,4 +1,4 @@
-displaypl = function(idPl,tension){
+displaypl = function(idPl,tension,facture){
 
 	//charge le store avec l'id du pl
 		var plstore = Ext.getStore('PlStore');
@@ -16,7 +16,7 @@ displaypl = function(idPl,tension){
 					var plpanel = Ext.widget('plpanel');
 				}	
 				Ext.getCmp('westregion').removeAll(false);
-				Ext.getCmp('westregion').setWidth(240);
+				Ext.getCmp('westregion').setWidth(220);
 				Ext.getCmp('westregion').add(plpanel);
 				var rec= database.getAt(0);
 				plpanel.getForm().loadRecord(rec);
@@ -56,6 +56,13 @@ displaypl = function(idPl,tension){
 			}
 		});
 		
+		var anomalieStore = Ext.getStore('AnomalieStore');
+		anomalieStore.load({
+			params: {
+				idPl: idPl,
+				BT_MT_EAU: BT_MT_EAU
+			}
+		});
 		//Si le panel plfacturepanel n'est pas déjà affiché
 		//if(Ext.getCmp('centerregion').items.items[0].alias!='widget.plfacturepanel'){
 			Ext.getCmp('centerregion').removeAll(false); //clean the center region

@@ -22,6 +22,10 @@ Ext.define('MainApp.view.panel.PlFacturePanel', {
 				padding:5,
 				flex:2
 			},{
+				xtype: 'gridanomalie',
+				padding:5,
+				flex:1
+			},{
 				xtype: 'gridalerte',
 				padding:5,
 				flex:1

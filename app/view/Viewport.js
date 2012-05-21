@@ -1,38 +1,41 @@
 Ext.define('MainApp.view.Viewport', {
-    extend: 'Ext.container.Viewport',
+    	extend: 'Ext.container.Viewport',
 	id: 'viewport',
 	//alias : 'widget.viewport',
-    requires: [
-    	'MainApp.view.panel.HomePanel',
-    	'MainApp.view.panel.HomeButtonPanel',
-        'MainApp.view.panel.SearchbarPanel',
-        'MainApp.view.tools.SearchView',
-        'MainApp.view.image.Searchbaricon',
-        'MainApp.view.panel.MenuMensuelPanel',
-        'MainApp.view.panel.BilanMainPanel',
-        'MainApp.view.panel.MainPanel',
-        'MainApp.view.tools.ButtonHomeView',
-        'MainApp.view.tools.ButtonUploadView',
-        'MainApp.view.tools.ButtonAlerteView',
-        'MainApp.view.tools.ButtonWaterView',
-        'MainApp.view.tools.ButtonMTView',
-        'MainApp.view.tools.ButtonBTView',
-        'MainApp.view.tools.ButtonSynchroView',
-        'MainApp.view.panel.UploadMainPanel',
-        //'MainApp.view.panel.UploadPanel',
-        //'MainApp.view.panel.HistoriqueUploadPanel',
-        'MainApp.view.panel.PlFacturePanel',
-        'MainApp.view.panel.PlPanel',
-        'MainApp.view.panel.PlAllPanel',
-        'MainApp.view.panel.PlFactureMTPanel',
-        'MainApp.view.panel.AlerteAllPanel',
-        'MainApp.view.panel.ValidationPanel'
-        
-    ],
+    	requires: [
+	    	'MainApp.view.panel.HomePanel',
+	    	'MainApp.view.panel.HomeButtonPanel',
+		'MainApp.view.panel.SearchbarPanel',
+		'MainApp.view.tools.SearchView',
+		'MainApp.view.image.Searchbaricon',
+		'MainApp.view.panel.MenuMensuelPanel',
+		'MainApp.view.panel.BilanMainPanel',
+		'MainApp.view.panel.MainPanel',
+		'MainApp.view.tools.ButtonHomeView',
+		'MainApp.view.tools.ButtonUploadView',
+		'MainApp.view.tools.ButtonAlerteView',
+		'MainApp.view.tools.ButtonAnomalieView',
+		//'MainApp.view.tools.ButtonFactureNonValideView',
+		'MainApp.view.tools.ButtonWaterView',
+		'MainApp.view.tools.ButtonMTView',
+		'MainApp.view.tools.ButtonBTView',
+		'MainApp.view.tools.ButtonSynchroView',
+		'MainApp.view.panel.UploadMainPanel',
+		//'MainApp.view.panel.UploadPanel',
+		//'MainApp.view.panel.HistoriqueUploadPanel',
+		'MainApp.view.panel.PlFacturePanel',
+		//'MainApp.view.panel.FactureNonValidePanel',
+		'MainApp.view.panel.PlPanel',
+		'MainApp.view.panel.PlAllPanel',
+		'MainApp.view.panel.PlFactureMTPanel',        
+		'MainApp.view.panel.AnomalieAllPanel',
+		'MainApp.view.panel.AlerteAllPanel',
+		'MainApp.view.panel.ValidationPanel'
+        ],
 
-    layout: 'border',
+    	layout: 'border',
  
-    initComponent: function() {
+    	initComponent: function() {
         //Ext.QuickTips.init();
         this.items = [
         	{

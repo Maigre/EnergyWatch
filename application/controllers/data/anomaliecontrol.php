@@ -1,18 +1,73 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Alertecontrol extends CI_Controller {
+class Anomaliecontrol extends CI_Controller {
 
 	public function index()
 	{
 
 	}
-
+	
+	public function nouvelleAnomalie(){
+		$idFacture = $this->input->post('idfacture');
+		$BT_MT_EAU = $this->input->post('BT_MT_EAU');
+		if (!is_null($this->input->post('PERIODE_MENSUELLE'))){
+			//echo $this->input->post('PERIODE_MENSUELLE');die();
+			$array_periode=explode(' ',$this->input->post('PERIODE_MENSUELLE'));	
+			$tableau_mois=array('Janvier'=>'01','Février'=>'02','Mars'=>'03','Avril'=>'04','Mai'=>'05','Juin'=>'06','Juillet'=>'07','Août'=>'08','Septembre'=>'09','Octobre'=>'10','Novembre'=>'11','Décembre'=>'12');
+			$array_periode[0]=urldecode($array_periode[0]);
+			$mois= $tableau_mois[$array_periode[0]];
+			$PERIODE_MENSUELLE=$array_periode[1].'-'.$mois.'-01';		
+		}
+		$m= new Menumensuel();
+		$m->where('periode',$PERIODE_MENSUELLE)->get();
+		
+		$p=new Pl();
+		
+		if ($BT_MT_EAU=='MT'){
+			$f=new Facturemt();
+			$p->where_related_facturemt('id',$idFacture)->get();
+		}
+		elseif($BT_MT_EAU='BT'){
+			$f=new Facturemt();
+			$p->where_related_facturebt('id',$idFacture)->get();
+		}
+		else{
+			$f=new Factureeau();
+			$p->where_related_factureeau('id',$idFacture)->get();
+		}
+		$f->where('id',$idFacture)->get();
+		
+		
+		//Création de l'anomalie
+		$a=new Alerte();
+		$a->Etat=3;
+		$a->Type=13;
+		$a->Anomalie=1;
+		$a->Date=$f->Date_index;
+		
+		$a->save($m);
+		$a->save($f);
+		$a->save($p);
+		
+		//Etat de la facture => Non-valide
+		$f->etat=3;
+		$f->save();
+		
+		$ans=array(
+			'success'=> true
+		);
+		echo json_encode($ans);
+		die();
+	}
+	
 	public function load()
 	{
 		//DATAMAPPER CONSTRUCTING
 		$idPl = $this->input->post('idPl');
 		$only_active = $this->input->post('only_active');
+		$only_attente = $this->input->post('only_attente');
 		$No_de_facture = $this->input->post('No_de_facture');
+		
 		$this->load->model('Pl','run_pl');
 		$p = $this->run_pl;
 		$p->where('id', $idPl)->get();
@@ -43,29 +98,28 @@ class Alertecontrol extends CI_Controller {
 		
 		foreach($f->all as $facture){
 			$a=new Alerte();
-			$a->where('Anomalie',false);
+			$a->where('Anomalie',true);
 			if($p->Tension=='BT'){
 				if (substr($p->No_compteur,0,1)=='E'){
 	 				//BT
-					$a->where_related_facturebt('id',$facture->id);
-					if ($only_active) $a->where('Etat', 3);
-					$a->get();
+					$a->where_related_facturebt('id',$facture->id);	
 				}
 				else{
 					//EAU
 					$a->where_related_factureeau('id',$facture->id);
-					if ($only_active) $a->where('Etat', 3);
-					$a->get();
 				}
 			}
 			else{
 				$a->where_related_facturemt('id',$facture->id);
-				if ($only_active) $a->where('Etat', 3);
-				$a->get();
 			}
+			
+			if ($only_active) $a->where('Etat', 3);
+			elseif ($only_attente) $a->where('Etat', 2);
+			$a->get();
+			
 			foreach($a->all as $alerte){
 				$type_alerte_conso=array(1, 4, 6, 8, 10, 11);
-				if ($alerte->Anomalie==false){	
+				if (!in_array($alerte->Type,$type_alerte_conso)){
 					foreach($fieldArray as $field){
 						$answ[$field]=$alerte->$field;
 					}
@@ -90,6 +144,7 @@ class Alertecontrol extends CI_Controller {
 						$f->where_related_alerte('id', $alerte->id)->get();
 					}
 					$answ['No_de_facture']=$f->No_de_facture;
+					
 					if ($No_de_facture!=0){
 						if($No_de_facture==$f->No_de_facture){
 							$answer['data'][] = $answ;
@@ -97,7 +152,7 @@ class Alertecontrol extends CI_Controller {
 					}
 					else{
 						$answer['data'][] = $answ;
-					}					
+					}
 				}
 			}	
 		}
@@ -112,9 +167,12 @@ class Alertecontrol extends CI_Controller {
 	
 	public function loadall($BT_MT_EAU,$PERIODE_MENSUELLE)
 	{
+		$only_active = $this->input->post('only_active');
+		$only_attente = $this->input->post('only_attente');
+		
 		//$BT_MT_EAU=$this->input->post('BT_MT_EAU');
 		//formatte la date
-		if (!is_null($this->input->post('PERIODE_MENSUELLE'))){
+		if ($PERIODE_MENSUELLE!='bilan'){
 			$array_periode=explode('%20',$PERIODE_MENSUELLE);	
 			$tableau_mois=array('Janvier'=>'01','Février'=>'02','Mars'=>'03','Avril'=>'04','Mai'=>'05','Juin'=>'06','Juillet'=>'07','Août'=>'08','Septembre'=>'09','Octobre'=>'10','Novembre'=>'11','Décembre'=>'12');
 			$array_periode[0]=urldecode($array_periode[0]);
@@ -134,8 +192,9 @@ class Alertecontrol extends CI_Controller {
 			$f=new Factureeau();
 		}
 		$f->where_related_menumensuel('Tension',$BT_MT_EAU);
-		$f->where_related_menumensuel('periode',$PERIODE_MENSUELLE);
-		
+		if ($this->input->post('PERIODE_MENSUELLE')!='bilan'){
+			$f->where_related_menumensuel('periode',$PERIODE_MENSUELLE);
+		}
 		$linked_field=array('Nom_prenom', 'Point_de_livraison','No_de_facture');
 		//get parameters for infinite scrolling grid
 		$start = $this->input->post('start');
@@ -153,6 +212,11 @@ class Alertecontrol extends CI_Controller {
 		//DATAMAPPER CONSTRUCTING
 		$this->load->model('Alerte','run_al');
 		$a = $this->run_al;
+		
+		
+		$a->where('Anomalie',1);
+		
+		
 		
 		//initialize answer array TODO(should be an array design to be JSON encoded)
 		$answer = array(
@@ -191,11 +255,14 @@ class Alertecontrol extends CI_Controller {
 			}
 			//if ($sort!='lastpost' and isset($dir)) $a->order_by($sort, $dir);
 			//$a->limit($limit,$start);
-			$a->where_related_menumensuel('Tension',$BT_MT_EAU);
-			$a->where_related_menumensuel('periode',$PERIODE_MENSUELLE);
+			if ($only_active) $a->where('Etat', 3);
+			elseif ($only_attente) $a->where('Etat', 2);
+			if ($PERIODE_MENSUELLE!='bilan'){
+				$a->where_related_menumensuel('Tension',$BT_MT_EAU);
+				$a->where_related_menumensuel('periode',$PERIODE_MENSUELLE);
+			}
 			$a->order_by('Valeur','ASC');
 			$a->order_by('Type','ASC');
-			$a->where('Anomalie',false);
 			$a->get();
 			//Remplace le type numérique par le texte correspondant
 			$tableau_type=array (
@@ -206,11 +273,17 @@ class Alertecontrol extends CI_Controller {
 				9 => 'Incoh&eacute;rence index',
 				10 => 'Consommation nulle',
 				11 => 'Avoir',
-				12 => 'PL rejet&eacute'			
+				12 => 'P.L rejeté',
+				13 => 'Autre'				
 			);
 			foreach ($a->all as $alerte){
 				if($alerte->Type!=6){
-					$alerte->Type=$tableau_type[$alerte->Type];
+					if($alerte->Type==7){
+						$alerte->Type=$alerte->Valeur.'&egrave;me facture re&ccedil;ue ce mois.';
+					}
+					else{
+						$alerte->Type=$tableau_type[$alerte->Type];
+					}					
 				}
 				elseif($alerte->Valeur<0){
 					$alerte->Type='D&eacute;ficit de puissance';
@@ -304,7 +377,6 @@ class Alertecontrol extends CI_Controller {
 		else{
 			$a->where_related_menumensuel('Tension',$BT_MT_EAU);
 			$a->where_related_menumensuel('periode',$PERIODE_MENSUELLE);
-			$a->where('Anomalie',false);
 			$a->get();
 			if (count($a->all)<($start+$limit)) $start=count($a->all)-$limit;
 			if ($start<0){
@@ -415,8 +487,83 @@ class Alertecontrol extends CI_Controller {
 			}
 			//save updated entry into database
 			$a->save();
+			$tocopy=$data;
+			$data=null;
+			$data[0]=$tocopy;
 		}
+		
+		//Update l'etat de la facture correspondante.
+		
+		
+		//First get the associated pl to know the tension (BT_MT_EAU)
+		$p= new Pl();
+		foreach ($data as $al){
+			$p->where_related_alerte('id', $al['id'])->get();
+			break;
+		}
+		
+		$BT_MT_EAU=$p->Tension;
+		$etatchanged=false;
+		//Then get the facture related to each alerte
+		foreach ($data as $al){
+			
+			if ($BT_MT_EAU=='MT'){
+				//MT
+				$f= new Facturemt();
+			}
+			elseif($BT_MT_EAU=='BT'){
+				//BT
+				$f= new Facturebt();
+			}
+			else{
+				//EAU
+				$f= new Factureeau();
+			}
+		
+			$f->where_related_alerte('id', $al['id'])->get();
+			
+			//echo $f->id;
+			//Then get all the related anomalies
+			$a=new Alerte();
+			//$a;
+			if ($BT_MT_EAU=='MT'){
+				//MT
+				$a->where_related_facturemt('id',$f->id)->where('Anomalie', true)->get();
+			}
+			elseif($BT_MT_EAU=='BT'){
+				//BT
+				$a->where_related_facturebt('id',$f->id)->where('Anomalie', true)->get();
+			}
+			else{
+				//EAU
+				$a->where_related_factureeau('id',$f->id)->where('Anomalie', true)->get();
+			}
+		
+			//Si au moins une anomalie est active : facture non valide
+			//Sinon si une anomalie est en attente : facture en attente
+			//Sinon facture valide
+			$etat=1;
+			foreach($a->all as $anomalie){
+				
+				if($anomalie->Etat==3){
+					
+					$etat=3;
+					break;
+				}
+				elseif($anomalie->Etat==2){ //en attente
+					$etat=2;
+				}
+			}
+			if ($f->etat!=$etat){
+				$f->etat=$etat;
+				$etatchanged=true;
+			}
+			$f->save();
+		}
+		
+		
 		//RETURN JSON !
+		$answer['etatchanged'] = $etatchanged;
 		$answer['success'] = true;
 		echo json_encode($answer);
 	}
@@ -445,7 +592,6 @@ class Alertecontrol extends CI_Controller {
 		$a->order_by('Type','asc');
 		$a->order_by('Valeur','asc');
 		$a->order_by('Type','asc');
-		$a->where('Anomalie',false);
 		$a->get();
 		$answer=array();
 		$compteur=1;
@@ -481,8 +627,7 @@ class Alertecontrol extends CI_Controller {
 			
 			$a->where_related_menumensuel('Tension',$BT_MT_EAU);
 			$a->where_related_menumensuel('periode',$PERIODE_MENSUELLE);
-			$a->where('Anomalie',false);
-			$a->order_by('Valeur','asc');			
+			$a->order_by('Valeur','asc');
 			$a->get();
 			
 			$tableau_al=array();

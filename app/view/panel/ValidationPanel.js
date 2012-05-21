@@ -11,7 +11,7 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 	//margins: 5,
 	//padding: 5,
 	layout: {
-        type: 'vbox',
+        type: 'hbox',
         align: 'stretch'
     },
     bodyStyle: "background-image:url(app/images/"+BCKGRND_IMAGE+".jpg); background-repeat:no-repeat; background-position:center center;-moz-background-size: cover; -webkit-background-size: cover;-o-background-size: cover;background-size: cover;",
@@ -32,9 +32,9 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 				}
 			},
 		    {text: "Num&eacute;ro P.L", width: 110, sortable: false, dataIndex: 'Point_de_livraison'},
-		    {text: "Num&eacute;ro Facture", width: 100, sortable: false, dataIndex: 'No_de_facture'},
+		    //{text: "Num&eacute;ro Facture", width: 100, sortable: false, dataIndex: 'No_de_facture'},
 		    //{text: "", width: 70, sortable: true, dataIndex: 'date_validation', hidden: true, Value: 10},
-		    {text: "Montant net", width: 70, sortable: false, dataIndex: 'Montant_net'}
+		    //{text: "Montant net", width: 70, sortable: false, dataIndex: 'Montant_net'}
 		];
 	//****  ACTIONS 	
 		//Actions du panel NouveauPl
@@ -804,9 +804,9 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 						return value;					
 					}
 				},
-				{text: "Num&eacute;ro P.L", width: 70, sortable: false, dataIndex: 'Point_de_livraison'},
-				{text: "Num&eacute;ro Facture", width: 70, sortable: false, dataIndex: 'No_de_facture'},
-				{text: "Montant net", width: 70, sortable: false, dataIndex: 'Montant_net'}//,
+				{text: "Num&eacute;ro P.L", width: 110, sortable: false, dataIndex: 'Point_de_livraison'},
+				//{text: "Num&eacute;ro Facture", width: 70, sortable: false, dataIndex: 'No_de_facture'},
+				//{text: "Montant net", width: 70, sortable: false, dataIndex: 'Montant_net'}//,
 				//{text: "Date r&eacute;sil.", width: 80, sortable: false, dataIndex: 'date_validation', xtype: 'datecolumn',   format:'d-m-Y'}
 			],
 			/*tools:[{
@@ -836,11 +836,10 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 			border: 0,
 			flex: 1,
 			layout:{
-				type:'hbox',
+				type:'vbox',
 				align: 'stretch'
 			},
-			items:[NouveauPlGrid,
-				PlValideGrid
+			items:[NouveauPlGrid
 			]
 		},{
 			xtype: 'panel',
@@ -848,10 +847,11 @@ Ext.define('MainApp.view.panel.ValidationPanel', {
 			border: 0,
 			flex: 1,
 			layout:{
-				type:'hbox',
+				type:'vbox',
 				align: 'stretch'
 			},
-			items:[PlNonValideAgainGrid,
+			items:[
+				PlValideGrid,
 				PlNonValideGrid
 			]
 		}];

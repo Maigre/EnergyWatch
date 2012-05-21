@@ -1,18 +1,18 @@
-Ext.define('MainApp.view.panel.BilanAttentePanel', {
+Ext.define('MainApp.view.panel.BilanAnomaliePanel', {
 	extend		 : 'Ext.form.Panel',
-	alias 		 : 'widget.bilanattentepanel',
-	id           	 : 'bilanattentepanel',
+	alias 		 : 'widget.bilananomaliepanel',
+	id           	 : 'bilananomaliepanel',
 	frame 		 : true,
-	iconCls		 : 'help',
+	iconCls		 : 'alert',
 	height		 : 150,
-	width 		 : 150,
+	width 		 : 140,
 	x     		 : 0,
 	y     		 : 0,
 	url   		 : BASE_URL+'data/bilan/save',
 	frame 		 : true,
-	title 		 : 'EN ATTENTE',
+	title 		 : 'ANOMALIES',
 	bodyPadding  : 10,
-	//margin       : 50,
+	margin       : 50,
 	method       : 'post',
 	trackResetOnLoad : 'true',
 	fieldDefaults: {
@@ -25,12 +25,12 @@ Ext.define('MainApp.view.panel.BilanAttentePanel', {
 		anchor: '100%'
 	},
 	items 		 : [{
-			fieldLabel: 'A payer',
+			fieldLabel: '',
 			hideLabel : true,
-			name      : 'NbPlNouveau'
+			name      : 'NbAnomalieActive'
 			//,value     : ''
 		},{
-			xtype	  : 'buttonvalidation'
+			xtype	  : 'buttonanomalie'
 		}
 	],
 	initComponent: function() {

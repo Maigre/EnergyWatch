@@ -1,16 +1,16 @@
-Ext.define('MainApp.view.panel.BilanAttentePanel', {
+Ext.define('MainApp.view.panel.BilanNonValideFacturePanel', {
 	extend		 : 'Ext.form.Panel',
-	alias 		 : 'widget.bilanattentepanel',
-	id           	 : 'bilanattentepanel',
+	alias 		 : 'widget.bilannonvalidefacturepanel',
+	id           	 : 'bilannonvalidefacturepanel',
 	frame 		 : true,
-	iconCls		 : 'help',
-	height		 : 150,
+	iconCls		 : 'no',
+	height		 : 100,
 	width 		 : 150,
 	x     		 : 0,
 	y     		 : 0,
 	url   		 : BASE_URL+'data/bilan/save',
 	frame 		 : true,
-	title 		 : 'EN ATTENTE',
+	title 		 : 'NON VALIDE',
 	bodyPadding  : 10,
 	//margin       : 50,
 	method       : 'post',
@@ -27,11 +27,16 @@ Ext.define('MainApp.view.panel.BilanAttentePanel', {
 	items 		 : [{
 			fieldLabel: 'A payer',
 			hideLabel : true,
-			name      : 'NbPlNouveau'
+			name      : 'NbRejete'
 			//,value     : ''
 		},{
-			xtype	  : 'buttonvalidation'
-		}
+			fieldLabel: '',
+			//hideLabel : true,
+			name      : 'ConsoRejete'
+			//,value     : ''
+		}/*,{
+			xtype	  : 'buttonfacturenonvalide'
+		}*/
 	],
 	initComponent: function() {
 		this.callParent(arguments);

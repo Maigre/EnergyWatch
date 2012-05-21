@@ -102,6 +102,7 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 		 		if (empty($p->id)){
 		 			//Nouveau PL détecté 
 		 			$p->etat=1;
+		 			//Sinon on conserve l'état (valide, non valide, non valide again)
 		 		}
 		 		//Remplissage des champs du Pl
 		 		$p->No_client=substr($prod[$i][0], 1, -1);
@@ -214,7 +215,7 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 			 		$f->Nb_jours=substr($prod[$i][25], 1, -1);
 		 		}
 		 		
-		 		if (empty($f->etat)){
+		 		/*if (empty($f->etat)){
 		 			//ETAT de la facture nouveau, valide, non valide, non valide mais refacturé
 		 			if($p->etat==3){
 			 			//Pl non valide mais refacturé. Facture en attente de confirmation 
@@ -223,7 +224,7 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 			 		else{
 			 			$f->etat=$p->etat;
 			 		}
-		 		}
+		 		}*/
 		 	
 		 	//creation de l'objet menumensuel
 			 	$m= new Menumensuel();
@@ -478,9 +479,12 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 
 						if ($table=='conso_mts'){
 							$en_cours['Conso_PA']=$facture->Conso_PA;
-							$en_cours['Conso_Energie_Reactive']=$facture->Conso_Energie_Reactive;
+							$en_cours['Montant_Net_Cosinus_PHI']=$facture->Montant_Net_Cosinus_PHI;
 							$en_cours['Ancien_Index_Pointe']=$facture->Ancien_Index_Pointe;
+							$en_cours['Nouvel_Index_Pointe']=$facture->Nouvel_Index_Pointe;
 							$en_cours['Ancien_Index_Hors_Pointe']=$facture->Ancien_Index_Hors_Pointe;
+							$en_cours['Ancien_Index_Reactif']=$facture->Ancien_Index_Reactif;
+							
 						}
 						else{
 							$en_cours['Ancien_index']=$facture->Ancien_index;						
@@ -513,6 +517,7 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 							$mois_precedent['Conso_PA']=$facture->Conso_PA;
 							$mois_precedent['Nouvel_Index_Hors_Pointe']=$facture->Nouvel_Index_Hors_Pointe;
 							$mois_precedent['Nouvel_Index_Pointe']=$facture->Nouvel_Index_Pointe;
+							$mois_precedent['Nouvel_Index_Reactif']=$facture->Nouvel_Index_Reactif;
 						}
 						else{
 							$mois_precedent['Nouvel_index']=$facture->Nouvel_index;
@@ -615,6 +620,7 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 							'type_alerte'=>$type_alerte,
 							'flux'=>$flux,
 							'Date'=>$date,
+							'Anomalie'=>false
 						);
 						$alerte_temp[]=$alerte;
 					}
@@ -725,6 +731,7 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 							'type_alerte'=>$type_alerte,
 							'flux'=>$flux,
 							'Date'=>$date,
+							'Anomalie'=>false
 						);
 						$alerte_temp[]=$alerte;
 					}
@@ -747,6 +754,7 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 							'type_alerte'=>$type_alerte,
 							'flux'=>$flux,
 							'Date'=>$date,
+							'Anomalie'=>false
 						);
 						$alerte_temp[]=$alerte;
 					}
@@ -780,16 +788,17 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 							'type_alerte'=>$type_alerte,
 							'flux'=>$flux,
 							'Date'=>$date,
+							'Anomalie'=>true
 						);
 						$alerte_temp[]=$alerte;
 			 		}
 				
 				
 				//type 8 : Facturation d'Energie reactive
-				if (isset($en_cours['Conso_Energie_Reactive'])){
-					if ($en_cours['Conso_Energie_Reactive']> 0){
+				if (isset($en_cours['Montant_Net_Cosinus_PHI'])){
+					if ($en_cours['Montant_Net_Cosinus_PHI']> 0){
 						$idFacture=$f->id;
-						$valeur = $en_cours['Conso_Energie_Reactive'];
+						$valeur = $en_cours['Montant_Net_Cosinus_PHI'];
 						//$Alerte='Au mois de '.$mois.' la puissance appelée a dépassé de '.$hausse.'% la puissance souscrite.';
 						$Duree_validite = 1;
 						$type_alerte=8;
@@ -803,6 +812,7 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 							'type_alerte'=>$type_alerte,
 							'flux'=>$flux,
 							'Date'=>$date,
+							'Anomalie'=>false
 						);
 						$alerte_temp[]=$alerte;
 					}
@@ -811,15 +821,37 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 				//type 9 : Incohérence d'index
 				if ($table=='conso_mts'){
 					if ((isset($mois_precedent['Nouvel_Index_Pointe'])) and (isset($mois_precedent['Nouvel_Index_Hors_Pointe']))){
-						if (($en_cours['Ancien_Index_Pointe']!=$mois_precedent['Nouvel_Index_Pointe']) or ($en_cours['Ancien_Index_Hors_Pointe']!=$mois_precedent['Nouvel_Index_Hors_Pointe'])){
+						if (($en_cours['Ancien_Index_Pointe']!=$mois_precedent['Nouvel_Index_Pointe']) or ($en_cours['Ancien_Index_Hors_Pointe']!=$mois_precedent['Nouvel_Index_Hors_Pointe']) or ($en_cours['Ancien_Index_Reactif']!=$mois_precedent['Nouvel_Index_Reactif'])){
 							//echo 'AIP'.$en_cours['Ancien_Index_Pointe'].'NIP'.$mois_precedent['Nouvel_Index_Pointe'].'AIHP'.$en_cours['Ancien_Index_Hors_Pointe'].'NIHP'.$mois_precedent['Nouvel_Index_Hors_Pointe'];
+							if ($en_cours['Ancien_Index_Pointe']>$en_cours['Nouvel_Index_Pointe']){
+								echo 'ancien:'.$en_cours['Ancien_Index_Pointe'];
+								echo 'nouvel:'.$en_cours['Nouvel_Index_Pointe'];
+							}
 							$alerte=array(
 								'idFacture'=>$f->id,
 								'Valeur'=> '',
 								'Duree_validite'=>1,
 								'type_alerte'=>9,
 								'flux'=>'elec',
-								'Date'=>date('Y-m-d',$date_encours)								
+								'Date'=>date('Y-m-d',$date_encours),
+								'Anomalie'=>true								
+							);
+							$alerte_temp[]=$alerte;
+						}
+					}
+					if((isset($en_cours['Ancien_Index_Pointe'])) and (isset($en_cours['Nouvel_Index_Pointe']))){
+						
+						if ($en_cours['Ancien_Index_Pointe']>$en_cours['Nouvel_Index_Pointe']){
+							//echo 'ancien:'.$en_cours['Ancien_Index_Pointe'];
+							//echo 'nouvel:'.$en_cours['Nouvel_Index_Pointe'];
+							$alerte=array(
+								'idFacture'=>$f->id,
+								'Valeur'=> '',
+								'Duree_validite'=>1,
+								'type_alerte'=>9,
+								'flux'=>'elec',
+								'Date'=>date('Y-m-d',$date_encours),
+								'Anomalie'=>true								
 							);
 							$alerte_temp[]=$alerte;
 						}
@@ -834,12 +866,12 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 								'Duree_validite'=>1,
 								'type_alerte'=>9,
 								'flux'=>'elec',
-								'Date'=>date('Y-m-d',$date_encours)
+								'Date'=>date('Y-m-d',$date_encours),
+								'Anomalie'=>true
 							);
 							$alerte_temp[]=$alerte;
 						}
 					}
-					
 				}
 				
 				//type 10 : Consommations nulles
@@ -852,7 +884,8 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 							'Duree_validite'=>1,
 							'type_alerte'=>10,
 							'flux'=>'elec',
-							'Date'=>date('Y-m-d',$date_encours)
+							'Date'=>date('Y-m-d',$date_encours),
+							'Anomalie'=>false
 						);
 						$alerte_temp[]=$alerte;
 					}
@@ -869,15 +902,33 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 							'Duree_validite'=>1,
 							'type_alerte'=>11,
 							'flux'=>'elec',
-							'Date'=>date('Y-m-d',$date_encours)
+							'Date'=>date('Y-m-d',$date_encours),
+							'Anomalie'=>false
 						);
 						$alerte_temp[]=$alerte;
 					}
 				}
 				
+				//type 12 : Pl non valide mais refacturé
+				//Attention cette anomalie n'en est une que si la demande de résiliation du PL e été effectuée
+				//Et que la période nécessaire à la résiliation est bien passée
+				if ($p->etat==3){ //PL rejeté
+					$alerte=array(
+						'idFacture'=>$f->id,
+						'Valeur'=>$f->Montant_net,
+						'Duree_validite'=>1,
+						'type_alerte'=>12,
+						'flux'=>'elec',
+						'Date'=>date('Y-m-d',$date_encours),
+						'Anomalie'=>true
+					);
+					$alerte_temp[]=$alerte;					
+				}
+				
+				//Type 13: 'Autre' : utilisé lors d'une création manuelle d'une anomalie
+				
 				//Vérifie que l'alerte n'est pas déjà présente et valide avant de sauvegarder
 				if (is_array($alerte_temp)){
-					
 					foreach($alerte_temp as $AT){
 						$a=new Alerte();
 						if ($table=='conso_bts'){
@@ -903,7 +954,7 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 						}*/
 						//Cas des doubles facturations, pour toutes les factures du PL de cette periode
 						//supprimer les alertes de ce type, avant d'en ajouter une
-						if ($AT['type_alerte']==7){
+						/*if ($AT['type_alerte']==7){
 													 		
 					 		//Get all facture pour ce PL et la periode en cours d'importation
 		 					if ($table=='conso_bts'){
@@ -940,15 +991,17 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 		 						//On aura une seule alerte : 4 alertes pour ce mois.
 		 						$ale->delete_all();
 		 					}			 					
-						}
+						}*/
 						//Sauvegarde l'alerte dans la DB
 						if (empty($a->id)) {						
 							$a=new Alerte();
 							$a->Valeur= $AT['Valeur'];    
 							$a->Flux  = $AT['flux']; 
-							$a->Date  = $AT['Date']; 
-							$a->Etat  = 3;
+							$a->Date  = $AT['Date'];
 							$a->Type  = $AT['type_alerte'];
+							
+							$a->Etat  = 2; //En attente
+							$a->Anomalie  = $AT['Anomalie'];
 						}
 						
 						/*if ($table=='conso_bts'){
@@ -963,10 +1016,52 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 			 				$f= new Facturemt();			
 				 		}
 				 		$f->where('id',$AT['idFacture'])->get();*/
-			 			
-						$a->save(array($p,$f,$m));						
+			 			$a->save(array($p,$f,$m));						
 					}
 				}
+				
+				
+				
+				
+				
+				
+				//Determine l'etat de la facture :
+				//		*Si Aucune anomalie => Valide(etat=1)
+				//		*Si au moins 1 anomalie Valide => Non Valide (etat=3)
+				//		*Si anomalie en attente => En attente
+				//		*Si anomalie non valide => Valide
+				$a= new Alerte();
+				$a->where('Anomalie',true);				
+				if ($table=='conso_bts'){
+	 				if ($tension=='BT'){
+	 					$a->where_related_facturebt('id',$f->id);
+	 				}
+	 				else{
+	 					$a->where_related_factureeau('id',$f->id);
+	 				}
+		 		}
+		 		else{
+	 				$a->where_related_facturemt('id',$f->id);			
+		 		}
+		 		$a->get();
+		 		
+		
+				
+				$etat=1;//Valide Si aucune anomalie ou toutes désactivées(etat=3)
+				foreach($a->all as $anomalie){
+					if($anomalie->Etat==1){ //Active
+						$etat=3;//facture non valide
+						break;
+					}
+					elseif($anomalie->Etat==2){
+						$etat=2; //En attente
+					}
+				}
+				$f->etat=$etat;
+				
+				
+				//Sinon état déterminé précedemment lors de la sauvegarde de la facture au début (rechercher "$f->etat=$p->etat;")
+				$f->save();
 				
 				
 				
@@ -976,7 +1071,6 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 				//calcul de la consommation mensuelle moyenne
 				$conso_totale=0;
 				$nombrejour_total=0;
-				
 				foreach($f->all as $facture){
 					if ($table=='conso_mts'){
 						$facture->Consommation_mensuelle=$facture->Conso_Hors_Pointe+$facture->Conso_Pointe;

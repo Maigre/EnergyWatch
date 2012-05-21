@@ -1,8 +1,8 @@
-Ext.define('MainApp.view.tools.GridAlerteView', {
+Ext.define('MainApp.view.tools.GridAnomalieView', {
 	extend	: 'Ext.grid.Panel',
-	alias 	: 'widget.gridalerte',
-	title	: 'Alertes',
-	store	: 'AlerteStore',
+	alias 	: 'widget.gridanomalie',
+	title	: 'Anomalies',
+	store	: 'AnomalieStore',
 	resizable: true,
 	frame	: true,
 	margin	: 5,
@@ -12,11 +12,11 @@ Ext.define('MainApp.view.tools.GridAlerteView', {
 		// hidden:true,
 		handler: function(event, toolEl, panel){
 
-			Ext.getStore('AlerteStore').load({
+			Ext.getStore('AnomalieStore').load({
 				params: {
 					BT_MT_EAU 	: BT_MT_EAU,
 					idPl		: Ext.getStore('PlStore').data.items[0].data.id,
-					only_active	: true
+					only_active	: false
 				}
 			});		
 		}
@@ -48,7 +48,7 @@ Ext.define('MainApp.view.tools.GridAlerteView', {
 				'D&eacute;ficit de Puissance de ({Valeur}%)',
 			'</tpl>',
 			'<tpl if="Type == 7;">',
-				'{Valeur} factures re&ccedil;ues ce mois',
+				'{Valeur}&egrave;me facture re&ccedil;ue ce mois',
 			'</tpl>',
 			'<tpl if="Type == 8;">',
 				'Consommation d\'Energie R&eacute;active : {Valeur} CFA',
@@ -64,6 +64,9 @@ Ext.define('MainApp.view.tools.GridAlerteView', {
 			'</tpl>',
 			'<tpl if="Type == 12;">',
 				'PL rejet&eacute;',
+			'</tpl>',
+			'<tpl if="Type == 13;">',
+				'Autre',
 			'</tpl>'
 		);
 		
@@ -71,29 +74,29 @@ Ext.define('MainApp.view.tools.GridAlerteView', {
 			'<input type="button" name="addButton" value="Modifier" style="width:90px"/></div>'
 		);
 		
-		flagcomboboxstore = new Ext.data.Store({
+		flagcomboboxanomaliestore = new Ext.data.Store({
 			fields: [{name: 'Etat'},{name: 'nom_etat'}],
 			data : [
-				{"Etat":"3", "nom_etat":"Active"},
+				{"Etat":"3", "nom_etat":"Anomalie"},
 				{"Etat":"2", "nom_etat":"En attente"},
-				{"Etat":"1", "nom_etat":"Desactivee"}
+				{"Etat":"1", "nom_etat":"O.K"}
 			]
 		});
 		
-		Ext.define('MainApp.view.tools.flagcombobox_alerte', {
+		Ext.define('MainApp.view.tools.flagcombobox_anomalie', {
 			extend: 'Ext.form.ComboBox',
-			alias: 'widget.flagcombobox_alerte',
+			alias: 'widget.flagcombobox_anomalie',
 			//fieldLabel: 'nometat',
-			store: flagcomboboxstore,          //[['1'],['2'],['3']],
+			store: flagcomboboxanomaliestore,          //[['1'],['2'],['3']],
 			queryMode: 'local',
 			displayField: 'nom_etat',
 			valueField: 'Etat'
 			//,tpl: flagtpl
 		});
-		flagcombobox_alerte= new Ext.form.ComboBox({
-			alias: 'widget.flagcombobox_alerte',
+		flagcombobox_anomalie= new Ext.form.ComboBox({
+			alias: 'widget.flagcombobox_anomalie',
 			fieldLabel: 'Etat',
-			store: flagcomboboxstore,          //[['1'],['2'],['3']],
+			store: flagcomboboxanomaliestore,          //[['1'],['2'],['3']],
 			queryMode: 'local',
 			displayField: 'Etat',
 			valueField: 'Etat'
@@ -102,12 +105,12 @@ Ext.define('MainApp.view.tools.GridAlerteView', {
 		this.columns = [
 			{header: 'N&deg; Facture', dataIndex: 'No_de_facture', flex:1},
 			{header: 'Date', dataIndex: 'Date', xtype:'datecolumn', format:'d-m-Y', width:80},
-			{header: 'Alerte', dataIndex: 'Type', xtype: 'templatecolumn', tpl: type_tpl, flex:3}, 
+			{header: 'Anomalie', dataIndex: 'Type', xtype: 'templatecolumn', tpl: type_tpl, flex:3}, 
 			
 			//{header: 'Hausse', dataIndex: 'Valeur', xtype: 'templatecolumn', tpl: valeur_tpl, flex:1},
 			{header: 'Etat', dataIndex: 'Etat', xtype: 'templatecolumn', tpl: flagtpl , align:'center', width:40,
 				editor: {
-					xtype: 'flagcombobox_alerte',
+					xtype: 'flagcombobox_anomalie',
 					//triggerAction: 'all',
 					selectOnTab: true//,
 					//lazyRender: true,
@@ -126,10 +129,44 @@ Ext.define('MainApp.view.tools.GridAlerteView', {
 			}
 		];
 		this.plugins = [
-		    Ext.create('Ext.grid.plugin.CellEditing', {
-		        clicksToEdit: 1
-		    })
-		],
+			Ext.create('Ext.grid.plugin.CellEditing', {
+				clicksToEdit: 1
+			})
+		];
+		
+		Ext.getStore('AnomalieStore').on('update', function(database,b,c){
+			
+			plstore = Ext.getStore('PlStore');
+			tension=plstore.data.items[0].data.Tension;
+			idPl=plstore.data.items[0].data.id;
+			
+			if (tension!=='MT'){
+				var facturestore = Ext.getStore('FactureStore');
+				//var donneesConsoStore = this.getStore('DonneesConsoStore');
+				var plfacturepanel = Ext.getCmp('plfacturepanel');
+				if (!plfacturepanel){
+					var plfacturepanel = Ext.widget('plfacturepanel');
+				}
+			}
+			else{
+				var facturestore = Ext.getStore('FactureMTStore');
+				//var donneesConsoStore = this.getStore('DonneesConsoMTStore');
+				var plfacturepanel = Ext.getCmp('plfacturemtpanel');
+				if (!plfacturepanel){
+					var plfacturepanel = Ext.widget('plfacturemtpanel');
+				}
+			}
+			
+			setTimeout(function() {
+				facturestore.load({
+				params: {idPl: idPl}
+			});
+			},1250);
+			
+			//var rec= database.getAt(0);
+			//plpanel.getForm().loadRecord(rec);
+		});
+		
 		this.callParent(arguments);
 	},
 	

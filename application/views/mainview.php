@@ -50,6 +50,12 @@
 
     </head>
     <body>
+    	<!--<div id="loading-mask"></div>
+	<div id="loading">
+	  <div class="loading-indicator">
+	    Loading...
+	</div> -->
+</div>
     	<div id="working-area"></div>
     </body>
 </html>
