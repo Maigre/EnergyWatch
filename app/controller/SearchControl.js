@@ -15,6 +15,7 @@ displaypl = function(idPl,tension,facture){
 				if (!plpanel){
 					var plpanel = Ext.widget('plpanel');
 				}	
+				Ext.getCmp('westregion').show();
 				Ext.getCmp('westregion').removeAll(false);
 				Ext.getCmp('westregion').setWidth(220);
 				Ext.getCmp('westregion').add(plpanel);

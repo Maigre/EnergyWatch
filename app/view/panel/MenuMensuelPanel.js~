@@ -47,7 +47,14 @@ Ext.define('MainApp.view.panel.MenuMensuelPanel', {
 						menumensuelstore = Ext.getStore('MenuMensuelStore');
 						menumensuelstore.proxy.api.read= BASE_URL+'data/menumensuelcontrol/loadall/'+BT_MT_EAU; 
 						menumensuelstore.load();
-						Ext.widget('bilanwindow').show();
+						var bilanwindow = Ext.getCmp('bilanwindow');
+						if(!bilanwindow){
+							console.info(bilanwindow);
+							bilanwindow = Ext.widget('bilanwindow');
+							console.info(bilanwindow);
+						}
+						
+						Ext.getCmp('centerregion').add('bilanwindow');
 						
 						/*
 						var bilanstore = Ext.getStore('BilanStore');
