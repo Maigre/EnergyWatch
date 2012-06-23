@@ -64,6 +64,15 @@ Ext.define('MainApp.view.tools.GridAlerteView', {
 			'</tpl>',
 			'<tpl if="Type == 12;">',
 				'PL rejet&eacute;',
+			'</tpl>',
+			'<tpl if="Type == 13;">',
+				'Autre',
+			'</tpl>',
+			'<tpl if="Type == 14;">',
+				'Consommations fausses',
+			'</tpl>',
+			'<tpl if="Type == 15;">',
+				'Changement de compteur',
 			'</tpl>'
 		);
 		

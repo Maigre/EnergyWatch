@@ -10,6 +10,9 @@ Ext.define('MainApp.view.Viewport', {
 		'MainApp.view.image.Searchbaricon',
 		'MainApp.view.panel.MenuMensuelPanel',
 		'MainApp.view.panel.BilanMainPanel',
+		
+		'MainApp.view.panel.BilanWindow',
+		
 		'MainApp.view.panel.MainPanel',
 		'MainApp.view.tools.ButtonHomeView',
 		'MainApp.view.tools.ButtonUploadView',
@@ -18,6 +21,9 @@ Ext.define('MainApp.view.Viewport', {
 		//'MainApp.view.tools.ButtonFactureNonValideView',
 		'MainApp.view.tools.ButtonWaterView',
 		'MainApp.view.tools.ButtonMTView',
+		'MainApp.view.tools.ButtonMTHeaderView',
+		'MainApp.view.tools.ButtonBTHeaderView',
+		'MainApp.view.tools.ButtonWaterHeaderView',
 		'MainApp.view.tools.ButtonBTView',
 		'MainApp.view.tools.ButtonSynchroView',
 		'MainApp.view.panel.UploadMainPanel',
@@ -26,6 +32,7 @@ Ext.define('MainApp.view.Viewport', {
 		'MainApp.view.panel.PlFacturePanel',
 		//'MainApp.view.panel.FactureNonValidePanel',
 		'MainApp.view.panel.PlPanel',
+		'MainApp.view.tools.ButtonEBatView',
 		'MainApp.view.panel.PlAllPanel',
 		'MainApp.view.panel.PlFactureMTPanel',        
 		'MainApp.view.panel.AnomalieAllPanel',
@@ -73,7 +80,7 @@ Ext.define('MainApp.view.Viewport', {
 				},
 				bodyStyle: "background-image:url(app/images/back_top.png); border:0px;  background-repeat:repeat; line-height:30px; text-align:center; font-style: italic;",
 				padding: 2,
-				html: "EnergyWatch - AirLab 2011"
+				html: "EnergyWatch - AirLab 2012"
 			},
 			{
 				xtype: 'panel',
@@ -106,19 +113,19 @@ Ext.define('MainApp.view.Viewport', {
 					//height: 62,
 					//width: 80
 				},{
-					xtype	: 'buttonwater',
+					xtype	: 'buttonwaterheader',
 					//x: 80,
 					//y: 10,
 					margins	: 10,
 					border	: 0,
 					hidden	: true,
 					id	: 'buttonwaterheader',
-					width   : 38,
+					width   : 53,
 					text	: '',
 					//height: 62,
 					//width: 80
 				},{
-					xtype	: 'buttonbt',
+					xtype	: 'buttonbtheader',
 					//x: 80,
 					//y: 10,
 					margins	: 10,
@@ -126,11 +133,11 @@ Ext.define('MainApp.view.Viewport', {
 					hidden	: true,
 					text	: '',
 					id	: 'buttonbtheader',
-					width   : 38
+					width   : 53,
 					//height: 62,
 					//width: 80
 				},{
-					xtype	: 'buttonmt',
+					xtype	: 'buttonmtheader',
 					//x: 80,
 					//y: 10,
 					margins	: 10,
@@ -138,7 +145,7 @@ Ext.define('MainApp.view.Viewport', {
 					hidden	: true,
 					text	: '',
 					id	: 'buttonmtheader',
-					width   : 38
+					width   : 53
 					//height: 62,
 					//width: 80
 				},{

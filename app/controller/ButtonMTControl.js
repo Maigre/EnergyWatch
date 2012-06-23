@@ -104,7 +104,7 @@ movebutton = function(){
 	//};
 };
 
-switch_button_to_header= function (){
+switch_button_to_header = function (){
 	Ext.getCmp('buttonwaterheader').show();
 	Ext.getCmp('buttonmtheader').show();
 	Ext.getCmp('buttonbtheader').show();
@@ -112,7 +112,7 @@ switch_button_to_header= function (){
 	return true;
 }
 
-westregion_appear= function(){
+westregion_appear = function(){
 	
 	Ext.getCmp('westregion').show();
 	Ext.getCmp('westregion').animate({
@@ -149,14 +149,60 @@ one_button_pressed= function(tension){
 	Ext.getCmp('button'+tension+'header').toggle(true);
 }
 
+//add menu to header split button
+add_menu_splitbutton = function(){
+	//Request the menu_mensuel periods
+	Ext.Ajax.request({
+		url: BASE_URL+'data/process/menumensuel',
+		method : 'POST',
+		params: {
+			BT_MT_EAU: BT_MT_EAU
+		},
+		success: function(response){
+			var periodes = Ext.decode(response.responseText).data;
+			console.info(periodes);
+			Ext.each(periodes, function(periode) {
+				menu_item = {text: 'Anomalies '+ periode, handler: function(){
+					PERIODE_MENSUELLE = periode;
+					
+					Ext.getCmp('westregion').removeAll();
+					var menumensuelpanel= new Ext.widget('menumensuelpanel');
+					Ext.getCmp('westregion').add(menumensuelpanel);
+					
+					//display les anomalies de la periode clickée
+					openanomalie();
+					//Affiche la période dans le titre du grid
+					Ext.getCmp('gridanomalieall').setTitle('Anomalies de ' + periode);
+				}};
+				
+				if(BT_MT_EAU == 'MT'){
+					Ext.getCmp('buttonmtheader').menu.add(menu_item);
+				}
+				else if(BT_MT_EAU =='BT'){
+					Ext.getCmp('buttonbtheader').menu.add(menu_item);
+				}
+				else{
+					Ext.getCmp('buttonwaterheader').menu.add(menu_item);
+				}
+				
+			});
+		}
+	});
+}
+
 Ext.define('MainApp.controller.ButtonMTControl', {
     extend: 'Ext.app.Controller',
     init: function() {
         this.control({
-            'buttonmt': {
-                click: this.tensionmt
-            }
+		'buttonmt': {
+			click: this.tensionmt
+		}
         });
+        this.control({
+        	'buttonmtheader': {
+			click: this.tensionmt
+		}
+        })
     },
     tensionmt: function() {
 		
@@ -164,6 +210,7 @@ Ext.define('MainApp.controller.ButtonMTControl', {
 				
 		if (movebutton()==true){
 			westregion_appear();
+			add_menu_splitbutton();
 		}
 		one_button_pressed('mt');
 		
@@ -171,7 +218,7 @@ Ext.define('MainApp.controller.ButtonMTControl', {
 		BT_MT_EAU='MT';
 		Ext.getCmp('westregion').removeAll();
 		
-		var homepanel= Ext.getCmp('homepanel');		
+		var homepanel = Ext.getCmp('homepanel');		
 		homepanel.removeAll(false);
 		
 		Ext.getCmp('centerregion').removeAll(false);

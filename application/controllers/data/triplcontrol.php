@@ -42,7 +42,7 @@ class Triplcontrol extends CI_Controller {
 		$temp=explode('%20',$PERIODE_MENSUELLE);
 		
 		$array_periode=explode(' ',urldecode($PERIODE_MENSUELLE));		
-		$tableau_mois=array('Janvier'=>'01','Février'=>'02','Mars'=>'03','Avril'=>'04','Mai'=>'05','Juin'=>'06','Juillet'=>'07','Aout'=>'08','Septembre'=>'09','Octobre'=>'10','Novembre'=>'11','Décembre'=>'12');
+		$tableau_mois=array('Janvier'=>'01','Février'=>'02','Mars'=>'03','Avril'=>'04','Mai'=>'05','Juin'=>'06','Juillet'=>'07','Août'=>'08','Septembre'=>'09','Octobre'=>'10','Novembre'=>'11','Décembre'=>'12');
 		$mois= $tableau_mois[$array_periode[0]];
 		$PERIODE_MENSUELLE=$array_periode[1].'-'.$mois.'-01';
 		

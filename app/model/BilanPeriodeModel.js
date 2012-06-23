@@ -1,0 +1,5 @@
+Ext.define('MainApp.model.BilanPeriodeModel', {
+    extend: 'MainApp.model.Crud',
+    fields: ['intitule', 'montant'],
+    idProperty: 'intitule'
+});

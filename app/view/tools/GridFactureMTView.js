@@ -6,6 +6,7 @@ Ext.define('MainApp.view.tools.GridFactureMTView', {
 	store	: 'FactureMTStore',
 	resizable : true,
 	minHeight : 50,
+	maxHeight : 305,
 	//forceFit: true,
 	//width: 1000,
 	margin	: 5,
@@ -27,7 +28,8 @@ Ext.define('MainApp.view.tools.GridFactureMTView', {
 		
 		
 		this.columns = [
-			{header: 'N&deg; facture', dataIndex: 'No_de_facture', flex:9}, 
+			{header: 'N&deg facture', dataIndex: 'No_de_facture', flex:9}, 
+			{header: 'N&deg compteur', dataIndex: 'No_compteur', flex:9},
 			{header: 'Tarif', dataIndex: 'Tarif',  flex:1, hidden: true}, 
 			{header: 'P.Sou', dataIndex: 'Puisance_souscrite', flex:2}, 
 			{header: 'Coef. PA', dataIndex: 'Coefficient_PA', flex:8, hidden: true}, 
@@ -127,10 +129,32 @@ Ext.define('MainApp.view.tools.GridFactureMTView', {
 			}
 		});
 		
+		//Create the Download button and add it to the top toolbar
+		/*var exportButton = new Ext.ux.exporter.Button({
+			//component: grid,
+			text : "Download as .xls",
+			swfPath: 'app/ext4/Exporter/downloadify.swf',
+			downloadImage: 'app/ext4/Exporter/download.png',
+			width: 62, // mantain the width and height
+			height: 22,
+			downloadName: "download", // this is the name of the file
+			formatter: "csv" // Or "csv"
+		});*/
+		
 		this.dockedItems = [{
 				xtype: 'toolbar',
 				items: [
-					nouvelleAnomalie
+					nouvelleAnomalie,
+					{
+						xtype: 'exporterbutton',
+						//store: 'FactureMTStore',
+						swfPath: 'app/ext4/Exporter/downloadify.swf',
+						downloadImage: 'app/ext4/Exporter/download.png',
+						width: 62, // mantain the width and height
+						height: 22,
+						downloadName: "download", // this is the name of the file
+						formatter: "csv" // Or "csv"
+					}
 				]
 		}];
 		

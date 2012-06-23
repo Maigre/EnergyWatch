@@ -44,6 +44,13 @@ Ext.define('MainApp.view.panel.MenuMensuelPanel', {
 						PERIODE_MENSUELLE = 'bilan';
 						Ext.getCmp('centerregion').removeAll(false);
 						
+						menumensuelstore = Ext.getStore('MenuMensuelStore');
+						menumensuelstore.proxy.api.read= BASE_URL+'data/menumensuelcontrol/loadall/'+BT_MT_EAU; 
+						menumensuelstore.load();
+						bilanwindow = Ext.widget('bilanwindow');
+						Ext.getCmp('centerregion').add('bilanwindow');
+						
+						/*
 						var bilanstore = Ext.getStore('BilanStore');
 						bilanstore.load({
 							params: {
@@ -97,6 +104,7 @@ Ext.define('MainApp.view.panel.MenuMensuelPanel', {
 							bilanattentepanel.doLayout();
 							bilanalertepanel.doLayout();								
 						});
+						*/
 					}
 				});
 				me.add(BilanButton);

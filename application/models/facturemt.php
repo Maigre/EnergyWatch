@@ -13,6 +13,13 @@ class Facturemt extends Dmc {
 				'type'		=> 'normal',				
 				'formfield' => array('text', 15)
 		),
+		'No_compteur' => 	array(
+				'label' 	=> array('Nom',false),
+				'rules' 	=> array('required', 'xss_clean'),
+				'defval'	=> '',
+				'type'		=> 'normal',				
+				'formfield' => array('text', 15)
+		),
 		'Tarif' => 	array(
 				'label' 	=> array('Nom',false),
 				'rules' 	=> array('required', 'xss_clean'),

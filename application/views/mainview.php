@@ -10,6 +10,14 @@
         <link rel="stylesheet" type="text/css" href="app/ext4/resources/css/ext-all.css" />
         <script type="text/javascript" src="app/ext4/ext-all.js"></script>
         <script type="text/javascript" src="app/ext4/locale/ext-lang-fr.js"></script>
+        
+        <!-- Exporter grid to excel or pdf -->
+	<script type="text/javascript" src="app/ext4/Exporter/Exporter.js"></script>
+	<script type="text/javascript" src="app/ext4/Exporter/downloadify.min.js"></script>
+	<script type="text/javascript" src="app/ext4/Exporter/swfobject.js"></script> 
+        
+        
+        
         <script type="text/javascript">Ext.BLANK_IMAGE_URL = 'app/ext4/resources/s.gif';</script>
         
      	<!-- APPLICATION -->
@@ -40,7 +48,11 @@
 			
 			//load viewport
 			Ext.Loader.setConfig({enabled:true});
+			
+			Ext.Loader.setPath('Ext.ux.exporter','app/ext4/Exporter');
+			
 			Main.Launch.init();
+			
 			
 			//check if already logged in and display welcome message or login window
 			//Main.Login.ask();

@@ -10,10 +10,19 @@
         <link rel="stylesheet" type="text/css" href="app/ext4/resources/css/ext-all.css" />
         <script type="text/javascript" src="app/ext4/ext-all.js"></script>
         <script type="text/javascript" src="app/ext4/locale/ext-lang-fr.js"></script>
+        
+        <!-- Exporter grid to excel or pdf -->
+	<script type="text/javascript" src="app/ext4/Exporter/Exporter.js"></script>
+	<script type="text/javascript" src="app/ext4/Exporter/downloadify.min.js"></script>
+	<script type="text/javascript" src="app/ext4/Exporter/swfobject.js"></script> 
+        
+        
+        
         <script type="text/javascript">Ext.BLANK_IMAGE_URL = 'app/ext4/resources/s.gif';</script>
         
      	<!-- APPLICATION -->
      	<script type="text/javascript">BASE_URL = '<?=base_url()?>index.php/';</script>
+     	<script type="text/javascript">UPLOAD_RUNNING = false;</script>
      	<script 
      			//Application Start in MT(Moyenne Tension) Mode
      			type="text/javascript">BT_MT_EAU = 'MT';
@@ -24,7 +33,7 @@
      	</script>
      	
      	<script 
-     			type="text/javascript">BCKGRND_IMAGE = 2;
+     			type="text/javascript">BCKGRND_IMAGE = 9;
      	</script>
 
      	<link rel="stylesheet" type="text/css" href="app/css/icons.css" />
@@ -39,7 +48,11 @@
 			
 			//load viewport
 			Ext.Loader.setConfig({enabled:true});
+			
+			Ext.Loader.setPath('Ext.ux.exporter','app/ext4/Exporter');
+			
 			Main.Launch.init();
+			
 			
 			//check if already logged in and display welcome message or login window
 			//Main.Login.ask();
@@ -49,6 +62,12 @@
 
     </head>
     <body>
+    	<!--<div id="loading-mask"></div>
+	<div id="loading">
+	  <div class="loading-indicator">
+	    Loading...
+	</div> -->
+</div>
     	<div id="working-area"></div>
     </body>
 </html>

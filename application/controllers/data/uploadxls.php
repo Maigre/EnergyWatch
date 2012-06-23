@@ -28,6 +28,23 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 */
 	function do_upload($table,$periode)
 	{
+		if (!$this->db->field_exists('No_compteur', 'factureeaux')){
+			$this->db->query("
+				ALTER TABLE `factureeaux` ADD `No_compteur` VARCHAR( 250 ) NOT NULL AFTER `No_de_facture`
+			");
+		}
+		if (!$this->db->field_exists('No_compteur', 'facturebts')){
+			$this->db->query("
+				ALTER TABLE `facturebts` ADD `No_compteur` VARCHAR( 250 ) NOT NULL AFTER `No_de_facture`
+			");
+		}
+		if (!$this->db->field_exists('No_compteur', 'facturemts')){
+			$this->db->query("
+				ALTER TABLE `facturemts` ADD `No_compteur` VARCHAR( 250 ) NOT NULL AFTER `No_de_facture`
+			");
+		}
+		
+		
 		$this->periode_pour_menu=$periode."-01";
 		
 		if ($table=='conso_mts'){
@@ -109,7 +126,7 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 		 		$p->No_personne=substr($prod[$i][1], 1, -1);
 		 		$p->Nature=substr($prod[$i][3], 1, -1);
 		 		$p->Categorie_client=substr($prod[$i][4], 1, -1);
-		 		$p->No_compteur=substr($prod[$i][6], 1, -1);
+		 		
 		 		$p->No_police=substr($prod[$i][7], 1, -1);
 		 		$p->Point_de_livraison=substr($prod[$i][8], 1, -1);
 		 		$p->Nom_prenom=substr($prod[$i][10], 1, -1);
@@ -137,6 +154,11 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 			 		
 		 			//Remplissage des champs de la facture
 		 			$f->No_de_facture=substr($prod[$i][2], 1, -1);
+			 		
+			 		$f->No_compteur=substr($prod[$i][6], 1, -1);
+			 		
+			 		
+			 		
 			 		$f->Tarif=substr($prod[$i][5], 1, -1);
 			 		$f->Puisance_souscrite=substr($prod[$i][9], 1, -1);
 			 		$f->Coefficient_PA=substr($prod[$i][14], 1, -1);
@@ -200,6 +222,9 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 			 		
 		 			//Remplissage des champs de la facture
 		 			$f->No_de_facture=substr($prod[$i][2], 1, -1);
+			 		
+			 		$f->No_compteur=substr($prod[$i][6], 1, -1);
+			 		
 			 		$f->Code_tarif=substr($prod[$i][5], 1, -1);
 			 		$f->Puisance_souscrite=substr($prod[$i][9], 1, -1);
 			 		$f->Ancien_index=substr($prod[$i][14], 1, -1);
@@ -471,6 +496,7 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 						else{
 							$en_cours['Montant_net']=$c->Montant_net;
 						}*/
+						$en_cours['No_compteur']=$facture->No_compteur;
 						$en_cours['Nb_jours']=$facture->Nb_jours;
 						$en_cours['Consommation_mensuelle']=$facture->Consommation_mensuelle;
 						$en_cours['Montant_net']=$facture->Montant_net;
@@ -510,6 +536,8 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 						else{
 							$mois_precedent['Montant_net']=$c->Montant_net;
 						}*/
+						$mois_precedent['No_compteur']=$facture->No_compteur;
+						
 						$mois_precedent['Nb_jours']=$facture->Nb_jours;
 						$mois_precedent['Consommation_mensuelle']=$facture->Consommation_mensuelle;
 						$mois_precedent['Puisance_souscrite']=$facture->Puisance_souscrite;
@@ -926,6 +954,60 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 				}
 				
 				//Type 13: 'Autre' : utilisé lors d'une création manuelle d'une anomalie
+				
+				//type 14 : Consommation fausse (Après recalcul à partir des index)
+				//
+				if (isset($f->Montant_net)){
+					if ($table=='conso_mts'){
+						$conso_pointe = abs($f->Nouvel_Index_Pointe - $f->Ancien_Index_Pointe);
+						$conso_hors_pointe = abs($f->Nouvel_Index_Hors_Pointe - $f->Ancien_Index_Hors_Pointe);
+						$difference = abs(($conso_pointe - $f->Conso_Pointe) + ($conso_hors_pointe - $f->Conso_Hors_Pointe));
+					}
+					else{
+						$conso = abs($f->Ancien_index - $f->Nouvel_index);
+						$difference = abs( $conso - $f->Consommation_mensuelle );
+					}
+					
+					if ($difference!=0)
+					{
+						$alerte=array(
+							'idFacture'=>$f->id,
+							'Valeur'=> $difference,
+							'Duree_validite'=>1,
+							'type_alerte'=>14,
+							'flux'=>'elec',
+							'Date'=>date('Y-m-d',$date_encours),
+							'Anomalie'=>true
+						);
+						$alerte_temp[]=$alerte;
+					}
+				}
+				
+				//type 15 : changement de numéro de compteur
+				if ((isset($en_cours['No_compteur'])) and (isset($mois_precedent['No_compteur']))){
+					if ($en_cours['No_compteur']!=$mois_precedent['No_compteur'])
+					{
+						$idFacture=$f->id;
+						$valeur='';
+						//$Alerte='Au mois de '.$mois.' les consommations ont augmenté de '.$hausse.'% par rapport au mois précédent.';
+						$Duree_validite = 1;
+						$type_alerte=15;
+						$flux='elec';
+						$date=date('Y-m-d',$date_encours);
+						
+						$alerte=array(
+							'idFacture'=>$idFacture,
+							'Valeur'=>$valeur,
+							'Duree_validite'=>$Duree_validite,
+							'type_alerte'=>$type_alerte,
+							'flux'=>$flux,
+							'Date'=>$date,
+							'Anomalie'=>false
+						);
+						$alerte_temp[]=$alerte;
+					}
+				}
+				
 				
 				//Vérifie que l'alerte n'est pas déjà présente et valide avant de sauvegarder
 				if (is_array($alerte_temp)){

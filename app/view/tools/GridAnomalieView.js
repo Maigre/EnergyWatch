@@ -67,6 +67,12 @@ Ext.define('MainApp.view.tools.GridAnomalieView', {
 			'</tpl>',
 			'<tpl if="Type == 13;">',
 				'Autre',
+			'</tpl>',
+			'<tpl if="Type == 14;">',
+				'Consommations fausses',
+			'</tpl>',
+			'<tpl if="Type == 15;">',
+				'Changement de compteur',
 			'</tpl>'
 		);
 		

@@ -206,7 +206,10 @@ class Alertecontrol extends CI_Controller {
 				9 => 'Incoh&eacute;rence index',
 				10 => 'Consommation nulle',
 				11 => 'Avoir',
-				12 => 'PL rejet&eacute'			
+				12 => 'PL rejet&eacute',
+				13 => 'Autre',
+				14 => 'Consommation fausse',
+				15 => 'Changement de Compteur'			
 			);
 			foreach ($a->all as $alerte){
 				if($alerte->Type!=6){

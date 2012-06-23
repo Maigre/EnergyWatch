@@ -1,36 +1,48 @@
 Ext.define('MainApp.view.Viewport', {
-    extend: 'Ext.container.Viewport',
+    	extend: 'Ext.container.Viewport',
 	id: 'viewport',
 	//alias : 'widget.viewport',
-    requires: [
-    	'MainApp.view.panel.HomePanel',
-        'MainApp.view.panel.SearchbarPanel',
-        'MainApp.view.tools.SearchView',
-        'MainApp.view.image.Searchbaricon',
-        'MainApp.view.panel.MenuMensuelPanel',
-        'MainApp.view.panel.BilanMainPanel',
-        'MainApp.view.panel.MainPanel',
-        'MainApp.view.tools.ButtonHomeView',
-        'MainApp.view.tools.ButtonUploadView',
-        'MainApp.view.tools.ButtonAlerteView',
-        'MainApp.view.tools.ButtonWaterView',
-        'MainApp.view.tools.ButtonMTView',
-        'MainApp.view.tools.ButtonBTView',
-        'MainApp.view.panel.UploadMainPanel',
-        //'MainApp.view.panel.UploadPanel',
-        //'MainApp.view.panel.HistoriqueUploadPanel',
-        'MainApp.view.panel.PlFacturePanel',
-        'MainApp.view.panel.PlPanel',
-        'MainApp.view.panel.PlAllPanel',
-        'MainApp.view.panel.PlFactureMTPanel',
-        'MainApp.view.panel.AlerteAllPanel',
-        'MainApp.view.panel.ValidationPanel'
-        
-    ],
+    	requires: [
+	    	'MainApp.view.panel.HomePanel',
+	    	'MainApp.view.panel.HomeButtonPanel',
+		'MainApp.view.panel.SearchbarPanel',
+		'MainApp.view.tools.SearchView',
+		'MainApp.view.image.Searchbaricon',
+		'MainApp.view.panel.MenuMensuelPanel',
+		'MainApp.view.panel.BilanMainPanel',
+		
+		'MainApp.view.panel.BilanWindow',
+		
+		'MainApp.view.panel.MainPanel',
+		'MainApp.view.tools.ButtonHomeView',
+		'MainApp.view.tools.ButtonUploadView',
+		'MainApp.view.tools.ButtonAlerteView',
+		'MainApp.view.tools.ButtonAnomalieView',
+		//'MainApp.view.tools.ButtonFactureNonValideView',
+		'MainApp.view.tools.ButtonWaterView',
+		'MainApp.view.tools.ButtonMTView',
+		'MainApp.view.tools.ButtonMTHeaderView',
+		'MainApp.view.tools.ButtonBTHeaderView',
+		'MainApp.view.tools.ButtonWaterHeaderView',
+		'MainApp.view.tools.ButtonBTView',
+		'MainApp.view.tools.ButtonSynchroView',
+		'MainApp.view.panel.UploadMainPanel',
+		//'MainApp.view.panel.UploadPanel',
+		//'MainApp.view.panel.HistoriqueUploadPanel',
+		'MainApp.view.panel.PlFacturePanel',
+		//'MainApp.view.panel.FactureNonValidePanel',
+		'MainApp.view.panel.PlPanel',
+		'MainApp.view.panel.ButtonEBatView',
+		'MainApp.view.panel.PlAllPanel',
+		'MainApp.view.panel.PlFactureMTPanel',        
+		'MainApp.view.panel.AnomalieAllPanel',
+		'MainApp.view.panel.AlerteAllPanel',
+		'MainApp.view.panel.ValidationPanel'
+        ],
 
-    layout: 'border',
+    	layout: 'border',
  
-    initComponent: function() {
+    	initComponent: function() {
         //Ext.QuickTips.init();
         this.items = [
         	{
@@ -68,7 +80,7 @@ Ext.define('MainApp.view.Viewport', {
 				},
 				bodyStyle: "background-image:url(app/images/back_top.png); border:0px;  background-repeat:repeat; line-height:30px; text-align:center; font-style: italic;",
 				padding: 2,
-				html: "EnergyWatch - AirLab 2011"
+				html: "EnergyWatch - AirLab 2012"
 			},
 			{
 				xtype: 'panel',
@@ -89,51 +101,51 @@ Ext.define('MainApp.view.Viewport', {
 					//height: 62,
 					//width: 80
 				},{
-					xtype: 'buttonupload',
+					xtype	: 'buttonupload',
 					//x: 80,
 					//y: 10,
-					id: 'buttonuploadheader',
+					id	: 'buttonuploadheader',
 					hidden	: true,
-					margins: 10,
-					border: 0,
+					margins	: 10,
+					border	: 0,
 					width   : 38,
 					text	: ''
 					//height: 62,
 					//width: 80
 				},{
-					xtype	: 'buttonwater',
+					xtype	: 'buttonwaterheader',
 					//x: 80,
 					//y: 10,
 					margins	: 10,
 					border	: 0,
 					hidden	: true,
-					id		: 'buttonwaterheader',
-					width   : 38,
+					id	: 'buttonwaterheader',
+					width   : 53,
 					text	: '',
 					//height: 62,
 					//width: 80
 				},{
-					xtype: 'buttonbt',
+					xtype	: 'buttonbtheader',
 					//x: 80,
 					//y: 10,
-					margins: 10,
-					border: 0,
+					margins	: 10,
+					border	: 0,
 					hidden	: true,
 					text	: '',
-					id		: 'buttonbtheader',
-					width   : 38
+					id	: 'buttonbtheader',
+					width   : 53,
 					//height: 62,
 					//width: 80
 				},{
-					xtype: 'buttonmt',
+					xtype	: 'buttonmtheader',
 					//x: 80,
 					//y: 10,
-					margins: 10,
-					border: 0,
+					margins	: 10,
+					border	: 0,
 					hidden	: true,
 					text	: '',
-					id		: 'buttonmtheader',
-					width   : 38
+					id	: 'buttonmtheader',
+					width   : 53
 					//height: 62,
 					//width: 80
 				},{
@@ -146,16 +158,21 @@ Ext.define('MainApp.view.Viewport', {
 					//height: 62,
 					flex:4
 				},{
-					xtype: 'searchbar',
+					xtype	: 'searchbar',
+					id	: 'searchbar',
 					//x: 1100,
 					//align: 'left',
-					margins:'20 0 15 0',
+					margins	:'20 0 15 0',
 					//y:20,
-					border: 0,
-					flex:1
+					border	: 0,
+					flex	:1
 				},{
-					xtype: 'searchbaricon',
-					margins: '20 15 17 0'
+					xtype	: 'searchbaricon',
+					margins	: '23 15 17 -25'
+				},{
+					xtype	: 'buttonsynchro',
+					margins	: 10,
+					scale	: 'medium'
 				}]
 			}];
 

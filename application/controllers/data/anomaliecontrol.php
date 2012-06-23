@@ -274,7 +274,8 @@ class Anomaliecontrol extends CI_Controller {
 				10 => 'Consommation nulle',
 				11 => 'Avoir',
 				12 => 'P.L rejeté',
-				13 => 'Autre'				
+				13 => 'Autre',
+				14 => 'Consommation fausse'			
 			);
 			foreach ($a->all as $alerte){
 				if($alerte->Type!=6){

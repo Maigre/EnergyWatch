@@ -23,6 +23,10 @@ Ext.define('MainApp.view.panel.PlPanel', {
 		anchor: '100%'
 	},
 	items 		 : [{
+		xtype	: 'buttonebat',
+		id	: 'buttonebat',
+		anchor	: '50%'
+		},{
 		fieldLabel: 'Nom Prenom',
 		name      : 'Nom_prenom',
 		value     : 'SANTE PUBLIQUE',
@@ -59,7 +63,8 @@ Ext.define('MainApp.view.panel.PlPanel', {
 		},{
 		fieldLabel: 'Point de livraison', 
 		name      : 'Point_de_livraison',
-		value     : '3100851204A0251'
+		value     : '3100851204A0251',
+		id	  : 'NoPLfield'
 		},{
 		fieldLabel: 'Adresse', 
 		name      : 'Adresse',

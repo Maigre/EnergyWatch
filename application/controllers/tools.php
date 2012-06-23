@@ -35,7 +35,9 @@ class Tools extends CI_Controller {
 		if (!APP_UPGRADABLE) {echo 'UPGRADE DISABLED ON THIS SERVER !'; exit;}
 			
 		//check if valid update submited
-		if (isset($_FILES["upgrade_file"]) and ($_FILES["upgrade_file"]['error'] === UPLOAD_ERR_OK) and ($_FILES["upgrade_file"]['name'])) {	
+		ini_set("memory_limit","1200M");
+		
+		if (isset($_FILES["upgrade_file"]) and ($_FILES["upgrade_file"]['error'] === UPLOAD_ERR_OK) and (isset($_FILES["upgrade_file"]['name']))) {	
 			$filename = $_FILES["upgrade_file"]["name"];
 			$source = $_FILES["upgrade_file"]["tmp_name"];
 			$target_path = "./upgrade/".$filename;  // change this to the correct site path

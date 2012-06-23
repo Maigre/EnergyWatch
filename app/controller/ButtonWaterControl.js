@@ -4,14 +4,19 @@ Ext.define('MainApp.controller.ButtonWaterControl', {
         this.control({
             'buttonwater': {
                 click: this.tensionwater
+            },
+            'buttonwaterheader': {
+                click: this.tensionwater
             }
         });
     },
     tensionwater: function() {
 		//buttonmt=Ext.getCmp('buttonmt');
 		
-		movebutton();//define in ButtonMTControl.js
-		westregion_appear();
+		if (movebutton()==true){
+			westregion_appear();
+			add_menu_splitbutton();
+		}
 		one_button_pressed('water');
 		
 		BT_MT_EAU='EAU';
