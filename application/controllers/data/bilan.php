@@ -232,38 +232,38 @@ class Bilan extends CI_Controller {
 				$an->get();
 				foreach($al->all as $alerte){
 					if(isset($montant_alerte[$alerte->Type])){
-						//if($alerte->Type==8){
+						if(($alerte->Type==1) || ($alerte->Type==6)/* || ($alerte->Type==8)*/){
+							$montant_alerte[$alerte->Type] += abs($alerte->Valeur2);
+						}
+						else{
 							$montant_alerte[$alerte->Type] += abs($alerte->Valeur);
-						//}
-						//else{
-						//	$montant_alerte[$alerte->Type] += abs($alerte->Valeur);
-						//}
+						}
 					}
 					else{
-						//if($alerte->Type==8){
+						if(($alerte->Type==1) || ($alerte->Type==6)/* || ($alerte->Type==8)*/){
+							$montant_alerte[$alerte->Type] = abs($alerte->Valeur2);
+						}
+						else{
 							$montant_alerte[$alerte->Type] = abs($alerte->Valeur);
-						//}
-						//else{
-						//	$montant_alerte[$alerte->Type] = abs($alerte->Valeur);
-						//}
+						}
 					}					
 				}
 				foreach($an->all as $anomalie){
 					if(isset($montant_anomalie[$anomalie->Type])){
-						//if($alerte->Type==8){
-							$montant_anomalie[$anomalie->Type] += abs($anomalie->Valeur);
-						/*}
+						if(($alerte->Type==1) || ($alerte->Type==6)/* || ($alerte->Type==8)*/){
+							$montant_anomalie[$anomalie->Type] += abs($anomalie->Valeur2);
+						}
 						else{
 							$montant_anomalie[$anomalie->Type] += abs($anomalie->Valeur);
-						}*/
+						}
 					}
 					else{
-						//if($alerte->Type==8){
+						if(($alerte->Type==1) || ($alerte->Type==6)/* || ($alerte->Type==8)*/){
+							$montant_anomalie[$anomalie->Type] = abs($anomalie->Valeur2);
+						}
+						else{
 							$montant_anomalie[$anomalie->Type] = abs($anomalie->Valeur);
-						//}
-						//else{
-						//	$montant_anomalie[$anomalie->Type] = abs($anomalie->Valeur);
-						//}
+						}
 					}					
 				}
 			}
@@ -275,7 +275,7 @@ class Bilan extends CI_Controller {
 		$answ['montant'] = $montant_facture;
 		$answer['data'][]=$answ;
 		
-		$alerte_type_wanted=array(1,4,6,7,8,11,12,14);
+		$alerte_type_wanted=array(6,8,11,12,14);
 		
 		foreach($montant_anomalie as $intitule => $montant){
 			if (in_array($intitule,$alerte_type_wanted)){
