@@ -162,7 +162,7 @@ class Alertecontrol extends CI_Controller {
 		);
 		//Populate the data
 		$answ = null;
-		$fieldArray=array('id', 'idAlerteParent', 'Date', 'Etat', 'Type', 'Valeur', 'Commentaire','Flux');
+		$fieldArray=array('id', 'idAlerteParent', 'Date', 'Etat', 'Type', 'Valeur', 'Valeur2', 'Commentaire','Flux');
 		$group_by_alerte=false;
 		
 		//trie sur champ non lié. utilise tri sql (order_by)

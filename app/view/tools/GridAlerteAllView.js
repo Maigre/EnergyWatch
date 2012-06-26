@@ -129,6 +129,39 @@ Ext.define('MainApp.view.tools.GridAlerteAllView', {
 			'</tpl>'
 		);
 		
+		valeur2_tpl= new Ext.XTemplate(
+			'<tpl if="Type ==\'Hausse des Consommations\';">',
+				'{Valeur2} CFA',
+			'</tpl>',
+			'<tpl if="Type ==\'Changement de Puissance Souscrite\';">',
+				'',
+			'</tpl>',
+			'<tpl if="Type ==\'D&eacute\;ficit de puissance\';">',
+				'{Valeur2} CFA',
+			'</tpl>',
+			'<tpl if="Type ==\'D&eacute\;passement de puissance\';">',
+				'{Valeur2} CFA',
+			'</tpl>',
+			'<tpl if="Type ==\'Plusieurs factures en un mois pour ce P.L\';">',
+				'{Valeur2}',
+			'</tpl>',
+			'<tpl if="Type ==\'Consommation Energie R&eacute;active\';">',
+				'{Valeur2} CFA',
+			'</tpl>',
+			'<tpl if="Type ==\'Incoh&eacute\;rence index\';">',
+				'',
+			'</tpl>',
+			'<tpl if="Type ==\'Consommation nulle\';">',
+				'',
+			'</tpl>',
+			'<tpl if="Type ==\'Avoir\';">',
+				'{Valeur2} CFA',
+			'</tpl>',
+			'<tpl if="Type ==\'PL rejet&eacute;\';">',
+				'{Valeur2} CFA',
+			'</tpl>'
+		);
+		
 		change_etat= new Ext.XTemplate(
 			'<input type="button" name="addButton" value="Modifier" style="width:90px"/></div>'
 		);
@@ -189,6 +222,44 @@ Ext.define('MainApp.view.tools.GridAlerteAllView', {
 					}
 
 					if (summaryData.Valeur==0){
+						return '';
+					}
+					else{
+						return value + ' CFA';
+					}
+					
+				}	
+			},
+			{header: 'Valeur2', dataIndex: 'Valeur2', align: 'center', xtype: 'templatecolumn', tpl: valeur2_tpl, width:140, sortable: false,
+				summaryType: 'sum',
+				summaryRenderer: function(value, summaryData, dataIndex) {
+					/*this.summaryData['Changement de Puissance souscrite'].Valeur=0;
+					
+					this.summaryData['D&eacute\;ficit de puissance'].Valeur=0;
+					this.summaryData['D&eacute\;passement de puissance'].Valeur=0;
+					
+					this.summaryData['Hausse des Consommations'].Valeur=0;*/
+					//this.summaryData['Plusieurs factures en un mois pour ce P.L'].Valeur=0;
+					/*if (this.summaryData['Changement de Puissance souscrite']){
+						this.summaryData['Changement de Puissance souscrite'].Valeur=0;
+					}
+					if (this.summaryData['D&eacute\;ficit de puissance']){
+						this.summaryData['D&eacute\;ficit de puissance'].Valeur=0;
+					}
+					if (this.summaryData['D&eacute\;passement de puissance']){
+						this.summaryData['D&eacute\;passement de puissance'].Valeur=0;
+					}
+					if (this.summaryData['Hausse des Consommations']){
+						this.summaryData['Hausse des Consommations'].Valeur=0;
+					}
+					if (this.summaryData['Incoh&eacute\;rence index']){
+						this.summaryData['Incoh&eacute\;rence index'].Valeur=0;
+					}
+					if (this.summaryData['Plusieurs factures en un mois pour ce P.L']){
+						this.summaryData['Plusieurs factures en un mois pour ce P.L'].Valeur=0;
+					}*/
+
+					if (summaryData.Valeur2==0){
 						return '';
 					}
 					else{

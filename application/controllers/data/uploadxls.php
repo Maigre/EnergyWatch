@@ -540,6 +540,8 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 						
 						$mois_precedent['Nb_jours']=$facture->Nb_jours;
 						$mois_precedent['Consommation_mensuelle']=$facture->Consommation_mensuelle;
+						$mois_precedent['Montant_net']=$facture->Montant_net;
+						
 						$mois_precedent['Puisance_souscrite']=$facture->Puisance_souscrite;
 						if ($table=='conso_mts'){
 							$mois_precedent['Conso_PA']=$facture->Conso_PA;
@@ -634,7 +636,8 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 					if ($en_cours['Consommation_mensuelle']>(1.5*$mois_precedent['Consommation_mensuelle']))
 					{
 						$idFacture=$f->id;
-						$valeur=round((($en_cours['Consommation_mensuelle']/$mois_precedent['Consommation_mensuelle'])-1)*100);
+						$valeur = round((($en_cours['Consommation_mensuelle']/$mois_precedent['Consommation_mensuelle'])-1)*100);
+						$valeur2=$en_cours['Montant_net']-$mois_precedent['Montant_net'];
 						//$Alerte='Au mois de '.$mois.' les consommations ont augmenté de '.$hausse.'% par rapport au mois précédent.';
 						$Duree_validite = 1;
 						$type_alerte=1;
@@ -642,13 +645,14 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 						$date=date('Y-m-d',$date_encours);
 						
 						$alerte=array(
-							'idFacture'=>$idFacture,
-							'Valeur'=>$valeur,
-							'Duree_validite'=>$Duree_validite,
-							'type_alerte'=>$type_alerte,
-							'flux'=>$flux,
-							'Date'=>$date,
-							'Anomalie'=>false
+							'idFacture' 	=> $idFacture,
+							'Valeur' 	=> $valeur,
+							'Valeur2' 	=> $valeur2,
+							'Duree_validite'=> $Duree_validite,
+							'type_alerte' 	=> $type_alerte,
+							'flux' 		=> $flux,
+							'Date' 		=> $date,
+							'Anomalie' 	=> false
 						);
 						$alerte_temp[]=$alerte;
 					}
@@ -753,13 +757,14 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 						$flux='elec';
 						$date=date('Y-m-d',$date_encours);
 						$alerte=array(
-							'idFacture'=>$idFacture,
-							'Valeur'=>$valeur,
-							'Duree_validite'=>$Duree_validite,
-							'type_alerte'=>$type_alerte,
-							'flux'=>$flux,
-							'Date'=>$date,
-							'Anomalie'=>false
+							'idFacture'	=> $idFacture,
+							'Valeur'	=> $valeur,
+							'Valeur2' 	=> 0,
+							'Duree_validite'=> $Duree_validite,
+							'type_alerte'	=> $type_alerte,
+							'flux'		=> $flux,
+							'Date'		=> $date,
+							'Anomalie'	=> false
 						);
 						$alerte_temp[]=$alerte;
 					}
@@ -769,6 +774,12 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 					if (($en_cours['Conso_PA']> 1*$en_cours['Puisance_souscrite'])or($en_cours['Conso_PA']<0.90*$en_cours['Puisance_souscrite'])){
 						$idFacture=$f->id;
 						$valeur = round(100*($en_cours['Conso_PA']-$en_cours['Puisance_souscrite'])/$en_cours['Puisance_souscrite']);
+						if ($en_cours['Conso_PA']> 1*$en_cours['Puisance_souscrite']){//Dépassement
+							$valeur2=$f->Montant_Net_Penalite_Depassement_PS;
+						}
+						else{//Déficit puissance : calcul approximatif de la différence de prix si la puissance souscrite était égale à la puissance atteinte
+							$valeur2=$f->Montant_Prime_TTC*(1-$f->Conso_PA/$f->Puisance_souscrite);
+						}
 						//$Alerte='Au mois de '.$mois.' la puissance appelée a dépassé de '.$hausse.'% la puissance souscrite.';
 						$Duree_validite = 1;
 						$type_alerte=6;
@@ -776,13 +787,14 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 						//$date= $mois;
 						$date=date('Y-m-d',$date_encours);
 						$alerte=array(
-							'idFacture'=>$idFacture,
-							'Valeur'=>$valeur,
-							'Duree_validite'=>$Duree_validite,
-							'type_alerte'=>$type_alerte,
-							'flux'=>$flux,
-							'Date'=>$date,
-							'Anomalie'=>false
+							'idFacture'	=> $idFacture,
+							'Valeur'	=> $valeur,
+							'Valeur2' 	=> $valeur2,
+							'Duree_validite'=> $Duree_validite,
+							'type_alerte'	=> $type_alerte,
+							'flux'		=> $flux,
+							'Date'		=> $date,
+							'Anomalie'	=> false
 						);
 						$alerte_temp[]=$alerte;
 					}
@@ -810,13 +822,14 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 						//$date= $mois;
 						$date=date('Y-m-d',$date_encours);
 						$alerte=array(
-							'Valeur'=>$valeur,
-							'idFacture'=>$idFacture,
-							'Duree_validite'=>$Duree_validite,
-							'type_alerte'=>$type_alerte,
-							'flux'=>$flux,
-							'Date'=>$date,
-							'Anomalie'=>true
+							'Valeur'	=> $valeur,
+							'Valeur2' 	=> 0,
+							'idFacture'	=> $idFacture,
+							'Duree_validite'=> $Duree_validite,
+							'type_alerte'	=> $type_alerte,
+							'flux'		=> $flux,
+							'Date'		=> $date,
+							'Anomalie'	=> true
 						);
 						$alerte_temp[]=$alerte;
 			 		}
@@ -834,13 +847,14 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 						//$date= $mois;
 						$date=date('Y-m-d',$date_encours);
 						$alerte=array(
-							'idFacture'=>$idFacture,
-							'Valeur'=>$valeur,
-							'Duree_validite'=>$Duree_validite,
-							'type_alerte'=>$type_alerte,
-							'flux'=>$flux,
-							'Date'=>$date,
-							'Anomalie'=>false
+							'idFacture'	=> $idFacture,
+							'Valeur'	=> $valeur,
+							'Valeur2' 	=> 0,
+							'Duree_validite'=> $Duree_validite,
+							'type_alerte'	=> $type_alerte,
+							'flux'		=> $flux,
+							'Date'		=> $date,
+							'Anomalie'	=> false
 						);
 						$alerte_temp[]=$alerte;
 					}
@@ -856,13 +870,14 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 								echo 'nouvel:'.$en_cours['Nouvel_Index_Pointe'];
 							}
 							$alerte=array(
-								'idFacture'=>$f->id,
-								'Valeur'=> '',
-								'Duree_validite'=>1,
-								'type_alerte'=>9,
-								'flux'=>'elec',
-								'Date'=>date('Y-m-d',$date_encours),
-								'Anomalie'=>true								
+								'idFacture'	=> $f->id,
+								'Valeur'	=> '',
+								'Valeur2'	=> 0,
+								'Duree_validite'=> 1,
+								'type_alerte'	=> 9,
+								'flux'		=> 'elec',
+								'Date'		=> date('Y-m-d',$date_encours),
+								'Anomalie'	=> true								
 							);
 							$alerte_temp[]=$alerte;
 						}
@@ -873,13 +888,14 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 							//echo 'ancien:'.$en_cours['Ancien_Index_Pointe'];
 							//echo 'nouvel:'.$en_cours['Nouvel_Index_Pointe'];
 							$alerte=array(
-								'idFacture'=>$f->id,
-								'Valeur'=> '',
+								'idFacture'	=>$f->id,
+								'Valeur'	=> '',
+								'Valeur2' 	=> 0,
 								'Duree_validite'=>1,
-								'type_alerte'=>9,
-								'flux'=>'elec',
-								'Date'=>date('Y-m-d',$date_encours),
-								'Anomalie'=>true								
+								'type_alerte'	=>9,
+								'flux'		=>'elec',
+								'Date'		=>date('Y-m-d',$date_encours),
+								'Anomalie'	=>true								
 							);
 							$alerte_temp[]=$alerte;
 						}
@@ -889,13 +905,14 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 					if (isset($mois_precedent['Nouvel_Index'])){
 						if ($en_cours['Ancien_Index']!=$mois_precedent['Nouvel_Index']){
 							$alerte=array(
-								'idFacture'=>$f->id,
-								'Valeur'=> '',
+								'idFacture'	=>$f->id,
+								'Valeur'	=> '',
+								'Valeur2' 	=> 0,
 								'Duree_validite'=>1,
-								'type_alerte'=>9,
-								'flux'=>'elec',
-								'Date'=>date('Y-m-d',$date_encours),
-								'Anomalie'=>true
+								'type_alerte'	=>9,
+								'flux'		=>'elec',
+								'Date'		=>date('Y-m-d',$date_encours),
+								'Anomalie'	=>true
 							);
 							$alerte_temp[]=$alerte;
 						}
@@ -907,13 +924,14 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 					if ($en_cours['Consommation_mensuelle']==0)
 					{
 						$alerte=array(
-							'idFacture'=>$f->id,
-							'Valeur'=>'',
-							'Duree_validite'=>1,
-							'type_alerte'=>10,
-							'flux'=>'elec',
-							'Date'=>date('Y-m-d',$date_encours),
-							'Anomalie'=>false
+							'idFacture'	=> $f->id,
+							'Valeur'	=> '',
+							'Valeur2' 	=> 0,
+							'Duree_validite'=> 1,
+							'type_alerte'	=> 10,
+							'flux'		=> 'elec',
+							'Date'		=> date('Y-m-d',$date_encours),
+							'Anomalie'	=> false
 						);
 						$alerte_temp[]=$alerte;
 					}
@@ -927,6 +945,7 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 						$alerte=array(
 							'idFacture'=>$f->id,
 							'Valeur'=>(-1)*$f->Montant_net,
+							'Valeur2'=> 0,
 							'Duree_validite'=>1,
 							'type_alerte'=>11,
 							'flux'=>'elec',
@@ -944,6 +963,7 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 					$alerte=array(
 						'idFacture'=>$f->id,
 						'Valeur'=>$f->Montant_net,
+						'Valeur2'=> 0,
 						'Duree_validite'=>1,
 						'type_alerte'=>12,
 						'flux'=>'elec',
@@ -970,16 +990,17 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 					
 					if ($difference!=0)
 					{
-						$alerte=array(
-							'idFacture'=>$f->id,
-							'Valeur'=> $difference,
-							'Duree_validite'=>1,
-							'type_alerte'=>14,
-							'flux'=>'elec',
-							'Date'=>date('Y-m-d',$date_encours),
-							'Anomalie'=>true
+						$alerte = array(
+							'idFacture' 	=> $f->id,
+							'Valeur'	=> $difference,
+							'Valeur2' 	=> 0,
+							'Duree_validite'=> 1,
+							'type_alerte'	=> 14,
+							'flux'		=> 'elec',
+							'Date'		=> date('Y-m-d',$date_encours),
+							'Anomalie'	=> true
 						);
-						$alerte_temp[]=$alerte;
+						$alerte_temp[] = $alerte;
 					}
 				}
 				
@@ -996,13 +1017,14 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 						$date=date('Y-m-d',$date_encours);
 						
 						$alerte=array(
-							'idFacture'=>$idFacture,
-							'Valeur'=>$valeur,
-							'Duree_validite'=>$Duree_validite,
-							'type_alerte'=>$type_alerte,
-							'flux'=>$flux,
-							'Date'=>$date,
-							'Anomalie'=>false
+							'idFacture'	=> $idFacture,
+							'Valeur'	=> $valeur,
+							'Valeur2'	=> 0,
+							'Duree_validite'=> $Duree_validite,
+							'type_alerte'	=> $type_alerte,
+							'flux'		=> $flux,
+							'Date'		=> $date,
+							'Anomalie'	=> false
 						);
 						$alerte_temp[]=$alerte;
 					}
@@ -1078,6 +1100,7 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 						if (empty($a->id)) {						
 							$a=new Alerte();
 							$a->Valeur= $AT['Valeur'];    
+							$a->Valeur2= $AT['Valeur2'];    
 							$a->Flux  = $AT['flux']; 
 							$a->Date  = $AT['Date'];
 							$a->Type  = $AT['type_alerte'];
@@ -1085,7 +1108,17 @@ var $decoupage=20;  //lors de l'import le fichier est decoupe en plusieurs parti
 							$a->Etat  = 2; //En attente
 							$a->Anomalie  = $AT['Anomalie'];
 						}
-						
+						else{
+							$a->Valeur= $AT['Valeur'];
+							$a->Valeur2= $AT['Valeur2'];    
+							$a->Flux  = $AT['flux']; 
+							$a->Date  = $AT['Date'];
+							$a->Type  = $AT['type_alerte'];
+							
+							//On conserve l'ancien état
+							//$a->Etat  = 2; //En attente
+							$a->Anomalie  = $AT['Anomalie'];
+						}
 						/*if ($table=='conso_bts'){
 			 				if ($tension=='BT'){
 			 					$f= new Facturebt();
