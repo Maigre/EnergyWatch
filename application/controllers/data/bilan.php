@@ -275,7 +275,7 @@ class Bilan extends CI_Controller {
 		$answ['montant'] = $montant_facture;
 		$answer['data'][]=$answ;
 		
-		$alerte_type_wanted=array(6,8,11,12,14);
+		$alerte_type_wanted=array(1,6,8,11,12,14);
 		
 		foreach($montant_anomalie as $intitule => $montant){
 			if (in_array($intitule,$alerte_type_wanted)){
